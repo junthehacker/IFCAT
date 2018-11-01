@@ -1,12 +1,12 @@
-var models = require('../../models');
+const models = require('../../models');
 // Retrieve course
 exports.getCourseByParam = (req, res, next, id) => {
-    models.Course.findById(id, (err, course) => {
-        if (err)
-            return next(err);
-        if (!course)
-            return next(new Error('No course is found.'));
-        req.course = course;
-        next();
-    });
+    req.user.getCourse(id)
+        .then(course => {
+            req.course = course;
+            next();
+        })
+        .catch(e => {
+            next(e);
+        });
 };

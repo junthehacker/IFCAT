@@ -1,6 +1,7 @@
 const async = require('async'),
     mongoose = require('mongoose');
 const FileSchema = new mongoose.Schema({
+    courseId: String,
     name: { type: String, required: true },
     type: String
 }, {
@@ -10,7 +11,6 @@ const FileSchema = new mongoose.Schema({
 FileSchema.pre('remove', function (next) {
     let self = this;
     async.parallel([
-        done => self.model('Course').update({ files: { $in: [self._id] }}, { $pull: { files: self._id }}, done),
         done => self.model('Question').update({ files: { $in: [self._id] }}, { $pull: { files: self._id }}, { multi: true }, done)
     ], next);
 });

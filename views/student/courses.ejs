@@ -5,9 +5,9 @@
 <% if (!_.isEmpty(courses)) { %>
     <div class="list-group">
     <% _.each(courses, course => { %>
-        <a href="/student/courses/<%= course._id %>/quizzes" class="list-group-item">
-            <span class="code"><%= course.code %></span> -
-            <span class="name"><%= course.name %></span>
+        <a href="/student/courses/<%= course.getId() %>/quizzes" class="list-group-item">
+            <span class="code"><%= course.getCode() %></span> -
+            <span class="name"><%= course.getDisplayName() %></span>
         </a>
     <% }) %>
     </div>

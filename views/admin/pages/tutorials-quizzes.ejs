@@ -1,10 +1,7 @@
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.code %></li>
-    <% if (tutorial) { %>
-        <li><a href="/admin/courses/<%= course.id %>/tutorials">Tutorials</a> ‐ TUT <%= tutorial.number %></li>
-    <% } %>
+    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
     <li class="active">Tutorials &amp; Quizzes</li>
 </ol>
 
@@ -16,7 +13,7 @@
 
     <div class="nav-actions">
         <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-edit-tutorials-quizzes"> Bulk Actions</button>
-        <button type="submit" class="btn btn-default btn-sm" formaction="/admin/courses/<%= course._id %>/marks?export=true">Export Marks</button>
+        <button type="submit" class="btn btn-default btn-sm" formaction="/admin/courses/<%= course.getId() %>/marks?export=true">Export Marks</button>
     </div>
 
     <table class="table table-hover table-nofluid">
@@ -35,10 +32,10 @@
             <tr><td colspan="7" class="clearfix"><% include ../partials/pagination %></td></tr>
         </tfoot>
         <tbody>
-        <% if (_.isEmpty(tutorialsQuizzes)) { %>
+        <% if (_.isEmpty(tutorialQuizzes)) { %>
             <tr><td colspan="7">No quizzes have been added for this tutorial yet.</td></tr>
         <% } else { %>
-            <% _.each(tutorialsQuizzes, tutorialQuiz => { %>
+            <% _.each(tutorialQuizzes, tutorialQuiz => { %>
                 <tr>
                     <td class="cb"><input type="checkbox" name="tutorialsQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
                     <td class="quiz"><%= tutorialQuiz.quiz.name %></td>
@@ -50,8 +47,8 @@
                         <div class="dropdown">
                             <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes/<%= tutorialQuiz._id %>"><span class="glyphicon glyphicon-play-circle"></span> Conduct quiz</a></li>
-                                <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes/<%= tutorialQuiz._id %>/marks"><span class="glyphicon glyphicon-signal"></span> View Results</a></li>
+                                <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes/<%= tutorialQuiz._id %>"><span class="glyphicon glyphicon-play-circle"></span> Conduct quiz</a></li>
+                                <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes/<%= tutorialQuiz._id %>/marks"><span class="glyphicon glyphicon-signal"></span> View Results</a></li>
                             </ul>
                         </div>
                     </td>

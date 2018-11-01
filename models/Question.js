@@ -21,11 +21,11 @@ const QuestionSchema = new mongoose.Schema({
     points: Number,
     firstTryBonus: Number,
     penalty: Number,
-    submitter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    submitter: String ,
     approved: Boolean,
     votes: {
-        up: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        down: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+        up: [String],
+        down: [String]
     }
 }, {
     timestamps: true 
@@ -74,7 +74,12 @@ QuestionSchema.methods.hasFile = function (id) {
 QuestionSchema.methods.isAnswer = function (choice) {
     return this.answers.indexOf(choice) > -1;
 };
-// Set question
+
+/**
+ * Create the question
+ * @param opts
+ * @returns {mongoose.Schema.methods}
+ */
 QuestionSchema.methods.store = function (opts) {
     let self = this;
 

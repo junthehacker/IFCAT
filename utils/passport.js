@@ -3,48 +3,29 @@ const models = require('../models'),
     LocalStrategy = require('passport-local').Strategy,
     Auth0Strategy = require('passport-auth0'),
     auth0Config = require('./config').auth0;
+const IAServiceProvider = require('../providers/IAServiceProvider');
+const CustomStrategy = require('passport-custom').Strategy;
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user);
 });
 
 passport.deserializeUser((id, done) => {
-    models.User.findById(id, '-password', done);
+    IAServiceProvider.getUserByToken(id)
+        .then(user => done(null, user))
+        .catch(e => done(e, false));
 });
 
-passport.use('local-signup', new LocalStrategy({
-    usernameField: 'email',
-    passReqToCallback : true
-}, (req, email, password, done) => {
-    process.nextTick(() => {
-        models.User.findOne({ 'local.email': email.trim().toLowerCase() }, (err, user) => {
-            if (err) 
-                return done(err);
-            if (user) 
-                return done(null, false, { 'message': 'Email is already taken' });
-            user = new models.User();
-            user.local = { email: email, password: password };
-            user.roles = ['student'];
-            user.save(done);
-        });
-    });
+passport.use('ia-auth', new CustomStrategy((req, done) => {
+    if(req.query.token) {
+        IAServiceProvider.getUserByToken(req.query.token)
+            .then(() => done(null, req.query.token))
+            .catch(e => done(e, false));
+    } else {
+        done(null, false);
+    }
 }));
 
-passport.use('local-login', new LocalStrategy({
-    usernameField: 'email',
-    passReqToCallback: true,
-    failureFlash: true
-}, (req, email, password, done) => {
-    models.User.findOne({ 'local.email': email.trim().toLowerCase() }, (err, user) => {
-        if (err || !user)
-            return done(null, false, { message: 'Invalid email' });
-        user.checkPassword(password, (err, res) => {
-            if (err || !res)
-                return done(null, false, { message: 'Invalid password' });
-            done(null, user);
-        });
-    });
-}));
 
 // Configure Passport to use Auth0
 passport.use(new Auth0Strategy({

@@ -1,5 +1,6 @@
 const controllers = require('../controllers/student'),
     passport = require('passport');
+const IAServiceProvider = require('../providers/IAServiceProvider');
 
 let router = require('express').Router();
 
@@ -8,7 +9,10 @@ router.get('/quiz', (req, res)=>
 {
     res.render('student/start-quiz.ejs');
 })
-router.get('/login', controllers.User.getLogin);
+router.get('/login', passport.authenticate('ia-auth', {
+    successRedirect: '/student/courses',
+    failureRedirect: IAServiceProvider.getLoginUrl()
+}));
 
 router.post('/signup', passport.authenticate('local-signup', {
     successRedirect: '/student/courses',

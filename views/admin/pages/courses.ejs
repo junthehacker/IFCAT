@@ -9,13 +9,7 @@
 <% include ../partials/flash %>
 
 <form method="post">
-    <% if (user.hasRole('admin')) { %>
-    <div class="nav-actions">
-        <a href="/admin/courses/new" class="btn btn-default btn-sm"><span 
-            class="glyphicon glyphicon-plus"></span> Add New Course</a>
-    </div>
-    <% } %>
-    <table class="table table-hover table-nofluid">
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th class="code">Code</th>
@@ -29,30 +23,16 @@
         <% } else { %>
             <% _.each(courses, course => { %>
                 <tr>
-                    <td class="code"><%= course.code %></td>
-                    <td class="name"><%= course.name %></td>
+                    <td class="code"><%= course.getCode() %></td>
+                    <td class="name"><%= course.getDisplayName() %></td>
                     <td class="actions">
                         <div class="dropdown">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"> Actions<span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                            <% if (user.hasRole('admin')) { %>
-                                <li><a href="/admin/courses/<%= course._id %>/edit"><span class="glyphicon glyphicon-pencil"></span> Edit Course</a></li>
-                            <% } %>
-                                <li><a href="/admin/courses/<%= course._id %>/tutorials"><span class="glyphicon glyphicon-blackboard"></span> Manage Tutorials</a></li>
-                                <li><a href="/admin/courses/<%= course._id %>/quizzes"><span class="glyphicon glyphicon-list-alt"></span> Manage Quizzes</a></li>
-                                <li><a href="/admin/courses/<%= course._id %>/files"><span class="glyphicon glyphicon-picture"></span> Manage Files</a></li>
-                            <% if (user.hasAnyRole(['admin', 'instructor'])) { %>
-                                <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes"><span class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes</a></li>
-                            <% } %>
-                            <% if (user.hasRole('admin')) { %>
-                                <li><a href="/admin/courses/<%= course._id %>/instructors"><span class="glyphicon glyphicon-user"></span> Manage Instructors</a></li>
-                            <% } %>
-                                <li><a href="/admin/courses/<%= course._id %>/teaching-assistants"><span class="glyphicon glyphicon-user"></span> Manage Teaching Assistants</a></li>
-                                <li><a href="/admin/courses/<%= course._id %>/students"><span class="glyphicon glyphicon-user"></span> Manage Students</a></li>
-                            <% if (user.hasRole('admin')) { %>
-                                <li class="divider"></li>
-                                <li><a href="/admin/courses/<%= course._id %>?_method=delete" class="btn-delete"><span class="glyphicon glyphicon-remove"></span> Delete Course</a></li>
+                                <li><a href="/admin/courses/<%= course.getId() %>/quizzes"><span class="glyphicon glyphicon-list-alt"></span> Manage Quizzes</a></li>
+                            <% if (user.isAdmin() || user.isInstructor()) { %>
+                                <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes"><span class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes</a></li>
                             <% } %>
                             </ul>
                         </div>

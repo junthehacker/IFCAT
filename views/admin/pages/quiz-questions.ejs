@@ -1,8 +1,8 @@
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.code %></li>
-    <li><a href="/admin/courses/<%= course._id %>/quizzes">Quizzes</a> ‐ <%= quiz.name %></li>
+    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="/admin/courses/<%= course.getId() %>/quizzes">Quizzes</a> ‐ <%= quiz.name %></li>
     <li class="active">Questions</li>
 </ol>
 
@@ -12,17 +12,17 @@
 
 <form method="post">
     <div class="nav-actions">
-        <a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz.id %>/questions/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Add New Question</a>
+        <a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz.id %>/questions/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Add New Question</a>
         <div class="btn-group">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-sort-by-attributes"></span> Sort By <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions">Default</a></li>
-                <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions?sort=createdAt">Date Created</a></li>
-                <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions?sort=votes">Votes</a></li>
+                <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions">Default</a></li>
+                <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions?sort=createdAt">Date Created</a></li>
+                <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions?sort=votes">Votes</a></li>
             </ul>
         </div>
-        <button type="submit" formaction="/admin/courses/<%= course._id %>/quizzes/<%= quiz.id %>/questions/sort?_method=patch" class="btn btn-default btn-sm btn-primary"><span class="glyphicon glyphicon-pushpin"></span> Save Order</a>
+        <button type="submit" formaction="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz.id %>/questions/sort?_method=patch" class="btn btn-default btn-sm btn-primary"><span class="glyphicon glyphicon-pushpin"></span> Save Order</a>
     </div>
     <table class="table table-hover">
         <thead>
@@ -85,9 +85,9 @@
                             <div class="dropdown">
                                 <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
                                 <ul class="dropdown-menu">
-                                    <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz.id %>/questions/<%= question._id %>/edit"><span class="glyphicon glyphicon-pencil"></span> Edit Question</a></li>
+                                    <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz.id %>/questions/<%= question._id %>/edit"><span class="glyphicon glyphicon-pencil"></span> Edit Question</a></li>
                                     <li class="divider"></li>
-                                    <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz.id %>/questions/<%= question._id %>?_method=delete" class="btn-delete"><span class="glyphicon glyphicon-remove"></span> Delete Question</a></li>
+                                    <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz.id %>/questions/<%= question._id %>?_method=delete" class="btn-delete"><span class="glyphicon glyphicon-remove"></span> Delete Question</a></li>
                                 </ul>
                             </div>
                         </td>

@@ -3,6 +3,7 @@ const _ = require('lodash'),
     mongoose = require('mongoose');
 const QuizSchema = new mongoose.Schema({
     name: { type: String, required: true },
+    courseId: String,
     questions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
     default: {
         tags: [String],
@@ -20,15 +21,17 @@ const QuizSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
 // Delete cascade
 QuizSchema.pre('remove', function (next) {
     let self = this;
     async.parallel([
-        done => self.model('Course').update({ quizzes: { $in: [self._id] }}, { $pull: { quizzes: self._id }}, done),
         done => self.model('Question').remove({ _id: { $in: self.questions }}, done),
         done => self.model('TutorialQuiz').remove({ quiz: self._id }, done)
     ], next);
 });
+
+
 // Populate tutorials-quizzes
 QuizSchema.virtual('tutorialQuizzes', { ref: 'TutorialQuiz', localField: '_id', foreignField: 'quiz' });
 // Populate questions
@@ -54,10 +57,12 @@ QuizSchema.methods.store = function (opts) {
 
     return self;
 };
+
 // Check if quiz is linked with tutorial
 QuizSchema.methods.isLinkedTo = function (tutorial) {
-    return _.some(this.tutorialQuizzes, tutorialQuiz => tutorialQuiz.tutorial.equals(tutorial._id));
+    return _.some(this.tutorialQuizzes, tutorialQuiz => tutorialQuiz.tutorial === tutorial.getId());
 };
+
 // Save quiz
 QuizSchema.methods.linkTutorials = function (tutorials = [], done) {
     let self = this;

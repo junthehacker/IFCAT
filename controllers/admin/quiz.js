@@ -2,6 +2,7 @@ const _ = require('lodash'),
     async = require('async'),
     mongoose = require('mongoose'),
     models = require('../../models');
+
 // Retrieve course
 exports.getQuizByParam = (req, res, next, id) => {
     models.Quiz.findById(id, (err, quiz) => {
@@ -13,20 +14,32 @@ exports.getQuizByParam = (req, res, next, id) => {
         next();
     });
 };
-// Retrieve quizzes within course
+
+/**
+ * List of quizzes page
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getQuizzes = (req, res, next) => {
-    req.course.withQuizzes().execPopulate().then(() => {
+    req.course.fillQuizzes().then(() => {
         res.render('admin/pages/course-quizzes', {
             bodyClass: 'quizzes-page',
             title: 'Quizzes',
-            course: req.course 
+            course: req.course
         });
     }, next);
 };
-// Retrieve quiz form
+
+/**
+ * Get one quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getQuiz = (req, res, next) => {
     let quiz = req.quiz || new models.Quiz();
-    req.course.withTutorials().execPopulate().then(() => {
+    req.course.fillTutorials().then(() => {
         quiz.populate('tutorialQuizzes').execPopulate().then(() => {
             res.render('admin/pages/course-quiz', {
                 bodyClass: 'quiz-page',
@@ -37,20 +50,31 @@ exports.getQuiz = (req, res, next) => {
         }, next);
     }, next);
 };
-// Add quiz to course
+
+/**
+ * Add a new quiz to the store
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.addQuiz = (req, res, next) => {
     let quiz = new models.Quiz();
     async.series([
         done => quiz.store(req.body).save(done),
-        done => req.course.update({ $push: { quizzes: quiz._id }}, done),
         done => quiz.linkTutorials(req.body.tutorials, done)
     ], err => {
         if (err) return next(err);
         req.flash('success', '<b>%s</b> has been created.', quiz.name);
-        res.redirect(`/admin/courses/${req.course._id}/quizzes`);
+        res.redirect(`/admin/courses/${req.course.getId()}/quizzes`);
     });
 };
-// Update quiz
+
+/**
+ * Update a quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.editQuiz = (req, res, next) => {
     async.series([
         done => req.quiz.store(req.body).save(done),
@@ -58,10 +82,16 @@ exports.editQuiz = (req, res, next) => {
     ], err => {
         if (err) return next(err);
         req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
-        res.redirect(`/admin/courses/${req.course._id}/quizzes/${req.quiz._id}/edit`);
+        res.redirect(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`);
     });
 };
-// Copy quiz
+
+/**
+ * Duplicate a quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.copyQuiz = (req, res, next) => {
     async.waterfall([
         function (done) {
@@ -70,7 +100,7 @@ exports.copyQuiz = (req, res, next) => {
                     question._id = mongoose.Types.ObjectId();
                     question.isNew = true;
                     question.save(err => {
-                        if (err) 
+                        if (err)
                             return done(err);
                         done(null, question._id);
                     });
@@ -83,9 +113,6 @@ exports.copyQuiz = (req, res, next) => {
             req.quiz.name += ' (copy)';
             req.quiz.questions = questions;
             req.quiz.save(done);
-        },
-        function (quiz, numAffected, done) {
-            req.course.update({ $addToSet: { quizzes: quiz }}, done)
         }
     ], err => {
         if (err)
@@ -94,7 +121,13 @@ exports.copyQuiz = (req, res, next) => {
         res.redirect('back');
     });
 };
-// Delete quiz
+
+/**
+ * Delete a quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.deleteQuiz = (req, res, next) => {
     req.quiz.remove(err => {
         if (err)
@@ -107,7 +140,7 @@ exports.deleteQuiz = (req, res, next) => {
 exports.fetchQuizJson = (req, res) => {
     models.Quiz
         .findById(req.params.quizId)
-        .populate({ path : 'questions', select : '-answers' })
-        .then((quiz) => res.json(quiz) )
+        .populate({path: 'questions', select: '-answers'})
+        .then((quiz) => res.json(quiz))
         .catch(err => console.err(err));
 };

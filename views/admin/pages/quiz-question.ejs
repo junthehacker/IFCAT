@@ -1,9 +1,9 @@
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.code %></li>
-    <li><a href="/admin/courses/<%= course._id %>/quizzes">Quizzes</a> ‐ <%= quiz.name %></li>
-    <li><a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions">Questions</a></li>
+    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="/admin/courses/<%= course.getId() %>/quizzes">Quizzes</a> ‐ <%= quiz.name %></li>
+    <li><a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions">Questions</a></li>
     <li class="active"><%- question.isNew ? 'New' : 'Edit' %></li>
 </ol>
 
@@ -11,7 +11,7 @@
 
 <% include ../partials/flash %>
 
-<form action="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions/<%= question.isNew ? '' : `${question._id}?_method=put` %>" method="post" autocomplete="off" class="form-horizontal">
+<form action="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions/<%= question.isNew ? '' : `${question._id}?_method=put` %>" method="post" autocomplete="off" class="form-horizontal">
 
     <% if (question.submitter) { %>
     <div class="form-group" style="margin-top: 10px">
@@ -339,8 +339,8 @@
     <!-- buttons -->
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-10">
-            <a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions" class="btn btn-default btn-sm">Cancel</a>
-            <a href="/admin/courses/<%= course._id %>/quizzes/<%= quiz._id %>/questions/preview" target="blank" class="btn btn-default btn-sm" id="btn-preview">Preview</a>
+            <a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions" class="btn btn-default btn-sm">Cancel</a>
+            <a href="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions/preview" target="blank" class="btn btn-default btn-sm" id="btn-preview">Preview</a>
             <% if (question.isNew) { %>
                 <input type="hidden" id="back" name="back" value="1">
                 <button type="submit" class="btn btn-primary btn-sm" onclick="back.value=0">Save &amp; Add Another New Question</button>

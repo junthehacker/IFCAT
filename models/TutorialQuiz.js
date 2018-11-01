@@ -1,8 +1,9 @@
 const _ = require('lodash'),
     async = require('async'),
     mongoose = require('mongoose');
+
 const TutorialQuizSchema = new mongoose.Schema({
-    tutorial: { type: mongoose.Schema.Types.ObjectId, ref: 'Tutorial' },
+    tutorial: String,
     quiz: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' },
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
     // whether members will be automatically placed into groups or manually pick their groups
@@ -21,6 +22,7 @@ const TutorialQuizSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
 // Set index
 TutorialQuizSchema.index({ tutorial: 1, quiz: 1 }, { unique: true });
 // Populate students

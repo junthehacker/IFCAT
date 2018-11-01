@@ -1,6 +1,7 @@
 const _ = require('lodash'),
     async = require('async'),
     models = require('../../models');
+
 // Retrieve tutorial quiz
 exports.getTutorialQuizByParam = (req, res, next, id) => {
     models.TutorialQuiz.findById(id, (err, tutorialQuiz) => {
@@ -12,6 +13,7 @@ exports.getTutorialQuizByParam = (req, res, next, id) => {
         next();
     });
 };
+
 // Retrieve quizzes within course OR by tutorial
 exports.getTutorialsQuizzes = (req, res, next) => {
     let page = parseInt(req.query.page, 10) || 1,
@@ -21,26 +23,38 @@ exports.getTutorialsQuizzes = (req, res, next) => {
     if (req.tutorial)
         query = { tutorial: req.tutorial };
 
-    models.TutorialQuiz.findAndCount(query, {
-        page: page,
-        perPage: perPage
-    }, (err, tutorialsQuizzes, count, pages) => {
-        if (err)
-            return next(err);
-        res.render('admin/pages/tutorials-quizzes', {
-            bodyClass: 'tutorials-quizzes-page',
-            title: 'Conduct Quizzes',
-            course: req.course,
-            tutorial: req.tutorial,
-            tutorialsQuizzes: tutorialsQuizzes,
-            pagination: {
-                page: page,
-                pages: pages,
-                perPage: perPage
-            }
-        });
-    });
+    models.TutorialQuiz.find({})
+        .then(tutorialQuizzes => {
+            res.render('admin/pages/tutorials-quizzes', {
+                bodyClass: 'tutorials-quizzes-page',
+                title: 'Conduct Quizzes',
+                course: req.course,
+                // tutorial: req.tutorial,
+                tutorialQuizzes
+            });
+        })
+
+    // models.TutorialQuiz.findAndCount(query, {
+    //     page: page,
+    //     perPage: perPage
+    // }, (err, tutorialsQuizzes, count, pages) => {
+    //     if (err)
+    //         return next(err);
+    //     res.render('admin/pages/tutorials-quizzes', {
+    //         bodyClass: 'tutorials-quizzes-page',
+    //         title: 'Conduct Quizzes',
+    //         course: req.course,
+    //         tutorial: req.tutorial,
+    //         tutorialsQuizzes: tutorialsQuizzes,
+    //         pagination: {
+    //             page: page,
+    //             pages: pages,
+    //             perPage: perPage
+    //         }
+    //     });
+    // });
 };
+
 // Edit quizzes 
 exports.editTutorialsQuizzes = (req, res, next) => {
     let items = req.body.tutorialsQuizzes || [];
@@ -64,14 +78,15 @@ exports.editTutorialsQuizzes = (req, res, next) => {
         res.redirect('back');
     });
 };
-// Retrieve quiz for tutorial
+
+/**
+ * Retrieve one quiz for the tutorial
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getTutorialQuiz = (req, res, next) => {
     req.tutorialQuiz.populate([{
-        path: 'tutorial',
-        populate: {
-            path: 'students'
-        }
-    }, {
         path: 'quiz'
     }, {
         path: 'groups'

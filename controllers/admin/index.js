@@ -1,4 +1,4 @@
-exports.User = require('./user');
+exports.User = require('./User');
 exports.Student = require('./student');
 exports.TeachingAssistant = require('./teachingAssistant');
 exports.Instructor = require('./instructor');

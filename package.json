@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "async": "^2.0.1",
+    "axios": "^0.18.0",
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.2",
     "bootbox": "^4.4.0",
@@ -27,6 +28,7 @@
     "express-session": "^1.14.0",
     "font-awesome": "^4.6.3",
     "fs-extra": "^0.30.0",
+    "https": "^1.0.0",
     "jquery": "^1.11.3",
     "loader-utils": "0.2.16",
     "lodash": "^4.15.0",
@@ -37,6 +39,7 @@
     "multer": "^1.1.0",
     "passport": "^0.3.2",
     "passport-auth0": "^0.5.2",
+    "passport-custom": "^1.0.5",
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "passport.socketio": "^3.6.2",

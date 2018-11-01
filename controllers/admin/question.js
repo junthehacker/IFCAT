@@ -2,7 +2,8 @@ const _ = require('../../utils/lodash.mixin'),
     async = require('async'),
     models = require('../../models'),
     url = require('url');
-// Retrieve course
+
+// Retrieve question
 exports.getQuestionByParam = (req, res, next, id) => {
     models.Question.findById(id, (err, question) => {
         if (err)
@@ -13,18 +14,24 @@ exports.getQuestionByParam = (req, res, next, id) => {
         next();
     });
 };
-// Retrieve list of questions for quiz
+
+/**
+ * Question list page
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getQuestions = (req, res, next) => {
     let options = { 
-        populate: { path: 'submitter', model: 'User' }
+        // populate: { path: 'submitter', model: 'User' }
     };
-    if (req.query.sort && req.query.sort != 'votes') {
+    if (req.query.sort && req.query.sort !== 'votes') {
         options.options = { sort: req.query.sort };
     }
     req.quiz.withQuestions(options).execPopulate().then(() => {
         let questions = req.quiz.questions;
         // sort questions by voting score
-        if (req.query.sort == 'votes')
+        if (req.query.sort === 'votes')
             questions = _.orderBy(questions, 'votes.score', 'desc');
         // group questions by status
         questions = _.groupBy(questions, question => question.submitter && !question.approved ? 'pending' : 'approved');
@@ -51,7 +58,13 @@ exports.sortQuestions = (req, res, next) => {
         res.redirect('back');
     });
 };
-// Retrieve specific question for quiz
+
+/**
+ * Add or update question page
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.getQuestion = (req, res, next) => {
     let question = req.question || new models.Question();
     // set default options
@@ -60,7 +73,7 @@ exports.getQuestion = (req, res, next) => {
             question[k] = v;
     });
 
-    req.course.withFiles().execPopulate().then(() => {
+    req.course.fillFiles().then(() => {
         question.populate('submitter').execPopulate().then(() => {
             res.render('admin/pages/quiz-question', {
                 bodyClass: 'question-page',
@@ -72,10 +85,16 @@ exports.getQuestion = (req, res, next) => {
         }, next);
     }, next);
 };
-// Add new question for quiz
+
+/**
+ * Create a new question for the quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.addQuestion = (req, res, next) => {
     let question = new models.Question();
-    let url = `/admin/courses/${req.course._id}/quizzes/${req.quiz._id}/questions`;
+    let url = `/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/questions`;
     async.series([
         done => question.store(req.body).save(done),
         done => req.quiz.update({ $addToSet: { questions: question._id }}, done)
@@ -86,6 +105,8 @@ exports.addQuestion = (req, res, next) => {
         res.redirect(req.body.back === '1' ? url : 'back');
     });
 };
+
+
 // Update specific question for quiz
 exports.editQuestion = (req, res, next) => {
     req.question.store(req.body).save(err => {
@@ -95,7 +116,13 @@ exports.editQuestion = (req, res, next) => {
         res.redirect('back');
     });
 };
-// Delete specific question for quiz
+
+/**
+ * Delete a question for the quiz
+ * @param req
+ * @param res
+ * @param next
+ */
 exports.deleteQuestion = (req, res, next) => {
     req.question.remove(err => {
         if (err) 
