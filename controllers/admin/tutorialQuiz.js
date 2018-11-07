@@ -1,9 +1,17 @@
-const _ = require('lodash'),
-    async = require('async'),
-    models = require('../../models');
+/*------------------------------------
+Controller for admin pages that conducts quizzes.
+
+Author(s): Jun Zheng [me at jackzh dot com]
+-------------------------------------*/
+
+const _      = require('lodash');
+const async  = require('async');
+
+const TutorialQuiz = require('../../models/TutorialQuiz');
+const models = require('../../models');
 
 /**
- * Retrieve one tutorial quiz by parameters
+ * Middleware that retrieves one tutorial quiz by parameters
  * This will also fill the 'tutorial' path from remote.
  * @param req
  * @param res
@@ -12,7 +20,7 @@ const _ = require('lodash'),
  */
 exports.getTutorialQuizByParam = (req, res, next, id) => {
     let tutorialQuiz;
-    models.TutorialQuiz.findById(id)
+    TutorialQuiz.findById(id)
         .then(result => {
             tutorialQuiz = result;
             if (!tutorialQuiz) {

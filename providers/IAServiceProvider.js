@@ -1,12 +1,31 @@
+/*------------------------------------
+Service provider for I.A. exposes useful
+methods to interact with the API.
+Supports I.A. v0.3
+
+Author(s): Jun Zheng [me at jackzh dot com]
+-------------------------------------*/
+
 const config = require('../utils/config').ia;
 const _axios = require('axios');
 const https = require('https');
-const axios = _axios.create({
-    httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-    })
-});
 
+// Configure axios to accept self-signed certificates in development environment
+let axios;
+if (process.env.NODE_ENV === 'development') {
+    axios = _axios.create({
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+} else {
+    axios = _axios;
+}
+
+/**
+ * Service provider for I.A. API
+ * @type {module.IAServiceProvider}
+ */
 module.exports = class IAServiceProvider {
     /**
      * Get an user by token
@@ -82,12 +101,12 @@ module.exports = class IAServiceProvider {
                 .then(tutorials => {
                     let tutorial;
                     tutorials.some(_tutorial => {
-                        if(_tutorial.getId() === id) {
+                        if (_tutorial.getId() === id) {
                             tutorial = _tutorial;
                             return true;
                         }
                     });
-                    if(tutorial) {
+                    if (tutorial) {
                         resolve(tutorial);
                     } else {
                         throw new Error("Tutorial not found.");

@@ -1,10 +1,21 @@
-const _ = require('lodash'),
-    async = require('async'),
-    mongoose = require('mongoose');
+/*------------------------------------
+Local mongoose model that links a quiz
+instance to a remote tutorial from I.A.
 
+Author(s): Jun Zheng [me at jackzh dot com]
+           Neeilan Selvalingam
+-------------------------------------*/
+
+// Dependencies
+const _        = require('lodash');
+const async    = require('async');
+const mongoose = require('mongoose');
+
+// Service providers
 const IAServiceProvider = require('../providers/IAServiceProvider');
 
-const TutorialQuizSchema = new mongoose.Schema({
+// Mongoose schema
+const tutorialQuizSchema = new mongoose.Schema({
     tutorialId: String,
     quiz: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' },
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
@@ -26,7 +37,7 @@ const TutorialQuizSchema = new mongoose.Schema({
 });
 
 // Virtual for populated tutorial from remote
-TutorialQuizSchema.virtual('tutorial').get(function () {
+tutorialQuizSchema.virtual('tutorial').get(function () {
     return this._tutorial;
 }).set(function (v) {
     this._tutorial = v;
@@ -34,7 +45,7 @@ TutorialQuizSchema.virtual('tutorial').get(function () {
 
 
 // Populate students
-TutorialQuizSchema.methods.withStudents = function () {
+tutorialQuizSchema.methods.withStudents = function () {
     return this.populate({
         path: 'tutorial.students',
         model: this.model('User'),
@@ -43,8 +54,9 @@ TutorialQuizSchema.methods.withStudents = function () {
         }
     });
 };
+
 // Populate groups
-TutorialQuizSchema.methods.withGroups = function () {
+tutorialQuizSchema.methods.withGroups = function () {
     return this.populate({
         path: 'groups',
         model: this.model('Group'),
@@ -64,7 +76,7 @@ TutorialQuizSchema.methods.withGroups = function () {
  * Populate the tutorial field from API
  * @returns {Promise<any>}
  */
-TutorialQuizSchema.methods.fillTutorialFromRemote = function() {
+tutorialQuizSchema.methods.fillTutorialFromRemote = function() {
     return new Promise((resolve, reject) => {
         IAServiceProvider.getAllTutorials()
             .then(tutorials => {
@@ -82,7 +94,7 @@ TutorialQuizSchema.methods.fillTutorialFromRemote = function() {
     })
 };
 
-TutorialQuizSchema.statics.findAndCount = function (conditions, options, done) {
+tutorialQuizSchema.statics.findAndCount = function (conditions, options, done) {
     let self = this;
     async.series([
         done => {
@@ -121,4 +133,4 @@ TutorialQuizSchema.statics.findAndCount = function (conditions, options, done) {
     });
 };
 
-module.exports = mongoose.model('TutorialQuiz', TutorialQuizSchema);
+module.exports = mongoose.model('TutorialQuiz', tutorialQuizSchema);
