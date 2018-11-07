@@ -2,16 +2,31 @@ const _ = require('lodash'),
     async = require('async'),
     models = require('../../models');
 
-// Retrieve tutorial quiz
+/**
+ * Retrieve one tutorial quiz by parameters
+ * This will also fill the 'tutorial' path from remote.
+ * @param req
+ * @param res
+ * @param next
+ * @param id
+ */
 exports.getTutorialQuizByParam = (req, res, next, id) => {
-    models.TutorialQuiz.findById(id, (err, tutorialQuiz) => {
-        if (err) 
-            return next(err);
-        if (!tutorialQuiz)
-            return next(new Error('No tutorial quiz is found.'));
-        req.tutorialQuiz = tutorialQuiz;
-        next();
-    });
+    let tutorialQuiz;
+    models.TutorialQuiz.findById(id)
+        .then(result => {
+            tutorialQuiz = result;
+            if (!tutorialQuiz) {
+                throw new Error("No tutorial quiz is found.");
+            }
+            return tutorialQuiz.fillTutorialFromRemote();
+        })
+        .then(() => {
+            req.tutorialQuiz = tutorialQuiz;
+            next();
+        })
+        .catch(e => {
+            reject(e);
+        });
 };
 
 // Retrieve quizzes within course OR by tutorial
@@ -19,12 +34,22 @@ exports.getTutorialsQuizzes = (req, res, next) => {
     let page = parseInt(req.query.page, 10) || 1,
         perPage = parseInt(req.query.perPage, 10) || 10;
 
-    let query = { quiz: { $in: req.course.quizzes }};
+    let query = {quiz: {$in: req.course.quizzes}};
     if (req.tutorial)
-        query = { tutorial: req.tutorial };
+        query = {tutorial: req.tutorial};
 
+    let tutorialQuizzes;
     models.TutorialQuiz.find({})
-        .then(tutorialQuizzes => {
+        .populate('quiz')
+        .then(result => {
+            tutorialQuizzes = result;
+            let chain = [];
+            tutorialQuizzes.forEach(tutorialQuiz => {
+                chain.push(tutorialQuiz.fillTutorialFromRemote());
+            });
+            return Promise.all(chain);
+        })
+        .then(() => {
             res.render('admin/pages/tutorials-quizzes', {
                 bodyClass: 'tutorials-quizzes-page',
                 title: 'Conduct Quizzes',
@@ -32,6 +57,9 @@ exports.getTutorialsQuizzes = (req, res, next) => {
                 // tutorial: req.tutorial,
                 tutorialQuizzes
             });
+        })
+        .catch(e => {
+            next(e);
         })
 
     // models.TutorialQuiz.findAndCount(query, {
@@ -64,7 +92,7 @@ exports.editTutorialsQuizzes = (req, res, next) => {
     }, {});
     // update each tutorial-quiz
     async.eachSeries(items, (id, done) => {
-        models.TutorialQuiz.findByIdAndUpdate(id, update, { new: true }, (err, tutorialQuiz) => {
+        models.TutorialQuiz.findByIdAndUpdate(id, update, {new: true}, (err, tutorialQuiz) => {
             if (err)
                 return done(err);
             // send notification
@@ -86,23 +114,29 @@ exports.editTutorialsQuizzes = (req, res, next) => {
  * @param next
  */
 exports.getTutorialQuiz = (req, res, next) => {
-    req.tutorialQuiz.populate([{
-        path: 'quiz'
-    }, {
-        path: 'groups'
-    }]).execPopulate().then(() => {
-        res.render('admin/pages/tutorial-quiz', {
-            bodyClass: 'tutorial-quiz-page',
-            title: `Conduct ${req.tutorialQuiz.quiz.name} in Tutorial ${req.tutorialQuiz.tutorial.number}`,
-            course: req.course,
-            tutorialQuiz: req.tutorialQuiz,
-            tutorial: req.tutorialQuiz.tutorial,
-            quiz: req.tutorialQuiz.quiz,
-            students: req.tutorialQuiz.tutorial.students,
-            groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
-        });
-    }, next);
+    req.tutorialQuiz.populate([
+        {path: 'quiz'},
+        {path: 'groups'}
+    ])
+        .execPopulate()
+        .then(() => {
+            res.render('admin/pages/tutorial-quiz', {
+                bodyClass: 'tutorial-quiz-page',
+                title: `Conduct ${req.tutorialQuiz.quiz.name} in ${req.tutorialQuiz.tutorial.getDisplayName()}`,
+                course: req.course,
+                tutorialQuiz: req.tutorialQuiz,
+                tutorial: req.tutorialQuiz.tutorial,
+                quiz: req.tutorialQuiz.quiz,
+                students: req.tutorialQuiz.tutorial.students,
+                groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
+            });
+        })
+        .catch(e => {
+            next(e);
+        })
 };
+
+
 // Edit settings for tutorial quiz
 exports.editTutorialQuiz = (req, res, next) => {
     async.series([

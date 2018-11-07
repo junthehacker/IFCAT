@@ -1,8 +1,8 @@
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.code %></li>
-    <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes">Tutorials &amp; Quizzes</a></li>
+    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes">Tutorials &amp; Quizzes</a></li>
     <li class="active">Conduct</li>
 </ol>
 
@@ -19,7 +19,7 @@
     <!-- settings -->
     <div class="tab-pane active" id="settings">
         <br>
-        <form action="/admin/courses/<%= course._id %>/tutorials-quizzes/<%= tutorialQuiz._id %>?_method=patch" method="post" class="form-horizontal" style="max-width: 700px">
+        <form action="/admin/courses/<%= course.getId() %>/tutorials-quizzes/<%= tutorialQuiz._id %>?_method=patch" method="post" class="form-horizontal">
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Allocate members by</label>
                 <div class="col-xs-7 col-sm-8">

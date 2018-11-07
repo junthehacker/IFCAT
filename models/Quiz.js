@@ -60,7 +60,7 @@ QuizSchema.methods.store = function (opts) {
 
 // Check if quiz is linked with tutorial
 QuizSchema.methods.isLinkedTo = function (tutorial) {
-    return _.some(this.tutorialQuizzes, tutorialQuiz => tutorialQuiz.tutorial === tutorial.getId());
+    return _.some(this.tutorialQuizzes, tutorialQuiz => tutorialQuiz.tutorialId === tutorial.getId());
 };
 
 // Save quiz
@@ -71,7 +71,7 @@ QuizSchema.methods.linkTutorials = function (tutorials = [], done) {
             self.populate({
                 path: 'tutorialQuizzes',
                 match: {
-                    tutorial: { $nin: tutorials } // TODO: prevent started TQs
+                    tutorialId: { $nin: tutorials } // TODO: prevent started TQs
                 }
             }, done)
         },
@@ -79,23 +79,17 @@ QuizSchema.methods.linkTutorials = function (tutorials = [], done) {
             self.model('TutorialQuiz').remove({ _id: { $in: self.tutorialQuizzes }}, done)
         },
         done => {
-            async.eachSeries(tutorials, (tutorial, done) => {
-                self.model('TutorialQuiz').create({ tutorial: tutorial, quiz: self }, err => {
+            async.eachSeries(tutorials, (tutorialId, done) => {
+                console.log(tutorialId);
+                self.model('TutorialQuiz').create({
+                    tutorialId,
+                    quiz: self
+                }, err => {
                     done(err && err.code !== 11000 ? err : null);
                 });
             }, done);
         }
     ], done);
-};
-
-// Load quiz' tutorials (deprecated)
-QuizSchema.methods.loadTutorials = function () {
-    let quiz = this;
-    return self.model('TutorialQuiz').find({ quiz: quiz }).populate('tutorial').exec(function (err, tutorialQuizzes) {
-        quiz.tutorials = tutorialQuizzes.map(function (tutorialQuiz) { 
-            return tutorialQuiz.tutorial.id;
-        });
-    });
 };
 
 module.exports = mongoose.model('Quiz', QuizSchema);

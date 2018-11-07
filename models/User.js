@@ -4,6 +4,8 @@ function getIAServiceProvider() {
     return require('../providers/IAServiceProvider');
 }
 
+const ADMIN_GROUP = "admin";
+
 class User {
     constructor(user) {
         this.user = user;
@@ -22,7 +24,7 @@ class User {
     // }
 
     isAdmin() {
-        return this.user.groups.indexOf(config.adminGroup) > -1;
+        return this.user.groups.indexOf(ADMIN_GROUP) > -1;
     }
 
     isInstructor() {

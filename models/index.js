@@ -1,6 +1,6 @@
-exports.User = require('./user');
-exports.Course = require('./course');
-exports.Tutorial = require('./tutorial');
+exports.User = require('./User');
+exports.Course = require('./Course');
+exports.Tutorial = require('./Tutorial');
 exports.Quiz = require('./Quiz');
 exports.Question = require('./Question');
 exports.File = require('./File');

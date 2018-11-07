@@ -54,6 +54,52 @@ module.exports = class IAServiceProvider {
     }
 
     /**
+     * Get list of tutorials
+     * @returns {Promise<any>}
+     */
+    static getAllTutorials() {
+        return new Promise((resolve, reject) => {
+            axios.get(`${config.root}/api/tutorials`, {
+                headers: {
+                    authorization: `Bearer ${config.secretKey}`
+                }
+            }).then(data => {
+                resolve(require('../models/Tutorial').createList(data.data));
+            }).catch(e => {
+                reject(e);
+            })
+        })
+    }
+
+    /**
+     * Get one tutorial or fail
+     * @param id
+     * @returns {Promise<any>}
+     */
+    static getTutorialByIdOrFail(id) {
+        return new Promise((resolve, reject) => {
+            this.getAllTutorials()
+                .then(tutorials => {
+                    let tutorial;
+                    tutorials.some(_tutorial => {
+                        if(_tutorial.getId() === id) {
+                            tutorial = _tutorial;
+                            return true;
+                        }
+                    });
+                    if(tutorial) {
+                        resolve(tutorial);
+                    } else {
+                        throw new Error("Tutorial not found.");
+                    }
+                })
+                .catch(e => {
+                    reject(e);
+                })
+        })
+    }
+
+    /**
      * Run a new get request
      * @param url
      * @returns {Promise<any>}

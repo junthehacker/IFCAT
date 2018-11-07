@@ -11,15 +11,19 @@
 <form method="post">
     <table class="table table-hover">
         <thead>
-            <tr>
-                <th class="code">Code</th>
-                <th class="name">Name</th>
-                <th class="actions"></th>
-            </tr>
+        <tr>
+            <th class="code">Code</th>
+            <th class="name">Name</th>
+            <th class="actions"></th>
+        </tr>
         </thead>
         <tbody>
         <% if (_.isEmpty(courses)) { %>
-            <tr><td colspan="3">No courses have been added yet.</td></tr>
+            <tr>
+                <td colspan="3">
+                    You don't have any courses yet, ask your administrator to add your course.
+                </td>
+            </tr>
         <% } else { %>
             <% _.each(courses, course => { %>
                 <tr>
@@ -27,13 +31,17 @@
                     <td class="name"><%= course.getDisplayName() %></td>
                     <td class="actions">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"> Actions<span class="caret"></span>
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                Actions<span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="/admin/courses/<%= course.getId() %>/quizzes"><span class="glyphicon glyphicon-list-alt"></span> Manage Quizzes</a></li>
-                            <% if (user.isAdmin() || user.isInstructor()) { %>
-                                <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes"><span class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes</a></li>
-                            <% } %>
+                                <li><a href="/admin/courses/<%= course.getId() %>/quizzes"><span
+                                                class="glyphicon glyphicon-list-alt"></span> Manage Quizzes</a></li>
+                                <% if (user.isAdmin() || user.isInstructor()) { %>
+                                    <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes"><span
+                                                    class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes</a>
+                                    </li>
+                                <% } %>
                             </ul>
                         </div>
                     </td>

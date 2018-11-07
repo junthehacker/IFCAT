@@ -2,8 +2,10 @@ const _ = require('lodash'),
     async = require('async'),
     mongoose = require('mongoose');
 
+const IAServiceProvider = require('../providers/IAServiceProvider');
+
 const TutorialQuizSchema = new mongoose.Schema({
-    tutorial: String,
+    tutorialId: String,
     quiz: { type: mongoose.Schema.Types.ObjectId, ref: 'Quiz' },
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
     // whether members will be automatically placed into groups or manually pick their groups
@@ -23,8 +25,14 @@ const TutorialQuizSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Set index
-TutorialQuizSchema.index({ tutorial: 1, quiz: 1 }, { unique: true });
+// Virtual for populated tutorial from remote
+TutorialQuizSchema.virtual('tutorial').get(function () {
+    return this._tutorial;
+}).set(function (v) {
+    this._tutorial = v;
+});
+
+
 // Populate students
 TutorialQuizSchema.methods.withStudents = function () {
     return this.populate({
@@ -50,6 +58,28 @@ TutorialQuizSchema.methods.withGroups = function () {
             path: 'driver'
         }]
     });
+};
+
+/**
+ * Populate the tutorial field from API
+ * @returns {Promise<any>}
+ */
+TutorialQuizSchema.methods.fillTutorialFromRemote = function() {
+    return new Promise((resolve, reject) => {
+        IAServiceProvider.getAllTutorials()
+            .then(tutorials => {
+                // Loop through all tutorials and find the correct one
+                tutorials.forEach(tutorial => {
+                    if(tutorial.getId() === this.tutorialId) {
+                        this.set('tutorial', tutorial);
+                    }
+                });
+                resolve();
+            })
+            .catch(e => {
+                reject(e);
+            })
+    })
 };
 
 TutorialQuizSchema.statics.findAndCount = function (conditions, options, done) {

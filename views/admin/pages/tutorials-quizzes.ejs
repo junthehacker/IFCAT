@@ -25,7 +25,7 @@
                 <th class="published">Published</th>
                 <th class="active-1">Active</th>
                 <th class="archived">Archived</th>
-                <th class="actions"></th>
+                <th class="actions"/>
             </tr>
         </thead>
         <tfoot>
@@ -39,7 +39,7 @@
                 <tr>
                     <td class="cb"><input type="checkbox" name="tutorialsQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
                     <td class="quiz"><%= tutorialQuiz.quiz.name %></td>
-                    <td class="tutorial"><%= tutorialQuiz.tutorial.number %></td>
+                    <td class="tutorial"><%= tutorialQuiz.tutorial.getDisplayName() %></td>
                     <td class="published"><% if (tutorialQuiz.published) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
                     <td class="active-1"><% if (tutorialQuiz.active) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
                     <td class="archived"><% if (tutorialQuiz.archived) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
