@@ -1,3 +1,10 @@
+<%/*----------------------------------
+Course list page for admin panel.
+
+Author(s): Jun Zheng [me at jackzh dot com]
+           Neeilan Selvalingam
+-----------------------------------*/%>
+
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
@@ -32,14 +39,19 @@
                     <td class="actions">
                         <div class="dropdown">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                                Actions<span class="caret"></span>
+                                Actions <span class="caret"/>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="/admin/courses/<%= course.getId() %>/quizzes"><span
-                                                class="glyphicon glyphicon-list-alt"></span> Manage Quizzes</a></li>
+                                <li>
+                                    <a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes">
+                                        <span class="glyphicon glyphicon-list-alt"></span> Manage Quizzes
+                                    </a>
+                                </li>
                                 <% if (user.isAdmin() || user.isInstructor()) { %>
-                                    <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes"><span
-                                                    class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes</a>
+                                    <li>
+                                        <a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/tutorials-quizzes">
+                                            <span class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes
+                                        </a>
                                     </li>
                                 <% } %>
                             </ul>

@@ -1,40 +1,77 @@
+/*------------------------------------
+Remote I.A. model that represents an user.
+
+Author(s): Jun Zheng [me at jackzh dot com]
+           Neeilan Selvalingam
+-------------------------------------*/
+
+// I.A. configuration
 const config = require('../utils/config').ia;
 
-function getIAServiceProvider() {
-    return require('../providers/IAServiceProvider');
-}
+// Service providers
+const getIAServiceProvider = () => require('../providers/IAServiceProvider');
 
+// Constants
 const ADMIN_GROUP = "admin";
+const INSTRUCTOR_GROUP = "instructor";
+const TA_GROUP = "ta";
 
-class User {
+/**
+ * Class describes a remote I.A. user
+ */
+class RemoteUser {
+    /**
+     * Construct a new user from the API response
+     * @param user
+     */
     constructor(user) {
         this.user = user;
     }
 
+    /**
+     * Get user ID
+     * @returns {*}
+     */
     getId() {
         return this.user._id;
     }
 
+    /**
+     * Get username, username is NOT UNIQUE
+     * @returns {string | *}
+     */
     getUsername() {
         return this.user.username;
     }
 
-    // isStudent() {
-    //     return this.user.groups.indexOf(config.studentGroup) > -1;
-    // }
-
+    /**
+     * Return if a user is an admin
+     * @returns {boolean}
+     */
     isAdmin() {
         return this.user.groups.indexOf(ADMIN_GROUP) > -1;
     }
 
+    /**
+     * Return if a user is an instructor
+     * @returns {boolean}
+     */
     isInstructor() {
-        return this.user.groups.indexOf(config.instructorGroup) > -1;
+        return this.user.groups.indexOf(INSTRUCTOR_GROUP) > -1;
     }
 
+    /**
+     * Return if a user is a TA
+     * @returns {boolean}
+     */
     isTA() {
-        return this.user.groups.indexOf(config.taGroup) > -1;
+        return this.user.groups.indexOf(TA_GROUP) > -1;
     }
 
+    /**
+     * Return if a user can access the admin panel
+     * @returns {boolean}
+     */
     canAccessAdminPanel() {
         return this.isAdmin() || this.isInstructor() || this.isTA();
     }
@@ -80,4 +117,4 @@ class User {
     }
 }
 
-module.exports = User;
+module.exports = RemoteUser;

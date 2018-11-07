@@ -1,4 +1,4 @@
-exports.User = require('./User');
+exports.User = require('./RemoteUser');
 exports.Course = require('./Course');
 exports.Tutorial = require('./Tutorial');
 exports.Quiz = require('./Quiz');

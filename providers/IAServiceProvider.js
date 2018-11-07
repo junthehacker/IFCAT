@@ -39,7 +39,7 @@ module.exports = class IAServiceProvider {
                     authorization: `Bearer ${config.secretKey}`
                 }
             }).then(data => {
-                resolve(new (require('../models/User'))(data.data.user));
+                resolve(new (require('../models/RemoteUser'))(data.data.user));
             }).catch(e => {
                 reject(e);
             })

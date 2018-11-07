@@ -22,43 +22,33 @@ app.locals._ = lodash;
 app.locals.DATEFORMAT = 'YYYY-MM-DD';
 app.locals.io = io;
 app.locals.moment = moment;
+app.locals.config = config;
 
 // application settings
 app.set('port', process.env.PORT || 8080);
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-// static assets
-app.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
-app.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
-app.use('/bootbox', express.static(__dirname + '/node_modules/bootbox'));
-app.use('/bootstrap-switch', express.static(__dirname + '/node_modules/bootstrap-switch/dist'));
-app.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome'));
-app.use('/lodash', express.static(__dirname + '/node_modules/lodash'));
-app.use('/socketioclient', express.static(__dirname + '/node_modules/socket.io-client/dist'));
-app.use('/sweetalert', express.static(__dirname + '/node_modules/sweetalert/dist'));
-app.use(express.static(__dirname + '/public'));
-
 // other middlewares
 app.use(morgan('dev'));
 app.use(methodOverride('_method'));
-app.use(bodyParser.json({ limit: '5mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
+app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '5mb'}));
 app.use(cookieParser());
 
 // database
 mongoose.Promise = global.Promise;
-mongoose.connect(config.database.url, { useMongoClient: true });
+mongoose.connect(config.database.url, {useMongoClient: true});
 //mongoose.set('debug', true);
 
 // sessions
-const sessionStore = new MongoStore({ mongooseConnection : mongoose.connection });
+const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
-app.use(session({ 
-    secret: config.session.secret, 
-    saveUninitialized: false, 
-    store : sessionStore,
-    resave: false 
+app.use(session({
+    secret: config.session.secret,
+    saveUninitialized: false,
+    store: sessionStore,
+    resave: false
 }));
 
 app.use(flash());
@@ -79,22 +69,39 @@ app.use((req, res, next) => {
 });
 
 // routes
-const routes = require('./routes');
+const mainRouter = new express.Router();
 
-app.use('/', routes.guest);
-app.use('/student', routes.student);
-app.use('/admin', routes.admin);
+mainRouter.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
+mainRouter.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
+mainRouter.use('/bootbox', express.static(__dirname + '/node_modules/bootbox'));
+mainRouter.use('/bootstrap-switch', express.static(__dirname + '/node_modules/bootstrap-switch/dist'));
+mainRouter.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome'));
+mainRouter.use('/lodash', express.static(__dirname + '/node_modules/lodash'));
+mainRouter.use('/socketioclient', express.static(__dirname + '/node_modules/socket.io-client/dist'));
+mainRouter.use('/sweetalert', express.static(__dirname + '/node_modules/sweetalert/dist'));
+mainRouter.use('/', express.static(__dirname + '/public'));
+
+const routes = require('./routes');
+mainRouter.use('/', routes.guest);
+mainRouter.use('/student', routes.student);
+mainRouter.use('/admin', routes.admin);
 
 // error handling
-app.use((err, req, res, next) => {
+mainRouter.use((err, req, res, next) => {
     if (app.get('env') !== 'development') {
-        //logger.error(err.message);
         delete err.stack;
     }
-    if (req.xhr)
+    if (req.xhr) {
         return res.status(err.status || 500).json(err);
-    res.status(err.status || 500).render('error', { error: err });
+    }
+    res.status(err.status || 500).render('error', {
+        req,
+        error: err
+    });
 });
+
+// Mount the app with baseDir
+app.use(config.baseDir, mainRouter);
 
 // sockets
 io.use(passportSocketIo.authorize({
