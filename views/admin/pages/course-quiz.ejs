@@ -1,8 +1,15 @@
+<%/*----------------------------------
+Page used to edit / create quiz for a course.
+
+Author(s): Jun Zheng [me at jackzh dot com]
+           Neeilan Selvalingam
+-----------------------------------*/%>
+
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
-    <li><a href="/admin/courses/<%= course.getId() %>/quizzes">Quizzes</a></li>
+    <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">Quizzes</a></li>
     <li class="active"><%= quiz.isNew ? 'New' : 'Edit' %></li>
 </ol>
 
@@ -10,7 +17,7 @@
 
 <% include ../partials/flash %>
 
-<form action="/admin/courses/<%= course.getId() %>/quizzes/<%= quiz.isNew ? '' : `${quiz._id}?_method=put` %>" method="post" autocomplete="off" class="form-horizontal">
+<form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/` + (quiz.isNew ? '' : `${quiz._id}?_method=put`)) %>" method="post" autocomplete="off" class="form-horizontal">
 
     <input type="hidden" name="courseId" value="<%= course.getId() %>" />
 
@@ -112,7 +119,7 @@
     </div>
     <div class="form-group" style="margin-top: 30px;">
         <div class="col-sm-offset-3 col-sm-9">
-            <a href="/admin/courses/<%= course.getId() %>/quizzes" class="btn btn-default btn-sm">Cancel</a>
+            <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>" class="btn btn-default btn-sm">Cancel</a>
             <button type="submit" class="btn btn-primary btn-sm">Save</button>
         </div>
     </div>

@@ -1,7 +1,9 @@
-const _ = require('lodash'),
-    async = require('async'),
-    mongoose = require('mongoose'),
-    models = require('../../models');
+const _         = require('lodash');
+const async     = require('async');
+const mongoose  = require('mongoose');
+const models    = require('../../models');
+const getAbsUrl = require('../../utils/getAbsUrl');
+
 
 // Retrieve course
 exports.getQuizByParam = (req, res, next, id) => {
@@ -65,7 +67,7 @@ exports.addQuiz = (req, res, next) => {
     ], err => {
         if (err) return next(err);
         req.flash('success', '<b>%s</b> has been created.', quiz.name);
-        res.redirect(`/admin/courses/${req.course.getId()}/quizzes`);
+        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes`));
     });
 };
 
@@ -82,7 +84,7 @@ exports.editQuiz = (req, res, next) => {
     ], err => {
         if (err) return next(err);
         req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
-        res.redirect(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`);
+        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`));
     });
 };
 
@@ -137,6 +139,11 @@ exports.deleteQuiz = (req, res, next) => {
     });
 };
 
+/**
+ * Get quiz JSON export
+ * @param req
+ * @param res
+ */
 exports.fetchQuizJson = (req, res) => {
     models.Quiz
         .findById(req.params.quizId)

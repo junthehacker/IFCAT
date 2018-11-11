@@ -23,6 +23,7 @@ app.locals.DATEFORMAT = 'YYYY-MM-DD';
 app.locals.io = io;
 app.locals.moment = moment;
 app.locals.config = config;
+app.locals.getAbsUrl = require('./utils/getAbsUrl');
 
 // application settings
 app.set('port', process.env.PORT || 8080);

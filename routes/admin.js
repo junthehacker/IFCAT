@@ -47,11 +47,6 @@ router.delete('/users/:us3r', controllers.User.deleteUser);
 
 router.get('/', controllers.Course.getCourses);
 router.get('/courses', controllers.Course.getCourses);
-router.get('/courses/new', controllers.Course.getCourse);
-router.get('/courses/:course/edit', controllers.Course.getCourse);
-router.post('/courses', controllers.Course.addCourse);
-router.put('/courses/:course', controllers.Course.editCourse);
-router.delete('/courses/:course', controllers.Course.deleteCourse);
 
 router.get('/courses/:course/files', controllers.File.getFiles);
 router.post('/courses/:course/files', upload.any.array('files'), controllers.File.addFiles);

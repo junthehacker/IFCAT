@@ -8,7 +8,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="<%= config.baseDir %>/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
     <li class="active">Quizzes</li>
 </ol>
 
@@ -18,7 +18,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 <form method="post">
     <div class="nav-actions">
-        <a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes/new" class="btn btn-default btn-sm">
+        <a href="<%= getAbsUrl('/admin/courses/' + course.getId() + '/quizzes/new') %>" class="btn btn-default btn-sm">
             <span class="glyphicon glyphicon-plus"></span> Add New Quiz
         </a>
     </div>
@@ -46,11 +46,27 @@ Author(s): Jun Zheng [me at jackzh dot com]
                                 Actions <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/edit"><span class="glyphicon glyphicon-pencil"></span> Edit Quiz</a></li>
-                                <li><a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/copy" class="btn-copy"><span class="glyphicon glyphicon-duplicate"></span> Copy Quiz</a></li>
-                                <li><a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>/questions"><span class="glyphicon glyphicon-question-sign"></span> Manage Questions</a></li>
+                                <li>
+                                    <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/edit`) %>">
+                                        <span class="glyphicon glyphicon-pencil"></span> Edit Quiz
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/copy`) %>" class="btn-copy">
+                                        <span class="glyphicon glyphicon-duplicate"></span> Copy Quiz
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="<%=getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`)%>">
+                                        <span class="glyphicon glyphicon-question-sign"></span> Manage Questions
+                                    </a>
+                                </li>
                                 <li class="divider"></li>
-                                <li><a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes/<%= quiz._id %>?_method=delete" class="btn-delete"><span class="glyphicon glyphicon-remove"></span> Delete Quiz</a></li>
+                                <li>
+                                    <a href="<%=getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}?_method=delete`)%>" class="btn-delete">
+                                        <span class="glyphicon glyphicon-remove"></span> Delete Quiz
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </td>
