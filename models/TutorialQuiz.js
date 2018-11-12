@@ -73,6 +73,23 @@ tutorialQuizSchema.methods.withGroups = function () {
 };
 
 /**
+ * Get all tutorials quizzes that is associated with a quiz
+ * @param quiz
+ * @returns {Promise<any>}
+ */
+tutorialQuizSchema.statics.getAllAssociatedWithQuiz = function(quiz) {
+    return new Promise((resolve, reject) => {
+        this.find({quiz: quiz._id})
+            .then(quizzes => {
+                resolve(quizzes);
+            })
+            .catch(e => {
+                reject(e);
+            })
+    })
+};
+
+/**
  * Populate the tutorial field from API
  * @returns {Promise<any>}
  */

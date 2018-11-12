@@ -63,33 +63,32 @@ QuizSchema.methods.isLinkedTo = function (tutorial) {
     return _.some(this.tutorialQuizzes, tutorialQuiz => tutorialQuiz.tutorialId === tutorial.getId());
 };
 
-// Save quiz
-QuizSchema.methods.linkTutorials = function (tutorials = [], done) {
-    let self = this;
-    async.series([
-        done => {
-            self.populate({
-                path: 'tutorialQuizzes',
-                match: {
-                    tutorialId: { $nin: tutorials } // TODO: prevent started TQs
-                }
-            }, done)
-        },
-        done => {
-            self.model('TutorialQuiz').remove({ _id: { $in: self.tutorialQuizzes }}, done)
-        },
-        done => {
-            async.eachSeries(tutorials, (tutorialId, done) => {
-                console.log(tutorialId);
-                self.model('TutorialQuiz').create({
-                    tutorialId,
-                    quiz: self
-                }, err => {
-                    done(err && err.code !== 11000 ? err : null);
+/**
+ * Link a quiz to tutorial
+ * @param tutorials
+ */
+QuizSchema.methods.linkTutorials = function (tutorials = []) {
+    return new Promise((resolve, reject) => {
+        // First we need to find and remove all old links
+        this.model('TutorialQuiz').remove({ quiz: this._id })
+            .then(() => {
+                // Then create all new links
+                let chain = [];
+                tutorials.forEach(tutorialId => {
+                    chain.push(this.model('TutorialQuiz').create({
+                        tutorialId,
+                        quiz: this
+                    }));
                 });
-            }, done);
-        }
-    ], done);
+                return Promise.all(chain);
+            })
+            .then(() => {
+                resolve();
+            })
+            .catch(e => {
+                reject(e);
+            });
+    });
 };
 
 module.exports = mongoose.model('Quiz', QuizSchema);

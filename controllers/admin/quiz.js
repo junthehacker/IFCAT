@@ -78,14 +78,17 @@ exports.addQuiz = (req, res, next) => {
  * @param next
  */
 exports.editQuiz = (req, res, next) => {
-    async.series([
-        done => req.quiz.store(req.body).save(done),
-        done => req.quiz.linkTutorials(req.body.tutorials, done)
-    ], err => {
-        if (err) return next(err);
-        req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
-        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`));
-    });
+    req.quiz.store(req.body).save()
+        .then(() => {
+            return req.quiz.linkTutorials(req.body.tutorials)
+        })
+        .then(() => {
+            req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
+            res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`));
+        })
+        .catch(e => {
+            next(e);
+        });
 };
 
 /**
