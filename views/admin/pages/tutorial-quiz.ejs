@@ -1,8 +1,8 @@
 <% include ../partials/header %>
 
 <ol class="breadcrumb">
-    <li><a href="/admin/courses">Courses</a> ‐ <%= course.getCode() %></li>
-    <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes">Tutorials &amp; Quizzes</a></li>
+    <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">Tutorials &amp; Quizzes</a></li>
     <li class="active">Conduct</li>
 </ol>
 

@@ -22,6 +22,12 @@ if (process.env.NODE_ENV === 'development') {
     axios = _axios;
 }
 
+const defaultAxiosConfig = {
+    headers: {
+        authorization: `Bearer ${config.secretKey}`
+    }
+};
+
 /**
  * Service provider for I.A. API
  * @type {module.IAServiceProvider}
@@ -32,18 +38,9 @@ module.exports = class IAServiceProvider {
      * @param token
      * @returns {*}
      */
-    static getUserByToken(token) {
-        return new Promise((resolve, reject) => {
-            axios.get(`${config.root}/api/auth_tokens/${token}`, {
-                headers: {
-                    authorization: `Bearer ${config.secretKey}`
-                }
-            }).then(data => {
-                resolve(new (require('../models/RemoteUser'))(data.data.user));
-            }).catch(e => {
-                reject(e);
-            })
-        })
+    static async getUserByToken(token) {
+        let data = await axios.get(`${config.root}/api/auth_tokens/${token}`, defaultAxiosConfig);
+        return new (require('../models/RemoteUser'))(data.data.user);
     }
 
     /**
@@ -51,7 +48,7 @@ module.exports = class IAServiceProvider {
      * @returns {string}
      */
     static getLoginUrl() {
-        return config.root + "/login?id=" + config.applicationId;
+        return config.publicRoot + "/login?id=" + config.applicationId;
     }
 
     /**

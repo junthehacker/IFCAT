@@ -77,18 +77,15 @@ exports.addQuiz = (req, res, next) => {
  * @param res
  * @param next
  */
-exports.editQuiz = (req, res, next) => {
-    req.quiz.store(req.body).save()
-        .then(() => {
-            return req.quiz.linkTutorials(req.body.tutorials)
-        })
-        .then(() => {
-            req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
-            res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`));
-        })
-        .catch(e => {
-            next(e);
-        });
+exports.editQuiz = async (req, res, next) => {
+    try {
+        await req.quiz.store(req.body).save();
+        await req.quiz.linkTutorials(req.body.tutorials);
+        req.flash('success', '<b>%s</b> has been updated.', req.quiz.name);
+        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/edit`));
+    } catch(e) {
+        next(e);
+    }
 };
 
 /**

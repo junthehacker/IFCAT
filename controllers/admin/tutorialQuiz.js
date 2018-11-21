@@ -18,23 +18,14 @@ const models = require('../../models');
  * @param next
  * @param id
  */
-exports.getTutorialQuizByParam = (req, res, next, id) => {
-    let tutorialQuiz;
-    TutorialQuiz.findById(id)
-        .then(result => {
-            tutorialQuiz = result;
-            if (!tutorialQuiz) {
-                throw new Error("No tutorial quiz is found.");
-            }
-            return tutorialQuiz.fillTutorialFromRemote();
-        })
-        .then(() => {
-            req.tutorialQuiz = tutorialQuiz;
-            next();
-        })
-        .catch(e => {
-            reject(e);
-        });
+exports.getTutorialQuizByParam = async (req, res, next, id) => {
+    let tutorialQuiz = await TutorialQuiz.findById(id);
+    if(!tutorialQuiz) {
+        throw new Error("No tutorial quiz is found.");
+    }
+    await tutorialQuiz.fillTutorialFromRemote();
+    req.tutorialQuiz = tutorialQuiz;
+    next();
 };
 
 // Retrieve quizzes within course OR by tutorial
@@ -121,27 +112,25 @@ exports.editTutorialsQuizzes = (req, res, next) => {
  * @param res
  * @param next
  */
-exports.getTutorialQuiz = (req, res, next) => {
-    req.tutorialQuiz.populate([
-        {path: 'quiz'},
-        {path: 'groups'}
-    ])
-        .execPopulate()
-        .then(() => {
-            res.render('admin/pages/tutorial-quiz', {
-                bodyClass: 'tutorial-quiz-page',
-                title: `Conduct ${req.tutorialQuiz.quiz.name} in ${req.tutorialQuiz.tutorial.getDisplayName()}`,
-                course: req.course,
-                tutorialQuiz: req.tutorialQuiz,
-                tutorial: req.tutorialQuiz.tutorial,
-                quiz: req.tutorialQuiz.quiz,
-                students: req.tutorialQuiz.tutorial.students,
-                groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
-            });
-        })
-        .catch(e => {
-            next(e);
-        })
+exports.getTutorialQuiz = async (req, res, next) => {
+    try {
+        await req.tutorialQuiz.populate([
+            {path: 'quiz'},
+            {path: 'groups'}
+        ]).execPopulate();
+        res.render('admin/pages/tutorial-quiz', {
+            bodyClass: 'tutorial-quiz-page',
+            title: `Conduct ${req.tutorialQuiz.quiz.name} in ${req.tutorialQuiz.tutorial.getDisplayName()}`,
+            course: req.course,
+            tutorialQuiz: req.tutorialQuiz,
+            tutorial: req.tutorialQuiz.tutorial,
+            quiz: req.tutorialQuiz.quiz,
+            students: req.tutorialQuiz.tutorial.students,
+            groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
+        });
+    } catch (e) {
+        next(e);
+    }
 };
 
 

@@ -1,6 +1,7 @@
 module.exports = class Tutorial {
     constructor(tutorial) {
         this.tutorial = tutorial;
+        this.students = [];
     }
 
     static createList(tutorials) {
@@ -18,4 +19,13 @@ module.exports = class Tutorial {
     getDisplayName() {
         return this.tutorial.courseDisplayName;
     }
+
+    getStudents() {
+        return this.students;
+    }
+
+    fillStudentsFromRemote() {
+
+    }
+
 };
