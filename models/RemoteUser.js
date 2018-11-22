@@ -29,6 +29,19 @@ class RemoteUser {
     }
 
     /**
+     * Create list
+     * @param users
+     * @returns {Array}
+     */
+    static createList(users) {
+        let result = [];
+        users.forEach(user => {
+            result.push(new RemoteUser(user));
+        });
+        return result;
+    }
+
+    /**
      * Get user ID
      * @returns {*}
      */

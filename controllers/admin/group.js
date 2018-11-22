@@ -1,6 +1,9 @@
-const _ = require('../../utils/lodash.mixin'),
-    async = require('async'),
-    models = require('../../models');
+const _            = require('../../utils/lodash.mixin');
+const async        = require('async');
+const models       = require('../../models');
+const asyncForEach = require('../../utils/asyncForEach');
+const getAbsUrl    = require('../../utils/getAbsUrl');
+
 // Retrieve group
 exports.getGroupByParam = (req, res, next, id) => {
     models.Group.findById(id, (err, group) => {
@@ -12,28 +15,28 @@ exports.getGroupByParam = (req, res, next, id) => {
         next();
     });
 };
-// Temporarily generate groups
-exports.generateGroups = (req, res, next) => {
-    req.tutorialQuiz.populate([{
-        path: 'tutorial',
-        model: 'Tutorial',
-        populate: {
-            path: 'students',
-            model: 'User',
-            options: {
-                sort: { 'name.first': 1, 'name.last': 1 }
-            }
-        }
-    }, {
-        path: 'quiz',
-        model: 'Quiz'
-    }]).execPopulate().then(() => {
+
+/**
+ * Temp generate groups (shuffle)
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+exports.generateGroups = async (req, res, next) => {
+
+    try {
+        // Populate fields
+        await req.tutorialQuiz.fillTutorialFromRemote();
+        await req.tutorialQuiz.tutorial.fillStudentsFromRemote();
+        await req.tutorialQuiz.populate('quiz').execPopulate();
+
         // shuffle students
-        let students = _.shuffle(_.map(req.tutorialQuiz.tutorial.students, '_id'));
+        let students = _.shuffle(_.map(req.tutorialQuiz.tutorial.students, student => student.getId()));
         // split into chunks of size + shuffle chunks
-        let chunks = _.chunk(students, req.tutorialQuiz.maxMembersPerGroup);
+        let chunks   = _.chunk(students, req.tutorialQuiz.maxMembersPerGroup);
         // map chunks to groups
-        let groups = _.map(chunks, (members, i) => new models.Group({ name: i + 1, members: members }));
+        let groups   = _.map(chunks, (members, i) => new models.Group({name: i + 1, members}));
         // add warning
         req.flash('warning', 'Below is an <b><u>unsaved</u></b> list of new groups.');
         res.locals.flash = req.flash();
@@ -48,52 +51,56 @@ exports.generateGroups = (req, res, next) => {
             students: req.tutorialQuiz.tutorial.students,
             groups: groups
         });
-    }, next);
+    } catch (e) {
+        next(e);
+    }
 };
-// Save groups for tutorial
-exports.saveGroups = (req, res, next) => {
-    let dict = _.transpose(req.body['+users'] || {});
-    async.series([
-        done => {
-            req.tutorialQuiz.populate('tutorial quiz groups', done);
-        },
-        done => {
-            // update existing groups
-            async.eachSeries(req.tutorialQuiz.groups, (group, done) => {
-                let members = group.members.map(String);
-                // ensure group consist of students from the tutorial
-                members = _.intersection(members, req.tutorialQuiz.tutorial.students);
-                // remove selected users from group
-                members = _.difference(members, req.body.users);
-                // add new users from group
-                members = _.union(members, dict[group._id]);
-                // mark as done
-                delete dict[group._id];
-                // save non-empty group
-                if (members.length)
-                    return group.update({ members: members }, done);
-                // delete empty group
-                group.remove(err => {
-                    if (err)
-                        return done(err);
-                    req.tutorialQuiz.update({ $pull: { groups: group._id }}, done);
-                });
-            }, done);
-        },
-        done => {
-            // add remaining (new) groups
-            async.eachOfSeries(dict, (members, name, done) => {
-                models.Group.create({ name: name, members: members }, (err, group) => {
-                    if (err)
-                        return done(err);
-                    req.tutorialQuiz.update({ $push: { groups: group._id }}, done);
-                });
-            }, done);
-        }
-    ], err => {
-        if (err)
-            return next(err);
-        req.flash('success', '<b>%s</b> groups have been updated for <b>TUT %s</b>.', req.tutorialQuiz.quiz.name, req.tutorialQuiz.tutorial.number);
-        res.redirect(`/admin/courses/${req.course._id}/tutorials-quizzes/${req.tutorialQuiz._id}`);
-    });
+
+/**
+ * Save tutorial quiz group settings
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise<void>}
+ */
+exports.saveGroups = async (req, res, next) => {
+    try {
+        let dict = _.transpose(req.body['+users'] || {}); // {groupId: [userIds...]}
+
+        // Populate fields
+        await req.tutorialQuiz.fillTutorialFromRemote();
+        await req.tutorialQuiz.tutorial.fillStudentsFromRemote();
+        await req.tutorialQuiz.populate('quiz groups').execPopulate();
+
+        await asyncForEach(req.tutorialQuiz.groups, async (group) => {
+            let members          = group.members.map(String);
+            let tutorialStudents = req.tutorialQuiz.tutorial.getStudents().map(student => student.getId());
+            // Make sure all students are actually in the tutorial
+            members              = _.intersection(members, tutorialStudents);
+            // Remove all users
+            members              = _.difference(members, req.body.users);
+            // Add all users
+            members              = _.union(members, dict[group._id]);
+            // Mark group as done updating
+            delete dict[group._id.toString()];
+            // Depends on if a group has member, remove or update
+            if (members.length) {
+                await group.update({members: members});
+            } else {
+                await group.remove();
+                await req.tutorialQuiz.update({$pull: {groups: group._id}});
+            }
+        });
+
+        // New groups
+        await asyncForEach(dict, async (members, name) => {
+            let group = await models.Group.create({name, members});
+            await req.tutorialQuiz.update({$push: {groups: group._id}});
+        });
+
+        req.flash('success', '<b>%s</b> groups have been updated for <b>TUT %s</b>.', req.tutorialQuiz.quiz.name, req.tutorialQuiz.tutorial.getDisplayName());
+        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/tutorials-quizzes/${req.tutorialQuiz._id}`));
+    } catch (e) {
+        next(e);
+    }
 };

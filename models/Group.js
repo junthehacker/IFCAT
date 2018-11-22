@@ -11,8 +11,8 @@ const mongoose = require('mongoose');
 
 const groupSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    members: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    driver: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+    members: [String],
+    driver: String,
     teachingPoints: [String]
 });
 

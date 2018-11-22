@@ -32,9 +32,8 @@ module.exports = class RemoteTutorial {
      * @returns {Promise<void>}
      */
     async fillStudentsFromRemote() {
-        console.log(this.getId());
         this.students = await getIAServiceProvider().runGetRequest(`${config.root}/api/tutorials/${this.getId()}/students`);
-        console.log(this.students);
+        this.students = require('./RemoteUser').createList(this.students);
     }
 
 };
