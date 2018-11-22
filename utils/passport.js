@@ -14,9 +14,12 @@ passport.deserializeUser((id, done) => {
 
 passport.use('ia-auth', new CustomStrategy((req, done) => {
     if(req.query.token) {
-        IAServiceProvider.getUserByToken(req.query.token)
-            .then(() => done(null, req.query.token))
-            .catch(e => done(e, false));
+        try {
+            IAServiceProvider.getUserByToken(req.query.token);
+            done(null, req.query.token)
+        } catch (e) {
+            done(null, false)
+        }
     } else {
         done(null, false);
     }
