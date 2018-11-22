@@ -4,11 +4,12 @@ Controller for admin pages that conducts quizzes.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-const _      = require('lodash');
-const async  = require('async');
+const _         = require('lodash');
+const async     = require('async');
+const getAbsUrl = require('../../utils/getAbsUrl');
 
 const TutorialQuiz = require('../../models/TutorialQuiz');
-const models = require('../../models');
+const models       = require('../../models');
 
 /**
  * Middleware that retrieves one tutorial quiz by parameters
@@ -20,7 +21,7 @@ const models = require('../../models');
  */
 exports.getTutorialQuizByParam = async (req, res, next, id) => {
     let tutorialQuiz = await TutorialQuiz.findById(id);
-    if(!tutorialQuiz) {
+    if (!tutorialQuiz) {
         throw new Error("No tutorial quiz is found.");
     }
     await tutorialQuiz.fillTutorialFromRemote();
@@ -30,7 +31,7 @@ exports.getTutorialQuizByParam = async (req, res, next, id) => {
 
 // Retrieve quizzes within course OR by tutorial
 exports.getTutorialsQuizzes = (req, res, next) => {
-    let page = parseInt(req.query.page, 10) || 1,
+    let page    = parseInt(req.query.page, 10) || 1,
         perPage = parseInt(req.query.perPage, 10) || 10;
 
     let query = {quiz: {$in: req.course.quizzes}};
@@ -42,7 +43,7 @@ exports.getTutorialsQuizzes = (req, res, next) => {
         .populate('quiz')
         .then(result => {
             tutorialQuizzes = result;
-            let chain = [];
+            let chain       = [];
             tutorialQuizzes.forEach(tutorialQuiz => {
                 chain.push(tutorialQuiz.fillTutorialFromRemote());
             });
@@ -84,7 +85,7 @@ exports.getTutorialsQuizzes = (req, res, next) => {
 
 // Edit quizzes 
 exports.editTutorialsQuizzes = (req, res, next) => {
-    let items = req.body.tutorialsQuizzes || [];
+    let items  = req.body.tutorialsQuizzes || [];
     let update = _.reduce(req.body.update, (obj, field) => {
         obj[field] = /^(published|active|archived)$/.test(field) ? !!req.body[field] : req.body[field];
         return obj;
@@ -135,28 +136,33 @@ exports.getTutorialQuiz = async (req, res, next) => {
 };
 
 
-// Edit settings for tutorial quiz
-exports.editTutorialQuiz = (req, res, next) => {
-    async.series([
-        done => {
-            req.tutorialQuiz.populate('tutorial quiz', done);
-        },
-        done => {
-            // update tutorial-quiz
-            req.tutorialQuiz.set({
-                allocateMembers: req.body.allocateMembers,
-                maxMembersPerGroup: req.body.maxMembersPerGroup,
-                published: !!req.body.published,
-                active: !!req.body.active,
-                archived: !!req.body.archived
-            }).save(done);
-        }
-    ], err => {
-        if (err)
-            return next(err);
-        // send notification
+/**
+ * Edit tutorial quiz settings
+ * @param req
+ * @param res
+ * @param next
+ */
+exports.editTutorialQuiz = async (req, res, next) => {
+
+    try {
+        await req.tutorialQuiz.fillTutorialFromRemote();
+        await req.tutorialQuiz.populate('quiz').execPopulate();
+
+        // update tutorial-quiz
+        await req.tutorialQuiz.set({
+            allocateMembers: req.body.allocateMembers,
+            maxMembersPerGroup: req.body.maxMembersPerGroup,
+            published: !!req.body.published,
+            active: !!req.body.active,
+            archived: !!req.body.archived
+        }).save();
+
+        // TODO: This part makes no sense, double check later with student UI
         req.app.locals.io.in('tutorialQuiz:' + req.tutorialQuiz._id).emit('quizActivated', req.tutorialQuiz);
-        req.flash('success', '<b>%s</b> settings have been updated for <b>TUT %s</b>.', req.tutorialQuiz.quiz.name, req.tutorialQuiz.tutorial.number);
-        res.redirect(`/admin/courses/${req.course._id}/tutorials-quizzes/${req.tutorialQuiz._id}`);
-    });
+        req.flash('success', '<b>%s</b> settings have been updated for <b>TUT %s</b>.', req.tutorialQuiz.quiz.name, req.tutorialQuiz.tutorial.getDisplayName());
+        res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/tutorials-quizzes/${req.tutorialQuiz._id}`));
+    } catch (e) {
+        next(e);
+    }
+
 };
