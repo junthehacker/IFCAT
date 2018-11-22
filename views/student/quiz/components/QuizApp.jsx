@@ -48,7 +48,7 @@ export default class QuizApp extends React.Component {
         var quizId = url.slice(url.indexOf('/quizzes/') + 9, url.indexOf('/start'));
 
         this.socket = this.props.io.connect({
-            path: '/ifcat'
+            path: '/ifcat/socket.io'
         });
         window.socket = this.socket;
 
