@@ -4,12 +4,12 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="/css/bootswatch/yeti/bootstrap.css" rel="stylesheet" />
+        <link href="<%= getAbsUrl('/bootstrap/css/bootstrap.min.css') %>" rel="stylesheet" />
+        <link href="<%= getAbsUrl('/css/bootswatch/yeti/bootstrap.css') %>" rel="stylesheet" />
         <link href="https://cdn.jsdelivr.net/css-toggle-switch/latest/toggle-switch.css" rel="stylesheet" />
-        <link href="/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-        <link href="/sweetalert/sweetalert.css" rel="stylesheet" />
-        <link href="/css/student.css" rel="stylesheet" />
+        <link href="<%= getAbsUrl('/font-awesome/css/font-awesome.min.css') %>" rel="stylesheet" />
+        <link href="<%= getAbsUrl('/sweetalert/sweetalert.css') %>" rel="stylesheet" />
+        <link href="<%= getAbsUrl('/css/student.css') %>" rel="stylesheet" />
         <% if (typeof user !== 'undefined') { %>
             <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
         <% } %>
