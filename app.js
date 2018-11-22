@@ -15,7 +15,7 @@ const lodash = require('./utils/lodash.mixin'),
 
 const app = express(),
     http = require('http').Server(app),
-    io = require('socket.io')(http);
+    io = require('socket.io')(http, {path: config.baseDir + '/socket.io'});
 
 // local variables
 app.locals._ = lodash;
