@@ -82,7 +82,7 @@
                 <% } else { %>
                     <% _.each(students, student => { %>
                         <tr>
-                            <td class="student"><%= student.name.full %></td>
+                            <td class="student"><%= student.username %></td>
                             <td class="groups">
                                 <input type="hidden" name="users[]" value="<%= student._id %>">
                             <% _.each(groups, group => { %>

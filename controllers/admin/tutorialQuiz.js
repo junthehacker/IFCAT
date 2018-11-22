@@ -118,6 +118,7 @@ exports.getTutorialQuiz = async (req, res, next) => {
             {path: 'quiz'},
             {path: 'groups'}
         ]).execPopulate();
+        await req.tutorialQuiz.tutorial.fillStudentsFromRemote();
         res.render('admin/pages/tutorial-quiz', {
             bodyClass: 'tutorial-quiz-page',
             title: `Conduct ${req.tutorialQuiz.quiz.name} in ${req.tutorialQuiz.tutorial.getDisplayName()}`,
@@ -125,7 +126,7 @@ exports.getTutorialQuiz = async (req, res, next) => {
             tutorialQuiz: req.tutorialQuiz,
             tutorial: req.tutorialQuiz.tutorial,
             quiz: req.tutorialQuiz.quiz,
-            students: req.tutorialQuiz.tutorial.students,
+            students: req.tutorialQuiz.tutorial.getStudents(),
             groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
         });
     } catch (e) {

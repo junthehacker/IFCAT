@@ -51,7 +51,7 @@ module.exports = class Course {
             getIAServiceProvider()
                 .runGetRequest(`${config.root}/api/users/${user.getId()}/courses/${this.getId()}/tutorials`)
                 .then(data => {
-                    resolve(require('./Tutorial').createList(data));
+                    resolve(require('./RemoteTutorial').createList(data));
                 })
                 .catch(e => {
                     reject(e);
@@ -68,7 +68,7 @@ module.exports = class Course {
             getIAServiceProvider()
                 .runGetRequest(`${config.root}/api/courses/${this.getId()}/tutorials`)
                 .then(data => {
-                    this.tutorials = require('./Tutorial').createList(data);
+                    this.tutorials = require('./RemoteTutorial').createList(data);
                     resolve();
                 })
                 .catch(() => resolve());

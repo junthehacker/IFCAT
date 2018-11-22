@@ -1,9 +1,9 @@
 exports.User = require('./RemoteUser');
 exports.Course = require('./Course');
-exports.Tutorial = require('./Tutorial');
+exports.Tutorial = require('./RemoteTutorial');
 exports.Quiz = require('./Quiz');
 exports.Question = require('./Question');
 exports.File = require('./File');
 exports.TutorialQuiz = require('./TutorialQuiz');
-exports.Group = require('./group');
+exports.Group = require('./Group');
 exports.Response = require('./response');

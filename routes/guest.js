@@ -22,7 +22,8 @@ router.get('/quiz', (req, res)=>
 router.get('/login', passport.authenticate('ia-auth', {
     failureRedirect: IAServiceProvider.getLoginUrl()
 }), (req, res) => {
-    res.send("Authenticated...");
+    // TODO: Redirect to a dashboard
+    res.redirect(getAbsUrl('/'));
 });
 
 module.exports = router;

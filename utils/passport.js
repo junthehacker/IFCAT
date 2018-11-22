@@ -1,6 +1,6 @@
-const passport = require('passport');
+const passport          = require('passport');
 const IAServiceProvider = require('../providers/IAServiceProvider');
-const CustomStrategy = require('passport-custom').Strategy;
+const CustomStrategy    = require('passport-custom').Strategy;
 
 passport.serializeUser((user, done) => {
     done(null, user);
@@ -13,7 +13,7 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use('ia-auth', new CustomStrategy((req, done) => {
-    if(req.query.token) {
+    if (req.query.token) {
         try {
             IAServiceProvider.getUserByToken(req.query.token);
             done(null, req.query.token)

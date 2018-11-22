@@ -1,6 +1,7 @@
 const _ = require('lodash'),
     async = require('async'),
     models = require('../../models');
+const IAServiceProvider = require('../../providers/IAServiceProvider');
 //
 exports.getUserByParam = (req, res, next, id) => {
     models.User.findById(id, (err, user) => {
@@ -21,11 +22,13 @@ exports.getLogin = (req, res, next) => {
         title: 'Login'
     });
 };
+
 // Logout user
-exports.logout = (req, res, next) => {
+exports.logout = (req, res) => {
     req.logout();
-    res.redirect('/admin/login');
+    res.redirect(IAServiceProvider.getLogoutUrl());
 };
+
 // Retrieve list of users
 exports.getUsers = (req, res, next) => {
     let page = parseInt(req.query.page, 10) || 1,

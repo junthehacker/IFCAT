@@ -22,24 +22,27 @@ if (process.env.NODE_ENV === 'development') {
     axios = _axios;
 }
 
-const defaultAxiosConfig = {
-    headers: {
-        authorization: `Bearer ${config.secretKey}`
-    }
-};
-
 /**
  * Service provider for I.A. API
  * @type {module.IAServiceProvider}
  */
 module.exports = class IAServiceProvider {
+
+    static get defaultAxiosConfig() {
+        return {
+            headers: {
+                authorization: `Bearer ${config.secretKey}`
+            }
+        };
+    };
+
     /**
      * Get an user by token
      * @param token
      * @returns {*}
      */
     static async getUserByToken(token) {
-        let data = await axios.get(`${config.root}/api/auth_tokens/${token}`, defaultAxiosConfig);
+        let data = await axios.get(`${config.root}/api/auth_tokens/${token}`, IAServiceProvider.defaultAxiosConfig);
         return new (require('../models/RemoteUser'))(data.data.user);
     }
 
@@ -49,6 +52,14 @@ module.exports = class IAServiceProvider {
      */
     static getLoginUrl() {
         return config.publicRoot + "/login?id=" + config.applicationId;
+    }
+
+    /**
+     * Get logout URL
+     * @returns {string}
+     */
+    static getLogoutUrl() {
+        return config.publicRoot + "/logout";
     }
 
     /**
@@ -80,7 +91,7 @@ module.exports = class IAServiceProvider {
                     authorization: `Bearer ${config.secretKey}`
                 }
             }).then(data => {
-                resolve(require('../models/Tutorial').createList(data.data));
+                resolve(require('../models/RemoteTutorial').createList(data.data));
             }).catch(e => {
                 reject(e);
             })
