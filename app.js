@@ -46,6 +46,7 @@ mongoose.connect(config.database.url, {useMongoClient: true});
 const sessionStore = new MongoStore({mongooseConnection: mongoose.connection});
 
 app.use(session({
+    name: config.name,
     secret: config.session.secret,
     saveUninitialized: false,
     store: sessionStore,
