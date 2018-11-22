@@ -107,7 +107,7 @@ app.use(config.baseDir, mainRouter);
 
 // sockets
 io.use(passportSocketIo.authorize({
-    key: 'connect.sid',
+    key: config.name,
     secret: config.session.secret,
     store: sessionStore,
     passport: passport,
@@ -116,6 +116,7 @@ io.use(passportSocketIo.authorize({
 
 // socket io handler for quizzes
 io.on('connection', require('./socket.io/quizHandlers.js')(io));
+
 
 // server
 http.listen(app.get('port'), () => {

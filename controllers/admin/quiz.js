@@ -59,16 +59,16 @@ exports.getQuiz = (req, res, next) => {
  * @param res
  * @param next
  */
-exports.addQuiz = (req, res, next) => {
-    let quiz = new models.Quiz();
-    async.series([
-        done => quiz.store(req.body).save(done),
-        done => quiz.linkTutorials(req.body.tutorials, done)
-    ], err => {
-        if (err) return next(err);
+exports.addQuiz = async (req, res, next) => {
+    try {
+        let quiz = new models.Quiz();
+        await quiz.store(req.body).save();
+        await quiz.linkTutorials(req.body.tutorials);
         req.flash('success', '<b>%s</b> has been created.', quiz.name);
         res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes`));
-    });
+    } catch (e) {
+        next(e);
+    }
 };
 
 /**

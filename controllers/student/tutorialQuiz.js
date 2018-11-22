@@ -1,47 +1,17 @@
 const models = require('../../models');
+
 // Retrieve tutorial quiz
-exports.getTutorialQuizByParam = (req, res, next, id) => {
-    models.TutorialQuiz.findById(id).populate('tutorial quiz').exec((err, tutorialQuiz) => {
-        if (err)
-            return next(err);
-        if (!tutorialQuiz)
-            return next(new Error('No tutorial quiz is found.'));
+exports.getTutorialQuizByParam = async (req, res, next, id) => {
+    try {
+        let tutorialQuiz = await models.TutorialQuiz.findById(id).populate('quiz').exec();
+        await tutorialQuiz.fillTutorialFromRemote();
         req.tutorialQuiz = tutorialQuiz;
         next();
-    });
+    } catch (e) {
+        next(e);
+    }
 };
-// Retrieve quizzes within course
-exports.getQuizzesForStudent = (req, res) => { 
-    models.Course.populate(req.course, {
-        // find the tutorial that student is in
-        path: 'tutorials',
-        model: models.Tutorial,
-        match: {
-            students: { $in: [req.user.id] }
-        },
-        // find the quizzes within the tutorial
-        populate: {
-            path: 'quizzes',
-            model: models.TutorialQuiz,
-            match: { published: true },
-            populate: {
-                path: 'quiz',
-                model: models.Quiz
-            }
-        }
-    }, function (err) {
-        if (err) {
-            return res.status(500).send("Unable to retrieve any quizzes at this time (" + err.message + ").");
-        }
-        var tutorial = req.course.tutorials[0];
-        if (tutorial) {
-            res.render('student/tutorial-quizzes', { course: req.course, tutorial: tutorial });
-        } else {
-            res.redirect('/student/courses');
-        }
-    });
-};
-//
+
 exports.startQuiz = (req, res) => {
     if (req.tutorialQuiz.archived){
         req.tutorialQuiz.quiz.withQuestions().execPopulate()
@@ -74,13 +44,12 @@ exports.startQuiz = (req, res) => {
 };
 
 // WebSocket event handler generators - these are curried functions that take
-// the input (socket) and output (emitter) context, and return the actual handler 
-
+// the input (socket) and output (emitter) context, and return the actual handler
 exports.nominateDriver = (socket, emitters) => (function(data) {
     models.Group.findById(data.groupId)
     .exec()
     .then(function(group) {
-        models.Group.findByIdAndUpdate(data.groupId, { driver : socket.request.user })
+        models.Group.findByIdAndUpdate(data.groupId, { driver : socket.request.user.getId() })
         .exec()
         .then(function() {
             emitters.emitToGroup(data.groupId, 'resetDriver', { groupId : data.groupId });

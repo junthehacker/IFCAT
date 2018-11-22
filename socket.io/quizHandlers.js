@@ -3,7 +3,10 @@ var models = require('../models'),
     controllers = require('../controllers/student');
 
 
-module.exports = (io) => (function (socket) {   
+module.exports = (io) => (function (socket) {
+
+    console.log("NEW CLIENT...");
+
     if (socket.request.user && socket.request.user.logged_in)
         console.log('authenticated socket');
     else
@@ -21,6 +24,8 @@ module.exports = (io) => (function (socket) {
     socket.on('CODE_TRACING_ANSWER_ATTEMPT', fetchHandler('codeTracingAttempt'));
     
     socket.on('REQUEST_QUIZ', function(tutQuizId){
+
+
         models.TutorialQuiz.findById(tutQuizId)
         .populate([{
             path : 'quiz',

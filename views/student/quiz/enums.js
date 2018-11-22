@@ -15,4 +15,4 @@ module.exports =  {
 	messages : {
 		correctlyAnswered : 'CORRECTLY ANSWERED'
 	}
-}
+};

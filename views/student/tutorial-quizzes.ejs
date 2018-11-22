@@ -4,11 +4,16 @@
 
 <br>
 
-<% if(!tutorials.length){ %>
-<p>You are not enrolled in any tutorials... You must be enrolled in at least one tutorial to write quizzes.</p>
+<% if(!tutorialQuizzes.length){ %>
+<p>There is no quiz currently available to you.</p>
 <% } else { %>
-    <% for(let i = 0; i < tutorials.length; i++){ %>
-        <h4><%= tutorials[i].getDisplayName() %></h4>
-    <% } %>
+    <% tutorialQuizzes.forEach(tutorialQuiz => { %>
+        <hr class="my-2"/>
+
+        <a href="<%= getAbsUrl(`/student/courses/${course.getId()}/quizzes/${tutorialQuiz._id}/start`) %>"
+           class="btn btn-primary pull-right">Enter</a>
+
+        <h4><%= tutorialQuiz.quiz.name %> <small><%= tutorialQuiz.tutorial.getDisplayName() %></small></h4>
+    <% }) %>
 <% } %>
 <% include ./footer %>

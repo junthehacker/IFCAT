@@ -46,21 +46,32 @@ export default class QuizApp extends React.Component {
     componentWillMount() {
         var url = window.location.href;
         var quizId = url.slice(url.indexOf('/quizzes/') + 9, url.indexOf('/start'));
-        var socket = this.props.io();
-        this.socket = socket;
+
+        this.socket = this.props.io.connect();
+        window.socket = this.socket;
+
+        console.log(this.socket);
+
+        this.socket.on('connect', (socket) => {
+            console.log("CONNECTED");
+        });
+
+        this.socket.on('connect_failed', function(){
+            console.log('Connection Failed');
+        });
 
         // Request quiz data
-        socket.emit('REQUEST_QUIZ', quizId);
+        this.socket.emit('REQUEST_QUIZ', quizId);
 
-        socket.on('setGroup', (id) => {
+        this.socket.on('setGroup', (id) => {
             if (id != this.state.groupId)
                 window.location.href = window.location.href;
         });
 
-        socket.on('groupsUpdated', (data) => {
+        this.socket.on('groupsUpdated', (data) => {
         });
 
-        socket.on('quizData', (tutorialQuiz) => {
+        this.socket.on('quizData', (tutorialQuiz) => {
             this.setState({
                 quiz: tutorialQuiz.quiz,
                 groupId: tutorialQuiz.groupId || this.state.groupId,
@@ -72,7 +83,7 @@ export default class QuizApp extends React.Component {
         });
 
 
-        socket.on('resetDriver', (data) => {
+        this.socket.on('resetDriver', (data) => {
             swal('New Driver', 'Your group now has a new driver.', 'info');
             if (this.state.groupId != data.groupId) return;
             this.setState({
@@ -81,11 +92,11 @@ export default class QuizApp extends React.Component {
             });
         });
 
-        socket.on('info', (data) => {
+        this.socket.on('info', (data) => {
             swal('Note', data.message, 'info');
         })
 
-        socket.on('ctGroupAttempt', (data) => {
+        this.socket.on('ctGroupAttempt', (data) => {
             if (data.groupId != this.state.groupId) return;
             var question = this.state.quiz.quiz.questions.filter(q => q._id == data.response.question)[0];
             question.output = data.codeOutput;
@@ -102,7 +113,7 @@ export default class QuizApp extends React.Component {
             });
         })
 
-        socket.on('GROUP_ATTEMPT', (data) => {
+        this.socket.on('GROUP_ATTEMPT', (data) => {
             if (this.state.groupId && data.groupId != this.state.groupId) return;
 
             var responsesStore = this.state.responses;
@@ -143,7 +154,7 @@ export default class QuizApp extends React.Component {
             });
         })
 
-        socket.on('updateScores', (data) => {            
+        this.socket.on('updateScores', (data) => {
             if (this.state.groupId && data.groupId != this.state.groupId) return;
 
             var responsesStore = this.state.responses;
@@ -163,7 +174,7 @@ export default class QuizApp extends React.Component {
             });
         });
 
-        socket.on('ASSIGNED_AS_DRIVER', (data) => {
+        this.socket.on('ASSIGNED_AS_DRIVER', (data) => {
             if (!this.state.groupId || data.groupId != this.state.groupId) return;
             // enable choices and submit buttons (disabled by default)
             this.setState({
@@ -172,7 +183,7 @@ export default class QuizApp extends React.Component {
             });
         });
 
-        socket.on('quizActivated', (data) => {
+        this.socket.on('quizActivated', (data) => {
             if (data.active) {
                 swal('Quiz activated', 'You can pick a driver and start the quiz', 'info');
                 this.setState({active : true});
@@ -187,7 +198,7 @@ export default class QuizApp extends React.Component {
             });
         });
 
-        socket.on('SYNC_RESPONSE', (data) => {
+        this.socket.on('SYNC_RESPONSE', (data) => {
             var responses = this.state.responses;
             responses[data.questionId] = data.response;
             this.setState({
@@ -212,8 +223,8 @@ export default class QuizApp extends React.Component {
                 }
             }
         });
-        
-        socket.on('FINISH_QUIZ', (data) => {
+
+        this.socket.on('FINISH_QUIZ', (data) => {
             this.setState({
                 teammates : data.members,
                 score : data.score,

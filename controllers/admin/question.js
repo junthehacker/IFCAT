@@ -2,6 +2,7 @@ const _ = require('../../utils/lodash.mixin'),
     async = require('async'),
     models = require('../../models'),
     url = require('url');
+const getAbsUrl = require('../../utils/getAbsUrl');
 
 // Retrieve question
 exports.getQuestionByParam = (req, res, next, id) => {
@@ -94,7 +95,7 @@ exports.getQuestion = (req, res, next) => {
  */
 exports.addQuestion = (req, res, next) => {
     let question = new models.Question();
-    let url = `/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/questions`;
+    let url = getAbsUrl(`/admin/courses/${req.course.getId()}/quizzes/${req.quiz._id}/questions`);
     async.series([
         done => question.store(req.body).save(done),
         done => req.quiz.update({ $addToSet: { questions: question._id }}, done)
