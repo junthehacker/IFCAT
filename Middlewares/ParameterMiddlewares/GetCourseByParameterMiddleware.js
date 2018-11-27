@@ -9,7 +9,7 @@ const ParameterMiddleware = require('./ParameterMiddleware');
 /**
  * Middleware to fill req.course by URL parameter.
  * @extends ParameterMiddleware
- * @memberOf Middlewares.ParameterMiddlewares
+ * @memberOf Middleware.ParameterMiddleware
  */
 class GetCourseByParameterMiddleware extends ParameterMiddleware {
 

@@ -7,11 +7,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
 const ParameterMiddleware = require('./ParameterMiddleware');
 const File                = require('../../Models/File');
 
-
 /**
  * Middleware to fill req.fil3 by URL parameter.
  * @extends ParameterMiddleware
- * @memberOf Middlewares.ParameterMiddlewares
+ * @memberOf Middleware.ParameterMiddleware
  */
 class GetFileByParameterMiddleware extends ParameterMiddleware {
 

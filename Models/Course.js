@@ -1,6 +1,6 @@
 // IA Model for a course
 
-const config = require('../utils/config').ia;
+const config = require('../Utils/config').ia;
 
 function getIAServiceProvider() {
     return require('../providers/IAServiceProvider');

@@ -2,7 +2,7 @@ const _         = require('lodash');
 const async     = require('async');
 const mongoose  = require('mongoose');
 const models    = require('../../Models');
-const getAbsUrl = require('../../utils/getAbsUrl');
+const getAbsUrl = require('../../Utils/getAbsUrl');
 
 
 // Retrieve course

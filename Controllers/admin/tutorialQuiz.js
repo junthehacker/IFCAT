@@ -6,7 +6,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 const _         = require('lodash');
 const async     = require('async');
-const getAbsUrl = require('../../utils/getAbsUrl');
+const getAbsUrl = require('../../Utils/getAbsUrl');
 
 const TutorialQuiz = require('../../Models/TutorialQuiz');
 const models       = require('../../Models');

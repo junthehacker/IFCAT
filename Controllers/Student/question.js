@@ -1,4 +1,4 @@
-const _ = require('../../utils/lodash.mixin'),
+const _ = require('../../Utils/lodash.mixin'),
     async = require('async'),
     models = require('../../Models');
 

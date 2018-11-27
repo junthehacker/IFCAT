@@ -6,7 +6,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
 // I.A. configuration
-const config = require('../utils/config').ia;
+const config = require('../Utils/config').ia;
 
 // Service providers
 const getIAServiceProvider = () => require('../providers/IAServiceProvider');

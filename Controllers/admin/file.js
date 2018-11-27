@@ -1,5 +1,5 @@
 const async = require('async'),
-    config = require('../../utils/config'),
+    config = require('../../Utils/config'),
     fs = require('fs-extra'),
     models = require('../../Models'),
     path = require('path');

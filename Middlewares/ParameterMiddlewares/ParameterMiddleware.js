@@ -6,8 +6,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 /**
  * Middleware namespace.
- * @namespace ParameterMiddlewares
- * @memberOf Middlewares
+ * @namespace ParameterMiddleware
+ * @memberOf Middleware
  */
 
 const Middleware = require('../Middleware');
@@ -15,7 +15,7 @@ const Middleware = require('../Middleware');
 /**
  * Middleware used for router.param().
  * @extends Middleware
- * @memberOf Middlewares.ParameterMiddlewares
+ * @memberOf Middleware.ParameterMiddleware
  */
 class ParameterMiddleware extends Middleware {
 

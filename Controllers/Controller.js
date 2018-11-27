@@ -7,7 +7,13 @@ Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
 /**
+ * Controller namespace.
+ * @namespace Controller
+ */
+
+/**
  * Super class for all controllers.
+ * @memberOf Controller
  */
 class Controller {
 

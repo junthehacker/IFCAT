@@ -7,11 +7,12 @@ Author(s): Jun Zheng [me at jackzh dot com]
 const Controller        = require('../Controller');
 const passport          = require('passport');
 const IAServiceProvider = require('../../providers/IAServiceProvider');
-const getAbsUrl         = require('../../utils/getAbsUrl');
+const getAbsUrl         = require('../../Utils/getAbsUrl');
 
 /**
  * Controller singleton for login actions.
  * @extends Controller
+ * @memberOf Controller.Guest
  */
 class LoginController extends Controller {
 

@@ -1,8 +1,8 @@
-const _ = require('../../utils/lodash.mixin'),
+const _ = require('../../Utils/lodash.mixin'),
     async = require('async'),
     models = require('../../Models'),
     url = require('url');
-const getAbsUrl = require('../../utils/getAbsUrl');
+const getAbsUrl = require('../../Utils/getAbsUrl');
 
 // Retrieve question
 exports.getQuestionByParam = (req, res, next, id) => {

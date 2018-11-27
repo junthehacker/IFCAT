@@ -10,7 +10,7 @@ const TutorialQuiz        = require('../../Models/TutorialQuiz');
 /**
  * Middleware to fill req.tutorialQuiz by URL parameter.
  * @extends ParameterMiddleware
- * @memberOf Middlewares.ParameterMiddlewares
+ * @memberOf Middleware.ParameterMiddleware
  */
 class GetTutorialQuizByParameterMiddleware extends ParameterMiddleware {
 

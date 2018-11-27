@@ -10,6 +10,7 @@ const IAServiceProvider = require('../../providers/IAServiceProvider');
 /**
  * Controller singleton for logout actions.
  * @extends Controller
+ * @memberOf Controller.Guest
  */
 class LogoutController extends Controller {
 

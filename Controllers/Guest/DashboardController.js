@@ -4,12 +4,17 @@ Controller for guest dashboard.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
+/**
+ * Guest controller namespace.
+ * @namespace Controller.Guest
+ */
+
 const Controller = require('../Controller');
-const IAServiceProvider = require('../../providers/IAServiceProvider');
 
 /**
  * Controller singleton for guest dashboard.
  * @extends Controller
+ * @memberOf Controller.Guest
  */
 class DashboardController extends Controller {
 
@@ -19,9 +24,7 @@ class DashboardController extends Controller {
      * @param {Object} res Express response
      */
     getHome(req, res) {
-        res.render('guest/dashboard', {
-            logoutUrl: IAServiceProvider.getLogoutUrl()
-        });
+        res.render('Guest/Dashboard');
     }
 
 }

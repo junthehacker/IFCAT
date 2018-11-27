@@ -6,7 +6,7 @@ Supports I.A. v0.3
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-const config = require('../utils/config').ia;
+const config = require('../Utils/config').ia;
 const _axios = require('axios');
 const https = require('https');
 

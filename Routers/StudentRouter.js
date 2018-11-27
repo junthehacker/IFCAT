@@ -13,9 +13,14 @@ GetQuestionByParameterMiddleware.applyToRouter('question', router);
 GetTutorialQuizByParameterMiddleware.applyToRouter('tutorialQuiz', router);
 EnsureAuthenticatedMiddleware.applyToRouter(router);
 
+
+const StudentController = require('../Controllers/Student/StudentController');
+
+let studentController = StudentController.getInstance();
+
 // authenticated routes
-router.get('/courses', controllers.Student.getCourses);
-router.get('/courses/:course/quizzes', controllers.Student.getQuizzes);
+router.get('/courses', studentController.getCourses);
+router.get('/courses/:course/quizzes', studentController.getQuizzes);
 router.get('/courses/:course/quizzes/:tutorialQuiz/start', controllers.TutorialQuiz.startQuiz);
 router.get('/courses/:course/quizzes/:tutorialQuiz/submit-question', controllers.Question.getQuestionForm);
 router.post('/courses/:course/quizzes/:tutorialQuiz/submit-question', controllers.Question.addQuestion);

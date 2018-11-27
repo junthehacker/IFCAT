@@ -1,4 +1,4 @@
-const config               = require('../utils/config').ia;
+const config               = require('../Utils/config').ia;
 const getIAServiceProvider = () => require('../providers/IAServiceProvider');
 
 module.exports = class RemoteTutorial {

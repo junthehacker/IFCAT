@@ -1,4 +1,4 @@
-<%- include('../partials/head.ejs', {title: "Home - IFCAT"}) %>
+<%- include('../Partials/Head.ejs', {title: "Home - IFCAT"}) %>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
@@ -17,7 +17,7 @@
             <ul class="navbar-nav">
                 <% if(user) { %>
                 <li class="nav-item">
-                    <a class="nav-link" href="<%= logoutUrl %>">
+                    <a class="nav-link" href="<%= getAbsUrl('/logout') %>">
                         <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
                     </a>
                 </li>
@@ -39,7 +39,7 @@
         <% if(!user) { %>
         <p class="lead">Welcome to IFCAT, start by logging in to your account.</p>
         <hr class="my-4">
-        <p>You will be redirected to your organizational sign-in page to finish login.</p>
+        <p>You will be redirected to your organization's sign-in page to finish login.</p>
         <p class="lead">
             <a class="btn btn-primary btn-raised btn-lg" href="<%= getAbsUrl('/login') %>" role="button">
                 <i class="fa fa-sign-in" aria-hidden="true"></i>
@@ -63,5 +63,5 @@
     </div>
 </div>
 
-<%- include ../partials/footer.ejs %>
-<%- include ../partials/foot.ejs %>
+<%- include ../Partials/Footer.ejs %>
+<%- include ../Partials/Foot.ejs %>

@@ -5,7 +5,7 @@
   "source": {
     "include": ".",
     "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs|public|views)"
+    "excludePattern": "(node_modules/|docs|public|Views)"
   },
   "plugins": [
     "plugins/markdown"

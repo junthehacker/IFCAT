@@ -1,7 +1,7 @@
 const _ = require('lodash'),
     controllers = require('../Controllers/admin'),
     passport = require('passport'),
-    upload = require('../utils/upload'),
+    upload = require('../Utils/upload'),
     mongoose = require('mongoose');
 
 const GetFileByParameterMiddleware  = require('../Middlewares/ParameterMiddlewares/GetFileByParameterMiddleware');

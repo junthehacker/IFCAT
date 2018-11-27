@@ -1,8 +1,8 @@
-const _            = require('../../utils/lodash.mixin');
+const _            = require('../../Utils/lodash.mixin');
 const async        = require('async');
 const models       = require('../../Models');
-const asyncForEach = require('../../utils/asyncForEach');
-const getAbsUrl    = require('../../utils/getAbsUrl');
+const asyncForEach = require('../../Utils/asyncForEach');
+const getAbsUrl    = require('../../Utils/getAbsUrl');
 
 // Retrieve group
 exports.getGroupByParam = (req, res, next, id) => {

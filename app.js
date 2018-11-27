@@ -1,6 +1,6 @@
-const lodash           = require('./utils/lodash.mixin'),
+const lodash           = require('./Utils/lodash.mixin'),
       bodyParser       = require('body-parser'),
-      config           = require('./utils/config'),
+      config           = require('./Utils/config'),
       cookieParser     = require('cookie-parser'),
       express          = require('express'),
       flash            = require('connect-flash'),
@@ -11,7 +11,7 @@ const lodash           = require('./utils/lodash.mixin'),
       session          = require('express-session'),
       MongoStore       = require('connect-mongo')(session),
       passportSocketIo = require('passport.socketio'),
-      logger           = require('./utils/logger');
+      logger           = require('./Utils/logger');
 
 const IS_EDGE = true; // Is edge release?
 
@@ -26,12 +26,12 @@ app.locals.io         = io;
 app.locals.moment     = moment;
 app.locals.config     = config;
 app.locals.IS_EDGE    = IS_EDGE;
-app.locals.getAbsUrl  = require('./utils/getAbsUrl');
+app.locals.getAbsUrl  = require('./Utils/getAbsUrl');
 
 // application settings
 app.set('port', process.env.PORT || 8080);
 app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/Views');
 
 // other middlewares
 app.use(morgan('dev'));
@@ -59,7 +59,7 @@ app.use(session({
 app.use(flash());
 
 // authentication
-const passport = require('./utils/passport');
+const passport = require('./Utils/passport');
 
 app.use(passport.initialize());
 app.use(passport.session());

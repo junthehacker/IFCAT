@@ -1,4 +1,4 @@
-import Question from '../../../student/quiz/components/Question.jsx';
+import Question from '../../../Student/quiz/components/Question.jsx';
 
 import React from 'react'
 import ReactDOM from 'react-dom';

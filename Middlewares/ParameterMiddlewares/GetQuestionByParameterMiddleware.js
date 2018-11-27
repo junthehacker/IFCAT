@@ -10,7 +10,7 @@ const Question            = require('../../Models/Question');
 /**
  * Middleware to fill req.question by URL parameter.
  * @extends ParameterMiddleware
- * @memberOf Middlewares.ParameterMiddlewares
+ * @memberOf Middleware.ParameterMiddleware
  */
 class GetQuestionByParameterMiddleware extends ParameterMiddleware {
 

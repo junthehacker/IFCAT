@@ -6,12 +6,12 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 /**
  * Middleware namespace.
- * @namespace Middlewares
+ * @namespace Middleware
  */
 
 /**
  * Middleware super class.
- * @memberOf Middlewares
+ * @memberOf Middleware
  */
 class Middleware {
 
