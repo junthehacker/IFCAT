@@ -5,8 +5,9 @@
   "private": true,
   "description": "no description yet",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "BUILD=`git rev-parse --short HEAD` NODE_ENV=development node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json --readme README.md"
   },
   "author": "mikey",
   "license": "ISC",
@@ -63,6 +64,8 @@
     "babel-loader": "7.1.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
-    "es2015": "0.0.0"
+    "docdash": "^1.0.0",
+    "es2015": "0.0.0",
+    "jsdoc": "^3.5.5"
   }
 }

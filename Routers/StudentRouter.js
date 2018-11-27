@@ -1,4 +1,4 @@
-const controllers = require('../controllers/student'),
+const controllers = require('../Controllers/student'),
     passport = require('passport'),
     models = require('../models');
 

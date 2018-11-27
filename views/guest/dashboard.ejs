@@ -1,0 +1,67 @@
+<%- include('../partials/head.ejs', {title: "Home - IFCAT"}) %>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">IFCAT</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <% if(user) { %>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= logoutUrl %>">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                    </a>
+                </li>
+                <% } %>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/junthehacker/IFCAT-IA">
+                        <i class="fa fa-github" aria-hidden="true"></i> GitHub
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-4">Hello<%= user ? ", " + user.getUsername() : "" %>!</h1>
+        <% if(!user) { %>
+        <p class="lead">Welcome to IFCAT, start by logging in to your account.</p>
+        <hr class="my-4">
+        <p>You will be redirected to your organizational sign-in page to finish login.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-raised btn-lg" href="<%= getAbsUrl('/login') %>" role="button">
+                <i class="fa fa-sign-in" aria-hidden="true"></i>
+                Login
+            </a>
+        </p>
+        <% } else { %>
+        <p class="lead">Welcome to IFCAT, please choose one of the options below.</p>
+        <hr class="my-4">
+        <p class="lead">
+            <a class="btn btn-primary btn-raised btn-lg" href="<%= getAbsUrl('/student/courses') %>" role="button">
+                <i class="fa fa-graduation-cap" aria-hidden="true"></i> My Courses
+            </a>
+            <% if(user.isAdmin()) { %>
+            <a class="btn btn-secondary btn-raised btn-lg" href="<%= getAbsUrl('/admin/courses') %>" role="button">
+                <i class="fa fa-user" aria-hidden="true"></i> Admin
+            </a>
+            <% } %>
+        </p>
+        <% } %>
+    </div>
+</div>
+
+<%- include ../partials/footer.ejs %>
+<%- include ../partials/foot.ejs %>

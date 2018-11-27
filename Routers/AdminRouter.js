@@ -1,5 +1,5 @@
 const _ = require('lodash'),
-    controllers = require('../controllers/admin'),
+    controllers = require('../Controllers/admin'),
     passport = require('passport'),
     upload = require('../utils/upload'),
     mongoose = require('mongoose');

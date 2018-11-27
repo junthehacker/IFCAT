@@ -1,6 +1,6 @@
 var models = require('../models'),
     _ = require('lodash'),
-    controllers = require('../controllers/student');
+    controllers = require('../Controllers/student');
 
 
 module.exports = (io) => (function (socket) {

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>models/Question.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="DashboardController.html">DashboardController</a><ul class='methods'><li data-type='method'><a href="DashboardController.html#.getInstance">getInstance</a></li><li data-type='method'><a href="DashboardController.html#getHome">getHome</a></li></ul></li><li><a href="IAServiceProvider.html">IAServiceProvider</a><ul class='methods'><li data-type='method'><a href="IAServiceProvider.html#.getAllCourses">getAllCourses</a></li><li data-type='method'><a href="IAServiceProvider.html#.getAllTutorials">getAllTutorials</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLoginUrl">getLoginUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLogoutUrl">getLogoutUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getTutorialByIdOrFail">getTutorialByIdOrFail</a></li><li data-type='method'><a href="IAServiceProvider.html#.getUserByToken">getUserByToken</a></li><li data-type='method'><a href="IAServiceProvider.html#.runGetRequest">runGetRequest</a></li></ul></li><li><a href="LoginController.html">LoginController</a><ul class='methods'><li data-type='method'><a href="LoginController.html#.getInstance">getInstance</a></li></ul></li><li><a href="LogoutController.html">LogoutController</a><ul class='methods'><li data-type='method'><a href="LogoutController.html#.getInstance">getInstance</a></li><li data-type='method'><a href="LogoutController.html#logout">logout</a></li></ul></li><li><a href="RemoteUser.html">RemoteUser</a><ul class='methods'><li data-type='method'><a href="RemoteUser.html#.createList">createList</a></li><li data-type='method'><a href="RemoteUser.html#canAccessAdminPanel">canAccessAdminPanel</a></li><li data-type='method'><a href="RemoteUser.html#getCourse">getCourse</a></li><li data-type='method'><a href="RemoteUser.html#getCourses">getCourses</a></li><li data-type='method'><a href="RemoteUser.html#getId">getId</a></li><li data-type='method'><a href="RemoteUser.html#getUsername">getUsername</a></li><li data-type='method'><a href="RemoteUser.html#isAdmin">isAdmin</a></li><li data-type='method'><a href="RemoteUser.html#isInstructor">isInstructor</a></li><li data-type='method'><a href="RemoteUser.html#isTA">isTA</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#addQuestion">addQuestion</a></li><li><a href="global.html#addQuiz">addQuiz</a></li><li><a href="global.html#copyQuiz">copyQuiz</a></li><li><a href="global.html#deleteQuestion">deleteQuestion</a></li><li><a href="global.html#deleteQuiz">deleteQuiz</a></li><li><a href="global.html#editQuiz">editQuiz</a></li><li><a href="global.html#editTutorialQuiz">editTutorialQuiz</a></li><li><a href="global.html#fetchQuizJson">fetchQuizJson</a></li><li><a href="global.html#generateGroups">generateGroups</a></li><li><a href="global.html#getQuestion">getQuestion</a></li><li><a href="global.html#getQuestions">getQuestions</a></li><li><a href="global.html#getQuiz">getQuiz</a></li><li><a href="global.html#getQuizzes">getQuizzes</a></li><li><a href="global.html#getTutorialByParam">getTutorialByParam</a></li><li><a href="global.html#getTutorialQuiz">getTutorialQuiz</a></li><li><a href="global.html#getTutorialQuizByParam">getTutorialQuizByParam</a></li><li><a href="global.html#saveGroups">saveGroups</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">models/Question.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const _ = require('../utils/lodash.mixin'),
+    async = require('async'),
+    mongoose = require('mongoose'),
+    url = require('url');
+const QuestionSchema = new mongoose.Schema({
+    number: String,
+    type: { type: String, enum: ['multiple choice', 'multiple select', 'short answer', 'code tracing'] },
+    question: { type: String, required: true },
+    code: String,
+    choices: [String],
+    answers: [String],
+    files: [{ type: mongoose.Schema.Types.ObjectId, ref: 'File' }],
+    links: [String],
+    tags: [String],
+    caseSensitive: Boolean,
+    maxPointsPerLine: Number,
+    maxAttemptsPerLine: Number,
+    immediateFeedbackDisabled: Boolean,
+    shuffleChoices: Boolean,
+    useLaTeX: Boolean,
+    points: Number,
+    firstTryBonus: Number,
+    penalty: Number,
+    submitter: String ,
+    approved: Boolean,
+    votes: {
+        up: [String],
+        down: [String]
+    }
+}, {
+    timestamps: true 
+});
+// Get total number of votes
+QuestionSchema.virtual('votes.length').get(function () {
+    return this.votes.up.length + this.votes.down.length;
+});
+// Get voting score
+QuestionSchema.virtual('votes.score').get(function () {
+    return _.lowerBound(this.votes.up.length, this.votes.length);
+});
+// Delete cascade
+QuestionSchema.pre('remove', function (next) {
+    let self = this;
+    async.parallel([
+        done => self.model('Quiz').update({ questions: { $in: [self._id] }}, { $pull: { questions: self._id }}, done),
+        done => self.model('Response').remove({ question: self._id }, done)
+    ], next);
+});
+// Populate files
+QuestionSchema.methods.withFiles = function () {
+    return this.populate({ path: 'files', options: { sort: { name: 1 }}});
+};
+// Check if question is a multiple choice question
+QuestionSchema.methods.isMultipleChoice = function () {
+    return this.type === 'multiple choice';
+};
+// Check if question is a multiple select question
+QuestionSchema.methods.isMultipleSelect = function () {
+    return this.type === 'multiple select';
+};
+// Check if question is a short answer question
+QuestionSchema.methods.isShortAnswer = function () {
+    return this.type === 'short answer';
+};
+// Check if question is a code tracing question
+QuestionSchema.methods.isCodeTracing = function () {
+    return this.type === 'code tracing';
+};
+// Check if question has file with given ID
+QuestionSchema.methods.hasFile = function (id) {
+    return this.files.indexOf(id) > -1;
+};
+// Check if given choice is one of the answers
+QuestionSchema.methods.isAnswer = function (choice) {
+    return this.answers.indexOf(choice) > -1;
+};
+
+/**
+ * Create the question
+ * @param opts
+ * @returns {mongoose.Schema.methods}
+ */
+QuestionSchema.methods.store = function (opts) {
+    let self = this;
+
+    self.links = self.choices = self.answers = self.tags = [];
+    self.caseSensitive = !!opts.caseSensitive;
+    self.shuffleChoices = !!opts.shuffleChoices;
+    self.useLaTeX = !!opts.useLaTeX;
+    self.approved = !!opts.approved;
+    self.set(opts);
+
+    if (opts._links)
+        _.each(opts._links, link => {
+            if (link = link.trim()) {
+                if (!url.parse(link).protocol)
+                    link = `http://${link}`;
+                self.links.addToSet(link);
+            }
+        });
+
+    if (opts._tags)
+        _.each(opts._tags.split(/[,;]/g), tag => {
+            if (tag = _.kebabCase(tag))
+                self.tags.addToSet(tag);
+        });
+
+    let selected;
+    if (self.isMultipleChoice()) {
+        _.forOwn(opts._choices, (choice, i) => {
+            choice = choice.trim();
+            if (choice &amp;&amp; self.choices.indexOf(choice) === -1) {
+                self.choices.push(choice);
+                if (i === opts._answer)
+                    self.answers = [choice];
+            }
+        });
+    } else if (self.isMultipleSelect()) {
+        selected = _.isObject(opts._answers) ? opts._answers : [];
+        _.forOwn(opts._choices, (choice, i) => {
+            choice = choice.trim();
+            if (choice &amp;&amp; self.choices.indexOf(choice) === -1) {
+                self.choices.push(choice);
+                if (selected.indexOf(i) > -1)
+                    self.answers.push(choice);
+            }
+        });
+    } else if (self.isShortAnswer()) {
+        _.forOwn(opts._answers, answer => {
+            if (answer = answer.trim())
+                self.answers.addToSet(answer);
+        });
+    } else if (self.isCodeTracing()) {
+        self.answers = opts._answers.trim().split(/\r?\n/);
+        self.points = self.maxPointsPerLine * self.answers.length + self.firstTryBonus;
+        self.immediateFeedbackDisabled = !!opts.immediateFeedbackDisabled;
+    }
+    return self;
+};
+
+module.exports = mongoose.model('Question', QuestionSchema);</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 27 2018 15:10:58 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

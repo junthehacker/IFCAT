@@ -23,11 +23,15 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /**
- * Service provider for I.A. API
- * @type {module.IAServiceProvider}
+ * Service provider for I.A. API, all members are static, you don't have to create a new instance.
+ * @hideconstructor
  */
-module.exports = class IAServiceProvider {
+class IAServiceProvider {
 
+    /**
+     * Get default axios configuration
+     * @returns {{headers: {authorization: string}}}
+     */
     static get defaultAxiosConfig() {
         return {
             headers: {
@@ -37,9 +41,9 @@ module.exports = class IAServiceProvider {
     };
 
     /**
-     * Get an user by token
-     * @param token
-     * @returns {*}
+     * Get an user by authentication token.
+     * @param {string} token Authentication token to use.
+     * @returns {Promise<User>} User obtained from token.
      */
     static async getUserByToken(token) {
         let data = await axios.get(`${config.root}/api/auth_tokens/${token}`, IAServiceProvider.defaultAxiosConfig);
@@ -47,101 +51,68 @@ module.exports = class IAServiceProvider {
     }
 
     /**
-     * Get login URL
-     * @returns {string}
+     * Get login URL.
+     * @returns {string} Login URL.
      */
     static getLoginUrl() {
         return (config.publicRoot || config.root) + "/login?id=" + config.applicationId;
     }
 
     /**
-     * Get logout URL
-     * @returns {string}
+     * Get logout URL.
+     * @returns {string} Logout URL.
      */
     static getLogoutUrl() {
         return (config.publicRoot || config.root) + "/logout";
     }
 
     /**
-     * Get list of courses
-     * @returns {Promise<any>}
+     * Get list of courses within the system.
+     * @returns {Promise<Course[]>} List of courses.
      */
-    static getAllCourses() {
-        return new Promise((resolve, reject) => {
-            axios.get(`${config.root}/api/courses`, {
-                headers: {
-                    authorization: `Bearer ${config.secretKey}`
-                }
-            }).then(data => {
-                resolve(require('../models/Course').createList(data.data));
-            }).catch(e => {
-                reject(e);
-            })
-        })
+    static async getAllCourses() {
+        let data = await axios.get(`${config.root}/api/courses`, IAServiceProvider.defaultAxiosConfig);
+        return require('../models/Course').createList(data.data);
     }
 
     /**
-     * Get list of tutorials
-     * @returns {Promise<any>}
+     * Get list of tutorials within the system.
+     * @returns {Promise<Tutorial[]>} List of tutorials.
      */
-    static getAllTutorials() {
-        return new Promise((resolve, reject) => {
-            axios.get(`${config.root}/api/tutorials`, {
-                headers: {
-                    authorization: `Bearer ${config.secretKey}`
-                }
-            }).then(data => {
-                resolve(require('../models/RemoteTutorial').createList(data.data));
-            }).catch(e => {
-                reject(e);
-            })
-        })
+    static async getAllTutorials() {
+        let data = await axios.get(`${config.root}/api/tutorials`, IAServiceProvider.defaultAxiosConfig);
+        return require('../models/RemoteTutorial').createList(data.data);
     }
 
     /**
-     * Get one tutorial or fail
-     * @param id
-     * @returns {Promise<any>}
+     * Get one tutorial by ID, throws an exception if not found.
+     * @param {string} id ID to find.
+     * @throws Error Thrown when tutorial is not found.
+     * @returns {Promise<Tutorial>} Tutorial with ID specified.
      */
-    static getTutorialByIdOrFail(id) {
-        return new Promise((resolve, reject) => {
-            this.getAllTutorials()
-                .then(tutorials => {
-                    let tutorial;
-                    tutorials.some(_tutorial => {
-                        if (_tutorial.getId() === id) {
-                            tutorial = _tutorial;
-                            return true;
-                        }
-                    });
-                    if (tutorial) {
-                        resolve(tutorial);
-                    } else {
-                        throw new Error("Tutorial not found.");
-                    }
-                })
-                .catch(e => {
-                    reject(e);
-                })
-        })
+    static async getTutorialByIdOrFail(id) {
+        let tutorials = await this.getAllTutorials();
+        let tutorial;
+        tutorials.some(_tutorial => {
+            if (_tutorial.getId() === id) {
+                tutorial = _tutorial;
+                return true;
+            }
+        });
+        if (tutorial) return tutorial;
+        else throw new Error("Tutorial not found.");
     }
 
     /**
-     * Run a new get request
-     * @param url
-     * @returns {Promise<any>}
+     * Run a new get request on API.
+     * @param {string} url Relative URL to use.
+     * @returns {Promise<any>} Request response data.
      */
-    static runGetRequest(url) {
-        return new Promise((resolve, reject) => {
-            axios.get(url, {
-                headers: {
-                    authorization: `Bearer ${config.secretKey}`
-                }
-            }).then(data => {
-                resolve(data.data);
-            }).catch(e => {
-                reject(e);
-            })
-        })
+    static async runGetRequest(url) {
+        let data = await axios.get(url, IAServiceProvider.defaultAxiosConfig);
+        return data.data;
     }
-};
+}
+
+module.exports = IAServiceProvider;
+

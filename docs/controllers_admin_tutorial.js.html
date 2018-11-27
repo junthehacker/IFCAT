@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Controllers/admin/tutorial.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="DashboardController.html">DashboardController</a><ul class='methods'><li data-type='method'><a href="DashboardController.html#.getInstance">getInstance</a></li><li data-type='method'><a href="DashboardController.html#getHome">getHome</a></li></ul></li><li><a href="IAServiceProvider.html">IAServiceProvider</a><ul class='methods'><li data-type='method'><a href="IAServiceProvider.html#.getAllCourses">getAllCourses</a></li><li data-type='method'><a href="IAServiceProvider.html#.getAllTutorials">getAllTutorials</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLoginUrl">getLoginUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLogoutUrl">getLogoutUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getTutorialByIdOrFail">getTutorialByIdOrFail</a></li><li data-type='method'><a href="IAServiceProvider.html#.getUserByToken">getUserByToken</a></li><li data-type='method'><a href="IAServiceProvider.html#.runGetRequest">runGetRequest</a></li></ul></li><li><a href="LoginController.html">LoginController</a><ul class='methods'><li data-type='method'><a href="LoginController.html#.getInstance">getInstance</a></li></ul></li><li><a href="LogoutController.html">LogoutController</a><ul class='methods'><li data-type='method'><a href="LogoutController.html#.getInstance">getInstance</a></li><li data-type='method'><a href="LogoutController.html#logout">logout</a></li></ul></li><li><a href="RemoteUser.html">RemoteUser</a><ul class='methods'><li data-type='method'><a href="RemoteUser.html#.createList">createList</a></li><li data-type='method'><a href="RemoteUser.html#canAccessAdminPanel">canAccessAdminPanel</a></li><li data-type='method'><a href="RemoteUser.html#getCourse">getCourse</a></li><li data-type='method'><a href="RemoteUser.html#getCourses">getCourses</a></li><li data-type='method'><a href="RemoteUser.html#getId">getId</a></li><li data-type='method'><a href="RemoteUser.html#getUsername">getUsername</a></li><li data-type='method'><a href="RemoteUser.html#isAdmin">isAdmin</a></li><li data-type='method'><a href="RemoteUser.html#isInstructor">isInstructor</a></li><li data-type='method'><a href="RemoteUser.html#isTA">isTA</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#addQuestion">addQuestion</a></li><li><a href="global.html#addQuiz">addQuiz</a></li><li><a href="global.html#copyQuiz">copyQuiz</a></li><li><a href="global.html#deleteQuestion">deleteQuestion</a></li><li><a href="global.html#deleteQuiz">deleteQuiz</a></li><li><a href="global.html#editQuiz">editQuiz</a></li><li><a href="global.html#editTutorialQuiz">editTutorialQuiz</a></li><li><a href="global.html#fetchQuizJson">fetchQuizJson</a></li><li><a href="global.html#generateGroups">generateGroups</a></li><li><a href="global.html#getQuestion">getQuestion</a></li><li><a href="global.html#getQuestions">getQuestions</a></li><li><a href="global.html#getQuiz">getQuiz</a></li><li><a href="global.html#getQuizzes">getQuizzes</a></li><li><a href="global.html#getTutorialByParam">getTutorialByParam</a></li><li><a href="global.html#getTutorialQuiz">getTutorialQuiz</a></li><li><a href="global.html#getTutorialQuizByParam">getTutorialQuizByParam</a></li><li><a href="global.html#saveGroups">saveGroups</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Controllers/admin/tutorial.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var _ = require('lodash'),
+    async = require('async'),
+    models = require('../../models');
+
+const IAServiceProvider = require('../../providers/IAServiceProvider');
+
+/**
+ * Retrieve tutorial from remote by param
+ * @param req
+ * @param res
+ * @param next
+ * @param id
+ */
+exports.getTutorialByParam = (req, res, next, id) => {
+    IAServiceProvider.getTutorialByIdOrFail(id)
+        .then(tutorial => {
+            req.tutorial = tutorial;
+            next();
+        })
+        .catch(e => {
+            next(e);
+        });
+};
+
+
+// Retrieve list of tutorials for course
+exports.getTutorials = (req, res, next) => {
+    models.Tutorial.find({ 
+        _id: { $in: req.course.tutorials }
+    }).populate('teachingAssistants').exec((err, tutorials) => {
+        if (err)
+            return next(err);
+        res.render('admin/pages/course-tutorials', {
+            bodyClass: 'tutorials-page',
+            title: 'Tutorials',
+            course: req.course,
+            tutorials: tutorials
+        });
+    });
+};
+// Add multiple tutorials for course
+exports.addTutorials = (req, res, next) => {
+    let start = Math.abs(_.toInteger(req.body.start)),
+        end = Math.abs(_.toInteger(req.body.end)),
+        range = _.range(start, end + 1);
+    async.waterfall([
+        function (done) {
+            // find old numbers
+            models.Tutorial.distinct('number', { _id: { $in: req.course.tutorials }}, done);
+        },
+        function (numbers, done) {
+            // filter and create new numbers
+            _.pullAll(range, numbers.map(Number));
+            range = _.map(range, number => { return { number: number }});
+            models.Tutorial.create(range, done);
+        },
+        function (tutorials, done) {
+            req.course.update({ $push: { tutorials: { $each: tutorials }}}, done);
+        }
+    ], err => {
+        if (err)
+            return next(err);
+        req.flash('success', 'List of tutorials has been updated.');
+        res.redirect(`/admin/courses/${req.course._id}/tutorials`);
+    });
+};
+// Retrieve specific tutorial for tutorial
+exports.getTutorial = (req, res, next) => {
+    res.render('admin/pages/course-tutorial', {
+        bodyClass: 'tutorial-page',
+        title: 'Edit tutorial',
+        course: req.course, 
+        tutorial: req.tutorial 
+    });
+};
+// Update specific tutorial for course
+exports.editTutorial = (req, res, next) => {
+    req.tutorial.set(req.body).save(err => {
+        if (err)
+            return next(err);
+        req.flash('success', 'Tutorial &lt;b>%s&lt;/b> has been updated.', req.tutorial.number);
+        res.redirect('back');
+    });
+};
+// Delete specific tutorial for course
+exports.deleteTutorial = (req, res, next) => {
+    req.tutorial.remove(err => {
+        if (err)
+            return next(err);
+        req.flash('success', 'Tutorial &lt;b>%s&lt;/b> has been deleted.', req.tutorial.number);
+        res.redirect('back');
+    });
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Nov 27 2018 15:10:58 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

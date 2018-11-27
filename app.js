@@ -13,6 +13,8 @@ const lodash           = require('./utils/lodash.mixin'),
       passportSocketIo = require('passport.socketio'),
       logger           = require('./utils/logger');
 
+const IS_EDGE = true; // Is edge release?
+
 const app  = express(),
       http = require('http').Server(app),
       io   = require('socket.io')(http, {path: config.baseDir + '/socket.io'});
@@ -23,6 +25,7 @@ app.locals.DATEFORMAT = 'YYYY-MM-DD';
 app.locals.io         = io;
 app.locals.moment     = moment;
 app.locals.config     = config;
+app.locals.IS_EDGE    = IS_EDGE;
 app.locals.getAbsUrl  = require('./utils/getAbsUrl');
 
 // application settings

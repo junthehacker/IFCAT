@@ -6,6 +6,11 @@ proofing.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-module.exports = class Controller {
+/**
+ * Super class for all controllers.
+ */
+class Controller {
     // Empty stub for controller class
-};
+}
+
+module.exports = Controller;

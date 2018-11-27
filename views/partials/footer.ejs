@@ -1,0 +1,10 @@
+<footer>
+    <div class="container">
+        <hr/>
+        <small class="text-muted">IFCAT-IA Build <%= process.env.BUILD %> [<%= process.env.NODE_ENV %>]</small>
+        <br/>
+        <% if(IS_EDGE) { %>
+            <small class="text-muted">⚠️ You are running an edge release, some of the features might not be stable.</small>
+        <% } %>
+    </div>
+</footer>
