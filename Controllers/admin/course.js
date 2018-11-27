@@ -1,4 +1,4 @@
-const models = require('../../models');
+const models = require('../../Models');
 const IAServiceProvider = require('../../providers/IAServiceProvider');
 
 // Retrieve course

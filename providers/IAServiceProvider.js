@@ -47,7 +47,7 @@ class IAServiceProvider {
      */
     static async getUserByToken(token) {
         let data = await axios.get(`${config.root}/api/auth_tokens/${token}`, IAServiceProvider.defaultAxiosConfig);
-        return new (require('../models/RemoteUser'))(data.data.user);
+        return new (require('../Models/RemoteUser'))(data.data.user);
     }
 
     /**
@@ -72,7 +72,7 @@ class IAServiceProvider {
      */
     static async getAllCourses() {
         let data = await axios.get(`${config.root}/api/courses`, IAServiceProvider.defaultAxiosConfig);
-        return require('../models/Course').createList(data.data);
+        return require('../Models/Course').createList(data.data);
     }
 
     /**
@@ -81,7 +81,7 @@ class IAServiceProvider {
      */
     static async getAllTutorials() {
         let data = await axios.get(`${config.root}/api/tutorials`, IAServiceProvider.defaultAxiosConfig);
-        return require('../models/RemoteTutorial').createList(data.data);
+        return require('../Models/RemoteTutorial').createList(data.data);
     }
 
     /**

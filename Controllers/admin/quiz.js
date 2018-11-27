@@ -1,7 +1,7 @@
 const _         = require('lodash');
 const async     = require('async');
 const mongoose  = require('mongoose');
-const models    = require('../../models');
+const models    = require('../../Models');
 const getAbsUrl = require('../../utils/getAbsUrl');
 
 

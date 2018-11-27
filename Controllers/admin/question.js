@@ -1,6 +1,6 @@
 const _ = require('../../utils/lodash.mixin'),
     async = require('async'),
-    models = require('../../models'),
+    models = require('../../Models'),
     url = require('url');
 const getAbsUrl = require('../../utils/getAbsUrl');
 

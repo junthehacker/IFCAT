@@ -1,7 +1,7 @@
 const _ = require('lodash'),
     async = require('async'),
     csv = require('csv'),
-    models = require('../../models');
+    models = require('../../Models');
 // Retrieve group responses
 exports.getResponses = (req, res, next) => {
     // get members, questions, and responses

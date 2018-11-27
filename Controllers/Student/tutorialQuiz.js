@@ -1,16 +1,4 @@
-const models = require('../../models');
-
-// Retrieve tutorial quiz
-exports.getTutorialQuizByParam = async (req, res, next, id) => {
-    try {
-        let tutorialQuiz = await models.TutorialQuiz.findById(id).populate('quiz').exec();
-        await tutorialQuiz.fillTutorialFromRemote();
-        req.tutorialQuiz = tutorialQuiz;
-        next();
-    } catch (e) {
-        next(e);
-    }
-};
+const models = require('../../Models');
 
 exports.startQuiz = (req, res) => {
     if (req.tutorialQuiz.archived){

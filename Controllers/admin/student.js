@@ -1,7 +1,7 @@
 const _ = require('lodash'),
     async = require('async'),
     csv = require('csv'),
-    models = require('../../models');
+    models = require('../../Models');
 //
 exports.getStudentByParam = (req, res, next, id) => {
     models.User.findOne({ _id: id, roles: { $in: ['student'] }}, (err, student) => {

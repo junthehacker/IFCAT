@@ -1,6 +1,6 @@
 const _            = require('../../utils/lodash.mixin');
 const async        = require('async');
-const models       = require('../../models');
+const models       = require('../../Models');
 const asyncForEach = require('../../utils/asyncForEach');
 const getAbsUrl    = require('../../utils/getAbsUrl');
 

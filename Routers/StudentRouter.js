@@ -1,14 +1,16 @@
-const controllers = require('../Controllers/student'),
-    passport = require('passport'),
-    models = require('../models');
+const controllers = require('../Controllers/Student');
 
-let router = require('express').Router(),
+let router         = require('express').Router(),
     ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
-// query single objects
-router.param('course', controllers.Course.getCourseByParam);
-router.param('question', controllers.Question.getQuestionByParam);
-router.param('tutorialQuiz', controllers.TutorialQuiz.getTutorialQuizByParam);
+const GetCourseByParameterMiddleware       = require('../Middlewares/ParameterMiddlewares/GetCourseByParameterMiddleware');
+const GetQuestionByParameterMiddleware     = require('../Middlewares/ParameterMiddlewares/GetQuestionByParameterMiddleware');
+const GetTutorialQuizByParameterMiddleware = require('../Middlewares/ParameterMiddlewares/GetTutorialQuizByParameterMiddleware');
+
+// Mount all parameter middlewares
+GetCourseByParameterMiddleware.applyToRouter('course', router);
+GetQuestionByParameterMiddleware.applyToRouter('question', router);
+GetTutorialQuizByParameterMiddleware.applyToRouter('tutorialQuiz', router);
 
 // check if user is authenticated
 router.use((req, res, next) => {

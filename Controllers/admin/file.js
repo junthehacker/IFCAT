@@ -1,7 +1,7 @@
 const async = require('async'),
     config = require('../../utils/config'),
     fs = require('fs-extra'),
-    models = require('../../models'),
+    models = require('../../Models'),
     path = require('path');
 // Retrieve file
 exports.getFileByParam = (req, res, next, id) => {

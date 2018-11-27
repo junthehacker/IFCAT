@@ -1,17 +1,7 @@
 const _ = require('../../utils/lodash.mixin'),
     async = require('async'),
-    models = require('../../models');
-// Retrieve course
-exports.getQuestionByParam = (req, res, next, id) => {
-    models.Question.findById(id, (err, question) => {
-        if (err)
-            return next(err);
-        if (!question)
-            return next(new Error('No question is found.'));
-        req.question = question;
-        next();
-    });
-};
+    models = require('../../Models');
+
 
 exports.getQuestionForm = (req, res) => {
     let question = new models.Question();

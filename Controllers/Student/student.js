@@ -1,4 +1,4 @@
-const models       = require('../../models');
+const models       = require('../../Models');
 const asyncForEach = require('../../utils/asyncForEach');
 
 // Retrieve courses enrolled for student

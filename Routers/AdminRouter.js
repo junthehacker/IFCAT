@@ -4,6 +4,9 @@ const _ = require('lodash'),
     upload = require('../utils/upload'),
     mongoose = require('mongoose');
 
+const GetFileByParameterMiddleware  = require('../Middlewares/ParameterMiddlewares/GetFileByParameterMiddleware');
+
+
 let router = require('express').Router();
 
 // non-authenticated routes
@@ -31,7 +34,7 @@ router.param('tutorial', controllers.Tutorial.getTutorialByParam);
 router.param('quiz', controllers.Quiz.getQuizByParam);
 router.param('tutorialQuiz', controllers.TutorialQuiz.getTutorialQuizByParam);
 router.param('question', controllers.Question.getQuestionByParam);
-router.param('fil3', controllers.File.getFileByParam);
+GetFileByParameterMiddleware.applyToRouter('fil3', router);
 router.param('group', controllers.Group.getGroupByParam);
 
 // authenticated routes

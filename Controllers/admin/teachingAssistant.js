@@ -1,6 +1,6 @@
 const _ = require('../../utils/lodash.mixin'),
     async = require('async'),
-    models = require('../../models');
+    models = require('../../Models');
 // Retrieve list of teaching assistants for course
 exports.getTeachingAssistantsByCourse = (req, res, next) => {
     req.course.withTutorials().withTeachingAssistants().execPopulate().then(() => {

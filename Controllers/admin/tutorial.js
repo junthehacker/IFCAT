@@ -1,6 +1,6 @@
 var _ = require('lodash'),
     async = require('async'),
-    models = require('../../models');
+    models = require('../../Models');
 
 const IAServiceProvider = require('../../providers/IAServiceProvider');
 

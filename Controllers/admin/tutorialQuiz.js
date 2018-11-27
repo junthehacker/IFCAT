@@ -8,8 +8,8 @@ const _         = require('lodash');
 const async     = require('async');
 const getAbsUrl = require('../../utils/getAbsUrl');
 
-const TutorialQuiz = require('../../models/TutorialQuiz');
-const models       = require('../../models');
+const TutorialQuiz = require('../../Models/TutorialQuiz');
+const models       = require('../../Models');
 
 /**
  * Middleware that retrieves one tutorial quiz by parameters

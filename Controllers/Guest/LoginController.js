@@ -9,29 +9,11 @@ const passport          = require('passport');
 const IAServiceProvider = require('../../providers/IAServiceProvider');
 const getAbsUrl         = require('../../utils/getAbsUrl');
 
-let instance = null;
-
 /**
  * Controller singleton for login actions.
  * @extends Controller
  */
 class LoginController extends Controller {
-
-    /**
-     * @hideconstructor
-     */
-    constructor() {
-        super();
-        instance = this;
-    }
-
-    /**
-     * Get the singleton instance.
-     * @returns {LoginController}
-     */
-    static getInstance() {
-        return instance || new LoginController();
-    }
 
     /**
      * Get login action.
