@@ -1,29 +1,29 @@
-const lodash = require('./utils/lodash.mixin'),
-    bodyParser = require('body-parser'),
-    config = require('./utils/config'),
-    cookieParser = require('cookie-parser'),
-    express = require('express'),
-    flash = require('connect-flash'),
-    methodOverride = require('method-override'),
-    moment = require('moment'),
-    mongoose = require('mongoose'),
-    morgan = require('morgan'),
-    session = require('express-session'),
-    MongoStore = require('connect-mongo')(session),
-    passportSocketIo = require('passport.socketio'),
-    logger = require('./utils/logger');
+const lodash           = require('./utils/lodash.mixin'),
+      bodyParser       = require('body-parser'),
+      config           = require('./utils/config'),
+      cookieParser     = require('cookie-parser'),
+      express          = require('express'),
+      flash            = require('connect-flash'),
+      methodOverride   = require('method-override'),
+      moment           = require('moment'),
+      mongoose         = require('mongoose'),
+      morgan           = require('morgan'),
+      session          = require('express-session'),
+      MongoStore       = require('connect-mongo')(session),
+      passportSocketIo = require('passport.socketio'),
+      logger           = require('./utils/logger');
 
-const app = express(),
-    http = require('http').Server(app),
-    io = require('socket.io')(http, {path: config.baseDir + '/socket.io'});
+const app  = express(),
+      http = require('http').Server(app),
+      io   = require('socket.io')(http, {path: config.baseDir + '/socket.io'});
 
 // local variables
-app.locals._ = lodash;
+app.locals._          = lodash;
 app.locals.DATEFORMAT = 'YYYY-MM-DD';
-app.locals.io = io;
-app.locals.moment = moment;
-app.locals.config = config;
-app.locals.getAbsUrl = require('./utils/getAbsUrl');
+app.locals.io         = io;
+app.locals.moment     = moment;
+app.locals.config     = config;
+app.locals.getAbsUrl  = require('./utils/getAbsUrl');
 
 // application settings
 app.set('port', process.env.PORT || 8080);
@@ -64,9 +64,9 @@ app.use(passport.session());
 // local variables
 app.use((req, res, next) => {
     res.locals.flash = req.flash();
-    res.locals.path = req.path;
+    res.locals.path  = req.path;
     res.locals.query = req.query;
-    res.locals.user = req.user;
+    res.locals.user  = req.user;
     next();
 });
 
@@ -83,10 +83,10 @@ mainRouter.use('/socketioclient', express.static(__dirname + '/node_modules/sock
 mainRouter.use('/sweetalert', express.static(__dirname + '/node_modules/sweetalert/dist'));
 mainRouter.use('/', express.static(__dirname + '/public'));
 
-const routes = require('./routes');
-mainRouter.use('/', routes.guest);
-mainRouter.use('/student', routes.student);
-mainRouter.use('/admin', routes.admin);
+const routes = require('./Routers');
+mainRouter.use('/', routes.GuestRouter);
+mainRouter.use('/student', routes.StudentRouter);
+mainRouter.use('/admin', routes.AdminRouter);
 
 // error handling
 mainRouter.use((err, req, res, next) => {

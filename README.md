@@ -49,3 +49,42 @@ I.A. configuration object
 * `secretKey`: Your application secret key.
 * `root`: Server root.
 * `publicRoot`: Optional. You can optionally set this, and set `root` as a LAN url, this will make all API requests go through LAN. Can improve performance.
+
+## Contribution
+
+### Code Format
+
+* Tab style: Always 4 spaces.
+* Variable `=` sign vertical alignment: When grouped.
+* `from` vertical alignment: Always.
+
+### Code Heading
+
+When adding a new file, or modifying a file, make sure you add/modify the heading
+
+```javascript
+/*------------------------------------
+File description
+
+Author(s): Your name [me at myname dot com]
+-------------------------------------*/
+```
+
+### ESDoc
+
+Always include ESDoc, unless it is something very obvious, for example:
+
+```javascript
+class User extends Model {
+    toString() {
+        return this.name;
+    }
+}
+```
+
+In above case, you don't have to have ESDoc.
+
+### Promises / Callbacks
+
+No promises or callbacks when possible, only `async / await`.
+
