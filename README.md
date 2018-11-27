@@ -10,3 +10,42 @@ After changes in JSX files, the code needs to be transpiled. This is specificall
 
 
 Transpile front-end components by running ```webpack``` at the respective path (on node >=6.11.0).
+
+## Configuration
+
+Application configuration is stored within `config.json`, and is in the following format:
+
+```json
+{
+    "production": { CONFIG_OBJECT },
+    "development": { CONFIG_OBJECT }
+}
+```
+
+CONFIG_OBJECT contains following properties:
+
+
+#### baseDir: String
+
+Application base directory, for example, if you want to host IFCAT under `domain.local/ifcat`, then base directory would be `/ifcat`.
+
+#### database: Object
+
+MongoDB configuration object
+
+* `url`: Mongoose connection URL.
+
+#### session: Object
+
+Session configuration object
+
+* `secret`: Session secret, used to encrypt sessions.
+
+#### ia: Object
+
+I.A. configuration object
+
+* `applicationId`: Your application ID.
+* `secretKey`: Your application secret key.
+* `root`: Server root.
+* `publicRoot`: Optional. You can optionally set this, and set `root` as a LAN url, this will make all API requests go through LAN. Can improve performance.

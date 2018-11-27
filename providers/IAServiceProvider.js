@@ -51,7 +51,7 @@ module.exports = class IAServiceProvider {
      * @returns {string}
      */
     static getLoginUrl() {
-        return config.publicRoot + "/login?id=" + config.applicationId;
+        return (config.publicRoot || config.root) + "/login?id=" + config.applicationId;
     }
 
     /**
@@ -59,7 +59,7 @@ module.exports = class IAServiceProvider {
      * @returns {string}
      */
     static getLogoutUrl() {
-        return config.publicRoot + "/logout";
+        return (config.publicRoot || config.root) + "/logout";
     }
 
     /**

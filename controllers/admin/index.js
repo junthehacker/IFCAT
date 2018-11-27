@@ -10,4 +10,3 @@ exports.File = require('./file');
 exports.TutorialQuiz = require('./tutorialQuiz');
 exports.Group = require('./group');
 exports.Response = require('./response');
-exports.Hub = require('./hub');

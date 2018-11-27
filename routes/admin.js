@@ -2,8 +2,7 @@ const _ = require('lodash'),
     controllers = require('../controllers/admin'),
     passport = require('passport'),
     upload = require('../utils/upload'),
-    mongoose = require('mongoose');/*,
-    logger = require('../utils/logger');*/
+    mongoose = require('mongoose');
 
 let router = require('express').Router();
 
@@ -114,17 +113,5 @@ router.get('/courses/:course/students/:student/marks', controllers.Response.getM
 
 router.get('/quizzes/:quizId', controllers.Quiz.fetchQuizJson);
 
-router.get('/hub', controllers.Hub.getApi);
-router.patch('/hub/users', controllers.Hub.getUsers);
-
-// router.use((err, req, res, next) => {
-//     // ignore validation errors
-//     if (err instanceof mongoose.Error.ValidationError) {
-//         req.flash('error', 'An error occurred while trying to perform operation.');
-//         return res.redirect('back');
-//     }
-//     // @todo: include more info
-//     logger.error('%s', err.message);
-// });
 
 module.exports = router;
