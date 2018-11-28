@@ -12,7 +12,7 @@ const async    = require('async');
 const mongoose = require('mongoose');
 
 // Service providers
-const IAServiceProvider = require('../providers/IAServiceProvider');
+const IAServiceProvider = require('../Providers/IAServiceProvider');
 
 // Mongoose schema
 const tutorialQuizSchema = new mongoose.Schema({

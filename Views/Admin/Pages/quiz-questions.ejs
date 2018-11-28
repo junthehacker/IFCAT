@@ -1,0 +1,120 @@
+<%/*----------------------------------
+Page that lists all questions within a quiz
+
+Author(s): Jun Zheng [me at jackzh dot com]
+           Neeilan Selvalingam
+-----------------------------------*/%>
+
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
+    <li><a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">Quizzes</a> ‐ <%= quiz.name %></li>
+    <li class="active">Questions</li>
+</ol>
+
+<h3 id="title"><%- title %></h3>
+
+<% include ../Partials %>
+
+<form method="post">
+    <div class="nav-actions">
+        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/new`) %>" class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-plus"></span> Add New Question
+        </a>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-sort-by-attributes"></span> Sort By <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="?sort=">Default</a></li>
+                <li><a href="?sort=createdAt">Date Created</a></li>
+                <li><a href="?sort=votes">Votes</a></li>
+            </ul>
+        </div>
+        <button type="submit" formaction="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/sort?_method=patch`) %>" class="btn btn-default btn-sm btn-primary">
+            <span class="glyphicon glyphicon-pushpin"></span> Save Order
+        </button>
+    </div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="sort"></th>
+                <th class="number">No.</th>
+                <th class="type">Type</th>
+                <th class="question">Question</th>
+                <th class="votes">Votes</th>
+                <th class="createdAt">Date Created</th>
+                <th class="actions"></th>
+            </tr>
+        </thead>
+        <% if (_.isEmpty(quiz.questions)) { %>
+        <tbody>
+            <tr><td colspan="7">No questions have been added yet.</td></tr>
+        </tbody>
+        <% } else { %>
+            <% _.each(['pending', 'approved'], status => { %>
+                <% if (_.keys(questions).length > 1) { %>
+                    <thead>
+                        <tr><th class="status" colspan="7"><%= _.startCase(status) %></th></tr>
+                    <thead>
+                <% } %>
+                <tbody>
+                <% _.each(questions[status], question => { %>
+                    <tr class="<%- status %>">
+                        <td class="sort">
+                        <% if (status != 'pending') { %>
+                            <span class="glyphicon glyphicon-option-vertical handle" title="Hold and drag to new location"></span>
+                            <input type="hidden" name="questions[]" value="<%= question._id %>">
+                        <% } %>
+                        </td>
+                        <td class="number"><%= question.number %></td>
+                        <td class="type"><%= question.type %></td>
+                        <td class="question">
+                            <div class="question"><%= question.question %></div>
+                            <% if (question.tags.length) { %>
+                                <div class="tags">
+                                <% _.each(question.tags, tag => { %>
+                                    <span class="label label-info"><%= tag %></span>
+                                <% }) %>
+                                </div>
+                            <% } %>
+                            <% if (question.submitter) { %>
+                                <div class="submitter">
+                                    <span class="label label-default">Submitted by <%= question.submitter.name.full %></span>
+                                </div>
+                            <% } %>
+                        </td>
+                        <td class="votes">
+                            <div>
+                                <span class="up">+ <%= question.votes.up.length %></span>
+                                <span class="down">- <%= question.votes.down.length %></span>
+                            </div>
+                        </td>
+                        <td class="createdAt"><%= moment(question.createdAt).format(DATEFORMAT) %></td>
+                        <td class="actions">
+                            <div class="dropdown">
+                                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
+                                            <span class="glyphicon glyphicon-pencil"></span> Edit Question
+                                        </a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" class="btn-delete">
+                                            <span class="glyphicon glyphicon-remove"></span> Delete Question
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+                </tbody>
+            <% }) %>
+        <% } %>
+    </table>
+</form>
+
+<% include ../Partials %>

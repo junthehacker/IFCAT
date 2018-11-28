@@ -1,0 +1,54 @@
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li class="active">Users</li>
+</ol>
+
+<h3><%- title %></h3>
+
+<% include ../Partials %>
+
+<form method="post">
+    <div class="nav-actions">
+        <a href="/admin/users/new" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-plus"></span> Add New RemoteUser</a>
+    </div>
+    <table class="table table-hover table-nofluid">
+        <thead>
+            <tr>
+                <th class="name">Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th class="actions"></th>
+            </tr>
+        </thead>
+        <% if (_.isEmpty(users)) { %>
+            <tbody><tr><td colspan="4">No users have been added yet.</td></tr></tbody>
+        <% } else { %>
+            <tfoot>
+                <tr><td colspan="4" class="clearfix"><% include ../Partials %></td></tr>
+            </tfoot>
+            <tbody>
+            <% _.each(users, user => { %>
+                <tr>
+                    <td class="name"><%= user.name.full %></td>
+                    <td><%= user.local.email %></td>
+                    <td><%= user.roles.map(_.startCase).join(', ') %></td>
+                    <td class="actions">
+                        <div class="dropdown">
+                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="/admin/users/<%= user._id %>/edit"><span class="glyphicon glyphicon-pencil"></span> Edit user</a></li>
+                                <li class="divider"></li>
+                                <li><a href="/admin/users/<%= user._id %>?_method=delete" class="btn-delete"><span class="glyphicon glyphicon-remove"></span> Delete user</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        <% } %>
+    </table>
+</form>
+
+<% include ../Partials %>

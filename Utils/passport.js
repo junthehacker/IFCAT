@@ -1,5 +1,5 @@
 const passport          = require('passport');
-const IAServiceProvider = require('../providers/IAServiceProvider');
+const IAServiceProvider = require('../Providers/IAServiceProvider');
 const CustomStrategy    = require('passport-custom').Strategy;
 
 passport.serializeUser((user, done) => {

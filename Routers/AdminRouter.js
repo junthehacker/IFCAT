@@ -1,54 +1,35 @@
-const _ = require('lodash'),
-    controllers = require('../Controllers/Admin'),
-    passport = require('passport'),
-    upload = require('../Utils/upload'),
-    mongoose = require('mongoose');
-
-const GetFileByParameterMiddleware  = require('../Middlewares/ParameterMiddlewares/GetFileByParameterMiddleware');
-
+const _           = require('lodash'),
+      controllers = require('../Controllers/Admin'),
+      upload      = require('../Utils/upload');
 
 let router = require('express').Router();
 
-// non-authenticated routes
-router.get('/install', controllers.User.install);
-router.get('/login', controllers.User.getLogin);
-router.post('/login', passport.authenticate('local-login', {
-    successRedirect: '/admin/courses',
-    failureRedirect: '/admin/login',
-    failureFlash: true
-}));
+const GetCourseByParameterMiddleware       = require('../Middlewares/ParameterMiddlewares/GetCourseByParameterMiddleware');
+const GetFileByParameterMiddleware         = require('../Middlewares/ParameterMiddlewares/GetFileByParameterMiddleware');
+const GetQuizByParameterMiddleware         = require('../Middlewares/ParameterMiddlewares/GetQuizByParameterMiddleware');
+const GetQuestionByParameterMiddleware     = require('../Middlewares/ParameterMiddlewares/GetQuestionByParameterMiddleware');
+const GetGroupByParameterMiddleware        = require('../Middlewares/ParameterMiddlewares/GetGroupByParameterMiddleware');
+const GetTutorialByParameterMiddleware     = require('../Middlewares/ParameterMiddlewares/GetTutorialByParameterMiddleware');
+const GetTutorialQuizByParameterMiddleware = require('../Middlewares/ParameterMiddlewares/GetTutorialQuizByParameterMiddleware');
+const EnsureAdminMiddleware                = require('../Middlewares/EnsureAdminMiddleware');
 
-// check if user is authenticated
-router.use((req, res, next) => {
-    if (req.isAuthenticated() && req.user.canAccessAdminPanel())
-        return next();
-    req.logout();
-    res.redirect('/admin/login');
-});
-
-// query single objects
-router.param('us3r', controllers.User.getUserByParam);
-router.param('student', controllers.Student.getStudentByParam);
-router.param('course', controllers.Course.getCourseByParam);
-router.param('tutorial', controllers.Tutorial.getTutorialByParam);
-router.param('quiz', controllers.Quiz.getQuizByParam);
-router.param('tutorialQuiz', controllers.TutorialQuiz.getTutorialQuizByParam);
-router.param('question', controllers.Question.getQuestionByParam);
+// Apply all middlewares
+GetTutorialByParameterMiddleware.applyToRouter('tutorial', router);
+GetTutorialQuizByParameterMiddleware.applyToRouter('tutorialQuiz', router);
+GetQuestionByParameterMiddleware.applyToRouter('question', router);
+GetQuizByParameterMiddleware.applyToRouter('quiz', router);
+GetCourseByParameterMiddleware.applyToRouter('course', router);
 GetFileByParameterMiddleware.applyToRouter('fil3', router);
-router.param('group', controllers.Group.getGroupByParam);
+GetGroupByParameterMiddleware.applyToRouter('group', router);
+EnsureAdminMiddleware.applyToRouter(router);
 
-// authenticated routes
-router.get('/logout', controllers.User.logout);
+const AdminController = require('../Controllers/Admin/AdminController');
+const QuizController  = require('../Controllers/Admin/QuizController');
 
-router.get('/users', controllers.User.getUsers);
-router.get('/users/new', controllers.User.getUser);
-router.get('/users/:us3r/edit', controllers.User.getUser);
-router.post('/users', controllers.User.addUser);
-router.put('/users/:us3r', controllers.User.editUser);
-router.delete('/users/:us3r', controllers.User.deleteUser);
+let adminController = AdminController.getInstance();
+let quizController  = QuizController.getInstance();
 
-router.get('/', controllers.Course.getCourses);
-router.get('/courses', controllers.Course.getCourses);
+router.get('/courses', adminController.getCourses);
 
 router.get('/courses/:course/files', controllers.File.getFiles);
 router.post('/courses/:course/files', upload.any.array('files'), controllers.File.addFiles);
@@ -60,15 +41,13 @@ router.get('/courses/:course/tutorials/:tutorial/edit', controllers.Tutorial.get
 router.put('/courses/:course/tutorials/:tutorial', controllers.Tutorial.editTutorial);
 router.delete('/courses/:course/tutorials/:tutorial', controllers.Tutorial.deleteTutorial);
 
-router.get('/courses/:course/tutorials/:tutorial/students', controllers.Student.getStudentsByTutorial);
-
-router.get('/courses/:course/quizzes', controllers.Quiz.getQuizzes);
-router.get('/courses/:course/quizzes/new', controllers.Quiz.getQuiz);
-router.get('/courses/:course/quizzes/:quiz/edit', controllers.Quiz.getQuiz);
-router.post('/courses/:course/quizzes', controllers.Quiz.addQuiz);
-router.post('/courses/:course/quizzes/:quiz/copy', controllers.Quiz.copyQuiz);
-router.put('/courses/:course/quizzes/:quiz', controllers.Quiz.editQuiz);
-router.delete('/courses/:course/quizzes/:quiz', controllers.Quiz.deleteQuiz);
+router.get('/courses/:course/quizzes', quizController.getQuizzes);
+router.get('/courses/:course/quizzes/new', quizController.getQuiz);
+router.get('/courses/:course/quizzes/:quiz/edit', quizController.getQuiz);
+router.post('/courses/:course/quizzes', quizController.addQuiz);
+router.post('/courses/:course/quizzes/:quiz/copy', quizController.copyQuiz);
+router.put('/courses/:course/quizzes/:quiz', quizController.editQuiz);
+router.delete('/courses/:course/quizzes/:quiz', quizController.deleteQuiz);
 
 router.get('/courses/:course/quizzes/:quiz/questions', controllers.Question.getQuestions);
 router.patch('/courses/:course/quizzes/:quiz/questions/sort', controllers.Question.sortQuestions);
@@ -79,24 +58,6 @@ router.get('/courses/:course/quizzes/:quiz/questions/preview', controllers.Quest
 router.put('/courses/:course/quizzes/:quiz/questions/:question', controllers.Question.editQuestion);
 router.delete('/courses/:course/quizzes/:quiz/questions/:question', controllers.Question.deleteQuestion);
 
-router.get('/courses/:course/instructors', controllers.Instructor.getInstructorsByCourse);
-router.get('/courses/:course/instructors/search', controllers.Instructor.getInstructorsBySearchQuery);
-router.post('/courses/:course/instructors', controllers.Instructor.addInstructors);
-router.delete('/courses/:course/instructors', controllers.Instructor.deleteInstructors);
-
-router.get('/courses/:course/teaching-assistants', controllers.TeachingAssistant.getTeachingAssistantsByCourse);
-router.get('/courses/:course/teaching-assistants/search', controllers.TeachingAssistant.getTeachingAssistantsBySearchQuery);
-router.post('/courses/:course/teaching-assistants', controllers.TeachingAssistant.addTeachingAssistants);
-router.delete('/courses/:course/teaching-assistants', controllers.TeachingAssistant.deleteTeachingAssistants);
-
-router.get('/courses/:course/students', controllers.Student.getStudentsByCourse);
-router.get('/courses/:course/students/search', controllers.Student.getStudentsBySearchQuery);
-router.post('/courses/:course/students/import', upload.csv.single('file'), controllers.Student.importStudents);
-router.post('/courses/:course/students', controllers.Student.addStudents);
-router.delete('/courses/:course/students', controllers.Student.deleteStudents);
-
-router.patch('/courses/:course/tutorials/teaching-assistants', controllers.TeachingAssistant.editTeachingAssistants);
-router.patch('/courses/:course/tutorials/students', controllers.Student.editStudents);
 
 router.get('/courses/:course/tutorials-quizzes', controllers.TutorialQuiz.getTutorialsQuizzes);
 router.patch('/courses/:course/tutorials-quizzes', controllers.TutorialQuiz.editTutorialsQuizzes);
@@ -113,8 +74,6 @@ router.get('/courses/:course/tutorials-quizzes/:tutorialQuiz/marks', controllers
 
 router.post('/courses/:course/marks', controllers.Response.getMarksByCourse);
 router.get('/courses/:course/students/:student/marks', controllers.Response.getMarksByStudent);
-
-router.get('/quizzes/:quizId', controllers.Quiz.fetchQuizJson);
 
 
 module.exports = router;

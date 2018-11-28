@@ -1,0 +1,56 @@
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li><a href="/admin/courses">Courses</a> ‐ <%- course.code %></li>
+    <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes">Tutorials &amp; Quizzes</a></li>
+    <li class="active">Marks</li>
+</ol>
+
+<h3><%- title %></h3>
+
+<div class="nav-actions">
+    <a class="btn btn-default btn-sm" href="/admin/courses/<%= course.id %>/tutorials-quizzes/<%= tutorialQuiz._id %>/marks?export=true"><span class="glyphicon glyphicon-save"></span> Export</a>
+</div>
+
+<table class="table table-hover table-nofluid">
+    <thead>
+        <tr>
+            <th>UTORid</th>
+            <th>Student No.</th>
+            <th>Name</th>
+            <th class="text-center">Tutorial</th>
+            <th>Quiz</th>
+            <th class="text-center">Group</th>
+            <th class="text-center">Mark</th>
+            <th class="actions"></th>
+        </tr>
+    </thead>
+    <tbody>
+    <% if (_.isEmpty(data)) { %>
+        <tr><td colspan="8">No students have been added yet.</td></tr>
+    <% } else { %>
+        <% _.each(data, d => { %>
+            <tr>
+                <td><%= d.member.UTORid %></td>
+                <td><%= d.member.studentNumber %></td>
+                <td><%= `${d.member.name.first} ${d.member.name.last}` %></td>
+                <td class="text-center"><%= d.tutorial.number %></td>
+                <td><%= d.quiz.name %></td>
+                <td class="text-center"><%= d.group.name %></td>
+                <td class="text-center"><%= d.totalPoints %></td>
+                <td class="actions">
+                    <div class="dropdown">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes/<%= tutorialQuiz._id %>/groups/<%= d.group._id %>/responses">View Group Responses</a></li>
+                            <li><a href="/admin/courses/<%= course._id %>/students/<%= d.member._id %>/marks">View Student Marks</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        <% }) %>
+    <% } %>
+    </tbody>
+</table>
+
+<% include ../Partials %>

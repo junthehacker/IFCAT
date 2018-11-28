@@ -1,5 +1,5 @@
 const config               = require('../Utils/config').ia;
-const getIAServiceProvider = () => require('../providers/IAServiceProvider');
+const getIAServiceProvider = () => require('../Providers/IAServiceProvider');
 
 module.exports = class RemoteTutorial {
     constructor(tutorial) {

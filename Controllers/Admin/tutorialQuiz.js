@@ -11,24 +11,6 @@ const getAbsUrl = require('../../Utils/getAbsUrl');
 const TutorialQuiz = require('../../Models/TutorialQuiz');
 const models       = require('../../Models');
 
-/**
- * Middleware that retrieves one tutorial quiz by parameters
- * This will also fill the 'tutorial' path from remote.
- * @param req
- * @param res
- * @param next
- * @param id
- */
-exports.getTutorialQuizByParam = async (req, res, next, id) => {
-    let tutorialQuiz = await TutorialQuiz.findById(id);
-    if (!tutorialQuiz) {
-        throw new Error("No tutorial quiz is found.");
-    }
-    await tutorialQuiz.fillTutorialFromRemote();
-    req.tutorialQuiz = tutorialQuiz;
-    next();
-};
-
 // Retrieve quizzes within course OR by tutorial
 exports.getTutorialsQuizzes = (req, res, next) => {
     let page    = parseInt(req.query.page, 10) || 1,

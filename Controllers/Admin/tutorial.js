@@ -2,27 +2,6 @@ var _ = require('lodash'),
     async = require('async'),
     models = require('../../Models');
 
-const IAServiceProvider = require('../../providers/IAServiceProvider');
-
-/**
- * Retrieve tutorial from remote by param
- * @param req
- * @param res
- * @param next
- * @param id
- */
-exports.getTutorialByParam = (req, res, next, id) => {
-    IAServiceProvider.getTutorialByIdOrFail(id)
-        .then(tutorial => {
-            req.tutorial = tutorial;
-            next();
-        })
-        .catch(e => {
-            next(e);
-        });
-};
-
-
 // Retrieve list of tutorials for course
 exports.getTutorials = (req, res, next) => {
     models.Tutorial.find({ 

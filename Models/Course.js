@@ -3,7 +3,7 @@
 const config = require('../Utils/config').ia;
 
 function getIAServiceProvider() {
-    return require('../providers/IAServiceProvider');
+    return require('../Providers/IAServiceProvider');
 }
 
 module.exports = class Course {

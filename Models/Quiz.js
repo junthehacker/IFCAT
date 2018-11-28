@@ -70,7 +70,7 @@ QuizSchema.methods.isLinkedTo = function (tutorial) {
 QuizSchema.methods.linkTutorials = function (tutorials = []) {
     return new Promise((resolve, reject) => {
         // First we need to find and remove all old links
-        this.model('TutorialQuiz').remove({ quiz: this._id })
+        this.model('TutorialQuiz').remove({ quiz: this }).exec()
             .then(() => {
                 // Then create all new links
                 let chain = [];

@@ -4,18 +4,6 @@ const _ = require('../../Utils/lodash.mixin'),
     url = require('url');
 const getAbsUrl = require('../../Utils/getAbsUrl');
 
-// Retrieve question
-exports.getQuestionByParam = (req, res, next, id) => {
-    models.Question.findById(id, (err, question) => {
-        if (err)
-            return next(err);
-        if (!question) 
-            return next(new Error('No question is found.'));
-        req.question = question;
-        next();
-    });
-};
-
 /**
  * Question list page
  * @param req

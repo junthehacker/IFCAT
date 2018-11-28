@@ -1,0 +1,30 @@
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li class="active">Hub</li>
+</ol>
+
+<h3><%- title %></h3>
+
+<% include ../Partials %>
+
+<form method="post">
+    <table class="table table-hover table-nofluid">
+        <thead>
+            <tr>
+                <th>Endpoint</th>
+                <th class="actions"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Users</td>
+                <td class="actions">
+                    <a href="/admin/hub/users?_method=patch" class="btn btn-primary">Pull</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<% include ../Partials %>

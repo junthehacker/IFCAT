@@ -1,0 +1,54 @@
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li><a href="/admin/courses">Courses</a> ‐ <%= course.code %></li>
+    <li class="active">Students</li>
+</ol>
+
+<h3><%- title %></h3>
+
+<% include ../Partials %>
+
+<form method="post">
+    <div class="nav-actions">
+        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-import-students"><span class="glyphicon glyphicon-save"></span> Import students</button>
+        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-find-users"><span class="glyphicon glyphicon-search"></span> Find students</button>
+        <button type="submit" formaction="/admin/courses/<%= course.id %>/tutorials/students?_method=patch" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-ok" id="btn-update"></span> Update tutorials</button>
+        <button type="submit" formaction="/admin/courses/<%= course.id %>/students?_method=delete" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete students</button>
+    </div>
+    <table class="table table-hover table-nofluid">
+        <thead>
+            <tr>
+                <th class="cb"><input type="checkbox" value="1"></th>
+                <th>Name</th>
+                <th>UTORid</th>
+                <th>Student No.</th>
+                <th>Tutorials</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% if (_.isEmpty(students)) { %>
+            <tr><td colspan="5">No students have been added to the course yet.</td></tr>
+        <% } else { %>
+            <% _.each(students, student => { %>
+                <tr>
+                    <td class="cb"><input type="checkbox" name="-users[]" value="<%= student._id %>"></td>
+                    <td><%= student.name.full %></td>
+                    <td><%= student.UTORid %></td>
+                    <td><%= student.studentNumber %></td>
+                    <td>
+                        <input type="hidden" name="users[]" value="<%= student._id %>"> 
+                        <% _.each(course.tutorials, tutorial => { %>
+                            <input type="checkbox" name="+users[<%= student._id %>]" value="<%= tutorial._id %>" data-label="<%= tutorial.number %>"<%= tutorial.hasStudent(student._id) ? ' checked' : '' %>>
+                        <% }) %>
+                    </td>
+                </tr>
+            <% }) %>
+        <% } %>
+        </tbody>
+    </table>
+</form>
+
+<% include ../Partials %>
+<% include ../Partials %>
+<% include ../Partials %>

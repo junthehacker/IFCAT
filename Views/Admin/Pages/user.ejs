@@ -1,0 +1,68 @@
+<% include ../Partials %>
+
+<ol class="breadcrumb">
+    <li><a href="/admin/users">Users</a></li>
+    <li class="active"><%- us3r.isNew ? 'New' : 'Edit' %></li>
+</ol>
+
+<h3><%- title %></h3>
+
+<% include ../Partials %>
+
+<form action="/admin/users/<%= us3r.isNew ? '' : `${us3r._id}?_method=put` %>" method="post" autocomplete="off" class="form-horizontal">
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-2" style="margin-bottom: 15px;">
+            <input type="text" name="name[first]" value="<%= us3r.name.first %>" placeholder="First" class="form-control" required>
+        </div>
+        <div class="col-sm-2"> 
+            <input type="text" name="name[last]" value="<%= us3r.name.last %>" placeholder="Last" class="form-control" required>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">Roles</label>
+        <div class="col-sm-8">
+            <select name="roles" multiple class="form-control">
+                <option value="admin"<%= us3r.hasRole('admin') ? ' selected' : '' %>>Administrator</option>
+                <option value="instructor"<%= us3r.hasRole('instructor') ? ' selected' : '' %>>Instructor</option>
+                <option value="teachingAssistant"<%= us3r.hasRole('teachingAssistant') ? ' selected' : '' %>>Teaching assistant</option>
+                <option value="student"<%= us3r.hasRole('student') ? ' selected' : '' %>>Student</option>
+            </select>
+            <p class="help-block"><span class="glyphicon glyphicon-info-sign"></span> Tip: Hold down Ctrl or Command key while clicking to select more than one option.</p>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">E-mail Address</label>
+        <div class="col-sm-8">
+            <input type="text" name="local[email]" value="<%= us3r.local.email %>" class="form-control" required>
+        </div>
+    </div>
+    <div class="form-group required">
+        <label class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-8">
+            <input type="password" name="local[password]" value="" class="form-control">
+        </div>
+    </div>
+    <div data-roles="student">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">UTORid</label>
+            <div class="col-sm-8">
+                <input type="text" name="UTORid" value="<%= us3r.UTORid %>" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Student Number</label>
+            <div class="col-sm-8">
+                <input type="text" name="studentNumber" value="<%= us3r.studentNumber %>" class="form-control" maxlength="12">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a href="/admin/users" class="btn btn-default btn-sm">Cancel</a>
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
+        </div>
+    </div>
+</form>
+
+<% include ../Partials %>

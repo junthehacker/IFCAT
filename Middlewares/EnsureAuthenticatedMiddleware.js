@@ -10,7 +10,7 @@ const getAbsUrl  = require('../Utils/getAbsUrl');
 /**
  * Redirect user back to / if not authenticated.
  * @extends Middleware
- * @memberOf Middlewares
+ * @memberOf Middleware
  */
 class EnsureAuthenticatedMiddleware extends Middleware {
 

@@ -6,7 +6,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 const Controller        = require('../Controller');
 const passport          = require('passport');
-const IAServiceProvider = require('../../providers/IAServiceProvider');
+const IAServiceProvider = require('../../Providers/IAServiceProvider');
 const getAbsUrl         = require('../../Utils/getAbsUrl');
 
 /**
