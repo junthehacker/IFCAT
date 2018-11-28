@@ -117,7 +117,7 @@ class QuizController extends Controller {
         try {
             await req.quiz.withQuestions().execPopulate();
             let questionIds = [];
-            asyncForEach(req.quiz.questions, async (question) => {
+            await asyncForEach(req.quiz.questions, async (question) => {
                 question._id   = mongoose.Types.ObjectId();
                 question.isNew = true;
                 await question.save();

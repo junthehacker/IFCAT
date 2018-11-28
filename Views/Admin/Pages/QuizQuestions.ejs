@@ -5,7 +5,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
            Neeilan Selvalingam
 -----------------------------------*/%>
 
-<% include ../Partials %>
+<% include ../Partials/Header.ejs %>
 
 <ol class="breadcrumb">
     <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
@@ -15,7 +15,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 <h3 id="title"><%- title %></h3>
 
-<% include ../Partials %>
+<% include ../Partials/Flash.ejs %>
 
 <form method="post">
     <div class="nav-actions">
@@ -117,4 +117,4 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </table>
 </form>
 
-<% include ../Partials %>
+<% include ../Partials/Footer.ejs %>

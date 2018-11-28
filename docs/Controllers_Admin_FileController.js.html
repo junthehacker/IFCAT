@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Controllers/Admin/FileController.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Controller.AdminController.AdminController.html">AdminController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.AdminController.html#getCourses">getCourses</a></li></ul></li><li><a href="Controller.AdminController.FileController.html">FileController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.FileController.html#addFiles">addFiles</a></li><li data-type='method'><a href="Controller.AdminController.FileController.html#deleteFiles">deleteFiles</a></li><li data-type='method'><a href="Controller.AdminController.FileController.html#getFiles">getFiles</a></li></ul></li><li><a href="Controller.AdminController.GroupController.html">GroupController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.GroupController.html#generateGroups">generateGroups</a></li><li data-type='method'><a href="Controller.AdminController.GroupController.html#saveGroups">saveGroups</a></li></ul></li><li><a href="Controller.AdminController.QuestionController.html">QuestionController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.QuestionController.html#addQuestion">addQuestion</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#deleteQuestion">deleteQuestion</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#editQuestion">editQuestion</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#getQuestion">getQuestion</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#getQuestions">getQuestions</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#previewQuestion">previewQuestion</a></li><li data-type='method'><a href="Controller.AdminController.QuestionController.html#sortQuestions">sortQuestions</a></li></ul></li><li><a href="Controller.AdminController.QuizController.html">QuizController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.QuizController.html#addQuiz">addQuiz</a></li><li data-type='method'><a href="Controller.AdminController.QuizController.html#copyQuiz">copyQuiz</a></li><li data-type='method'><a href="Controller.AdminController.QuizController.html#deleteQuiz">deleteQuiz</a></li><li data-type='method'><a href="Controller.AdminController.QuizController.html#editQuiz">editQuiz</a></li><li data-type='method'><a href="Controller.AdminController.QuizController.html#getQuiz">getQuiz</a></li><li data-type='method'><a href="Controller.AdminController.QuizController.html#getQuizzes">getQuizzes</a></li></ul></li><li><a href="Controller.AdminController.ResponseController.html">ResponseController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.ResponseController.html#addResponse">addResponse</a></li><li data-type='method'><a href="Controller.AdminController.ResponseController.html#editResponse">editResponse</a></li><li data-type='method'><a href="Controller.AdminController.ResponseController.html#getMarksByCourse">getMarksByCourse</a></li><li data-type='method'><a href="Controller.AdminController.ResponseController.html#getMarksByStudent">getMarksByStudent</a></li><li data-type='method'><a href="Controller.AdminController.ResponseController.html#getMarksByTutorialQuiz">getMarksByTutorialQuiz</a></li><li data-type='method'><a href="Controller.AdminController.ResponseController.html#getResponses">getResponses</a></li></ul></li><li><a href="Controller.AdminController.TutorialQuizController.html">TutorialQuizController</a><ul class='methods'><li data-type='method'><a href="Controller.AdminController.TutorialQuizController.html#editTutorialQuiz">editTutorialQuiz</a></li><li data-type='method'><a href="Controller.AdminController.TutorialQuizController.html#editTutorialsQuizzes">editTutorialsQuizzes</a></li><li data-type='method'><a href="Controller.AdminController.TutorialQuizController.html#getTutorialQuiz">getTutorialQuiz</a></li><li data-type='method'><a href="Controller.AdminController.TutorialQuizController.html#getTutorialsQuizzes">getTutorialsQuizzes</a></li></ul></li><li><a href="Controller.Controller.html">Controller</a><ul class='methods'><li data-type='method'><a href="Controller.Controller.html#.getInstance">getInstance</a></li></ul></li><li><a href="Controller.GuestController.DashboardController.html">DashboardController</a><ul class='methods'><li data-type='method'><a href="Controller.GuestController.DashboardController.html#getHome">getHome</a></li></ul></li><li><a href="Controller.GuestController.LoginController.html">LoginController</a></li><li><a href="Controller.GuestController.LogoutController.html">LogoutController</a><ul class='methods'><li data-type='method'><a href="Controller.GuestController.LogoutController.html#logout">logout</a></li></ul></li><li><a href="Controller.StudentController.FileController.html">FileController</a><ul class='methods'><li data-type='method'><a href="Controller.StudentController.FileController.html#getFileLinkById">getFileLinkById</a></li></ul></li><li><a href="Controller.StudentController.QuestionController.html">QuestionController</a><ul class='methods'><li data-type='method'><a href="Controller.StudentController.QuestionController.html#addQuestion">addQuestion</a></li><li data-type='method'><a href="Controller.StudentController.QuestionController.html#downVoteQuestion">downVoteQuestion</a></li><li data-type='method'><a href="Controller.StudentController.QuestionController.html#getQuestionForm">getQuestionForm</a></li><li data-type='method'><a href="Controller.StudentController.QuestionController.html#upVoteQuestion">upVoteQuestion</a></li></ul></li><li><a href="Controller.StudentController.StudentController.html">StudentController</a><ul class='methods'><li data-type='method'><a href="Controller.StudentController.StudentController.html#getCourses">getCourses</a></li><li data-type='method'><a href="Controller.StudentController.StudentController.html#getQuizzes">getQuizzes</a></li></ul></li><li><a href="IAServiceProvider.html">IAServiceProvider</a><ul class='methods'><li data-type='method'><a href="IAServiceProvider.html#.getAllCourses">getAllCourses</a></li><li data-type='method'><a href="IAServiceProvider.html#.getAllTutorials">getAllTutorials</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLoginUrl">getLoginUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getLogoutUrl">getLogoutUrl</a></li><li data-type='method'><a href="IAServiceProvider.html#.getTutorialByIdOrFail">getTutorialByIdOrFail</a></li><li data-type='method'><a href="IAServiceProvider.html#.getUserByToken">getUserByToken</a></li><li data-type='method'><a href="IAServiceProvider.html#.runGetRequest">runGetRequest</a></li></ul></li><li><a href="Middleware.EnsureAdminMiddleware.html">EnsureAdminMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.EnsureAdminMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.EnsureAuthenticatedMiddleware.html">EnsureAuthenticatedMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.EnsureAuthenticatedMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.Middleware.html">Middleware</a><ul class='methods'><li data-type='method'><a href="Middleware.Middleware.html#.applyToRouter">applyToRouter</a></li><li data-type='method'><a href="Middleware.Middleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetCourseByParameterMiddleware.html">GetCourseByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetCourseByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetFileByParameterMiddleware.html">GetFileByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetFileByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetGroupByParameterMiddleware.html">GetGroupByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetGroupByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetQuestionByParameterMiddleware.html">GetQuestionByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetQuestionByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetQuizByParameterMiddleware.html">GetQuizByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetQuizByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetTutorialByParameterMiddleware.html">GetTutorialByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetTutorialByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.GetTutorialQuizByParameterMiddleware.html">GetTutorialQuizByParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.GetTutorialQuizByParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="Middleware.ParameterMiddleware.ParameterMiddleware.html">ParameterMiddleware</a><ul class='methods'><li data-type='method'><a href="Middleware.ParameterMiddleware.ParameterMiddleware.html#.applyToRouter">applyToRouter</a></li><li data-type='method'><a href="Middleware.ParameterMiddleware.ParameterMiddleware.html#handler">handler</a></li></ul></li><li><a href="RemoteUser.html">RemoteUser</a><ul class='methods'><li data-type='method'><a href="RemoteUser.html#.createList">createList</a></li><li data-type='method'><a href="RemoteUser.html#canAccessAdminPanel">canAccessAdminPanel</a></li><li data-type='method'><a href="RemoteUser.html#getCourse">getCourse</a></li><li data-type='method'><a href="RemoteUser.html#getCourses">getCourses</a></li><li data-type='method'><a href="RemoteUser.html#getId">getId</a></li><li data-type='method'><a href="RemoteUser.html#getUsername">getUsername</a></li><li data-type='method'><a href="RemoteUser.html#isAdmin">isAdmin</a></li><li data-type='method'><a href="RemoteUser.html#isInstructor">isInstructor</a></li><li data-type='method'><a href="RemoteUser.html#isTA">isTA</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="Controller.html">Controller</a></li><li><a href="Controller.AdminController.html">AdminController</a></li><li><a href="Controller.GuestController.html">GuestController</a></li><li><a href="Controller.StudentController.html">StudentController</a></li><li><a href="Middleware.html">Middleware</a></li><li><a href="Middleware.ParameterMiddleware.html">ParameterMiddleware</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Controllers/Admin/FileController.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*------------------------------------
+Controller for admin quiz pages.
+
+Author(s): Jun Zheng [me at jackzh dot com]
+-------------------------------------*/
+
+const Controller   = require('../Controller');
+const File         = require('../../Models/File');
+const asyncForEach = require('../../Utils/asyncForEach');
+const async        = require('async');
+const path         = require('path');
+const fs           = require('fs-extra');
+const config       = require('../../Utils/config');
+
+// TODO: File system need serious refactoring, currently it only supports storing file into local FS.
+
+/**
+ * Controller singleton for admin quiz pages.
+ * @extends Controller
+ * @memberOf Controller.AdminController
+ */
+class FileController extends Controller {
+
+    /**
+     * Get all files in a course.
+     * @param {Object} req Express request.
+     * @param {Object} res Express response.
+     * @param {function} next Next callback.
+     * @returns {Promise&lt;void>}
+     */
+    async getFiles(req, res, next) {
+        try {
+            await req.course.withFiles().execPopulate();
+            res.render('Admin/Pages/CourseFiles', {
+                bodyClass: 'files-page',
+                title: 'Files',
+                course: req.course
+            });
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * Update database entries to reflect file uploads.
+     * This ENDPOINT DOES NOT actually upload files.
+     * @param {Object} req Express request.
+     * @param {Object} res Express response.
+     * @param {function} next Next callback.
+     * @returns {Promise&lt;void>}
+     */
+    async addFiles(req, res, next) {
+        try {
+            await asyncForEach(req.files, async (obj) => {
+                let file = new File();
+                await file.store(obj).save();
+                await req.course.update({$push: {files: file._id}});
+            });
+            req.flash('success', 'The files have been added.');
+            res.redirect(`/admin/courses/${req.course._id}/files`);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    /**
+     * Delete files from both database and file system.
+     * TODO: This function need to be rewritten.
+     * @param {Object} req Express request.
+     * @param {Object} res Express response.
+     * @param {function} next Next callback.
+     * @returns {Promise&lt;void>}
+     */
+    async deleteFiles(req, res, next) {
+        const dir = path.join(__dirname, '../..', config.upload.path, req.course.id);
+        async.eachSeries(req.body['-files'], (id, done) => {
+            async.waterfall([
+                function (done) {
+                    File.findById(id, (err, file) => {
+                        if (err)
+                            return done(err);
+                        if (!file)
+                            return done(new Error('no file'));
+                        done(null, file);
+                    });
+                },
+                function (file, done) {
+                    file.remove(err => {
+                        if (err)
+                            return done(err);
+                        done(null, file);
+                    });
+                },
+                function (file, done) {
+                    let filename = path.resolve(dir, file.name);
+                    fs.stat(filename, (err, stats) => {
+                        if (err &amp;&amp; err.code === 'ENOENT')
+                            return done();
+                        else if (err)
+                            return done(err);
+                        else if (stats.isFile())
+                            fs.remove(filename, done);
+                        else
+                            return done();
+                    });
+                }
+            ], done);
+        }, err => {
+            if (err)
+                return next(err);
+            req.flash('success', 'The files have been deleted.');
+            res.redirect('back');
+        });
+    }
+
+}
+
+module.exports = FileController;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Nov 28 2018 13:19:28 GMT-0500 (EST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

@@ -1,4 +1,4 @@
-<% include ../Partials %>
+<% include ../Partials/Header.ejs %>
 
 <ol class="breadcrumb">
     <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
@@ -7,7 +7,7 @@
 
 <h3><%- title %></h3>
 
-<% include ../Partials %>
+<% include ../Partials/Flash.ejs %>
 
 <form method="post" autocomplete="off" class="form-horizontal">
 
@@ -29,7 +29,7 @@
             </tr>
         </thead>
         <tfoot>
-            <tr><td colspan="7" class="clearfix"><% include ../Partials %></td></tr>
+            <tr><td colspan="7" class="clearfix"><% include ../Partials/Pagination.ejs %></td></tr>
         </tfoot>
         <tbody>
         <% if (_.isEmpty(tutorialQuizzes)) { %>
@@ -58,8 +58,8 @@
         </tbody>
     </table>
 
-    <% include ../Partials %>
+    <% include ../Partials/ModalEditTutorialsQuizzes.ejs %>
 
 </form>
 
-<% include ../Partials %>
+<% include ../Partials/Footer.ejs %>

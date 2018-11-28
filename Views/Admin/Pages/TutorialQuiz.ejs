@@ -1,4 +1,4 @@
-<% include ../Partials %>
+<% include ../Partials/Header.ejs %>
 
 <ol class="breadcrumb">
     <li><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a> ‐ <%= course.getCode() %></li>
@@ -8,7 +8,7 @@
 
 <h3 id="title"><%- title %></h3>
 
-<% include ../Partials %>
+<% include ../Partials/Flash.ejs %>
 
 <ul class="nav nav-tabs">
     <li class="active"><a href="#settings" data-toggle="tab">Settings</a></li>
@@ -112,4 +112,4 @@
 
 </div>
 
-<% include ../Partials %>
+<% include ../Partials/Footer.ejs %>
