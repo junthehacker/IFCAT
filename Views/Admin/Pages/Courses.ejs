@@ -1,17 +1,19 @@
-<%/*----------------------------------
+<% /*----------------------------------
 Course list page for admin panel.
 
 Author(s): Jun Zheng [me at jackzh dot com]
            Neeilan Selvalingam
------------------------------------*/%>
-
+           Michael Dennis
+-----------------------------------*/ %>
 <% include ../Partials/Header.ejs %>
 
-<ol class="breadcrumb">
-    <li class="active">Courses</li>
-</ol>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Courses</li>
+    </ol>
+</nav>
 
-<h3><%= title %></h3>
+<h3>All Courses</h3>
 
 <% include ../Partials/Flash.ejs %>
 
@@ -25,14 +27,14 @@ Author(s): Jun Zheng [me at jackzh dot com]
         </tr>
         </thead>
         <tbody>
-        <% if (_.isEmpty(courses)) { %>
-            <tr>
-                <td colspan="3">
-                    You don't have any courses yet, ask your administrator to add your course.
-                </td>
-            </tr>
+        <% if (courses.length === 0) { %>
+        <tr>
+            <td colspan="3">
+                Currently there is no course in the system.
+            </td>
+        </tr>
         <% } else { %>
-            <% _.each(courses, course => { %>
+            <% courses.forEach(course => { %>
                 <tr>
                     <td class="code"><%= course.getCode() %></td>
                     <td class="name"><%= course.getDisplayName() %></td>
@@ -41,20 +43,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
                                 Actions <span class="caret"/>
                             </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/quizzes">
-                                        <span class="glyphicon glyphicon-list-alt"></span> Manage Quizzes
-                                    </a>
-                                </li>
-                                <% if (user.isAdmin() || user.isInstructor()) { %>
-                                    <li>
-                                        <a href="<%= config.baseDir %>/admin/courses/<%= course.getId() %>/tutorials-quizzes">
-                                            <span class="glyphicon glyphicon-play-circle"></span> Conduct Quizzes
-                                        </a>
-                                    </li>
-                                <% } %>
-                            </ul>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"
+                                   href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">
+                                    <i class="fa fa-list" aria-hidden="true"></i> &nbsp;Manage Quizzes
+                                </a>
+                                <a class="dropdown-item"
+                                   href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">
+                                    <i class="fa fa-play" aria-hidden="true"></i> &nbsp;Conduct Quizzes
+                                </a>
+                            </div>
                         </div>
                     </td>
                 </tr>

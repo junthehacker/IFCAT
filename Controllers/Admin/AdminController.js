@@ -27,11 +27,7 @@ class AdminController extends Controller {
      */
     async getCourses(req, res) {
         let courses = await IAServiceProvider.getAllCourses();
-        res.render('Admin/Pages/Courses', {
-            bodyClass: 'courses-page',
-            title: 'Courses',
-            courses
-        });
+        res.render('Admin/Pages/Courses', {courses});
     }
 
 }

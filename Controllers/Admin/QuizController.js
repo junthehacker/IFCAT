@@ -26,11 +26,7 @@ class QuizController extends Controller {
      */
     async getQuizzes(req, res, next) {
         await req.course.fillQuizzes();
-        res.render('Admin/Pages/CourseQuizzes', {
-            bodyClass: 'quizzes-page',
-            title: 'Quizzes',
-            course: req.course
-        });
+        res.render('Admin/Pages/CourseQuizzes', {course: req.course});
     }
 
     /**
