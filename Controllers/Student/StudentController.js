@@ -6,7 +6,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 /**
  * Student controller namespace.
- * @namespace Controller.Student
+ * @namespace Controller.StudentController
  */
 
 const Controller   = require('../Controller');
@@ -16,7 +16,7 @@ const asyncForEach = require('../../Utils/asyncForEach');
 /**
  * Controller singleton for student dashboard.
  * @extends Controller
- * @memberOf Controller.Student
+ * @memberOf Controller.StudentController
  */
 class StudentController extends Controller {
 

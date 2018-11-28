@@ -2,6 +2,8 @@ var models = require('../Models'),
     _ = require('lodash'),
     controllers = require('../Controllers/Student');
 
+const QuestionController = require('../Controllers/Student/QuestionController');
+let questionController = QuestionController.getInstance();
 
 module.exports = (io) => (function (socket) {
 
@@ -200,11 +202,11 @@ socket.on('attemptAnswer', function(data) {
     })
     
 socket.on('UPVOTE_QUESTION', function(data) {
-    controllers.Question.upvoteQuestion(data.questionId, socket.request.user._id);
-})
+    questionController.upVoteQuestion(data.questionId, socket.request.user._id);
+});
 
 socket.on('DOWNVOTE_QUESTION', function(data) {
-    controllers.Question.downvoteQuestion(data.questionId, socket.request.user._id);
+    questionController.downVoteQuestion(data.questionId, socket.request.user._id);
 })
 
 

@@ -1,4 +1,4 @@
-<% include ./header %>
+<% include ./Header.ejs %>
 
 <h3><%= course.getDisplayName() %></h3>
 
@@ -16,4 +16,4 @@
         <h4><%= tutorialQuiz.quiz.name %> <small><%= tutorialQuiz.tutorial.getDisplayName() %></small></h4>
     <% }) %>
 <% } %>
-<% include ./footer %>
+<% include ./Footer.ejs %>

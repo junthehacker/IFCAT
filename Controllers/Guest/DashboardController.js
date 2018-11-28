@@ -6,7 +6,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 /**
  * Guest controller namespace.
- * @namespace Controller.Guest
+ * @namespace Controller.GuestController
  */
 
 const Controller = require('../Controller');
@@ -14,7 +14,7 @@ const Controller = require('../Controller');
 /**
  * Controller singleton for guest dashboard.
  * @extends Controller
- * @memberOf Controller.Guest
+ * @memberOf Controller.GuestController
  */
 class DashboardController extends Controller {
 

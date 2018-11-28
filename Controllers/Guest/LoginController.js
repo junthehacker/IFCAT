@@ -12,7 +12,7 @@ const getAbsUrl         = require('../../Utils/getAbsUrl');
 /**
  * Controller singleton for login actions.
  * @extends Controller
- * @memberOf Controller.Guest
+ * @memberOf Controller.GuestController
  */
 class LoginController extends Controller {
 

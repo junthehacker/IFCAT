@@ -13,17 +13,20 @@ GetQuestionByParameterMiddleware.applyToRouter('question', router);
 GetTutorialQuizByParameterMiddleware.applyToRouter('tutorialQuiz', router);
 EnsureAuthenticatedMiddleware.applyToRouter(router);
 
+const StudentController  = require('../Controllers/Student/StudentController');
+const FileController     = require('../Controllers/Student/FileController');
+const QuestionController = require('../Controllers/Student/QuestionController');
 
-const StudentController = require('../Controllers/Student/StudentController');
-
-let studentController = StudentController.getInstance();
+let studentController  = StudentController.getInstance();
+let fileController     = FileController.getInstance();
+let questionController = QuestionController.getInstance();
 
 // authenticated routes
 router.get('/courses', studentController.getCourses);
 router.get('/courses/:course/quizzes', studentController.getQuizzes);
 router.get('/courses/:course/quizzes/:tutorialQuiz/start', controllers.TutorialQuiz.startQuiz);
-router.get('/courses/:course/quizzes/:tutorialQuiz/submit-question', controllers.Question.getQuestionForm);
-router.post('/courses/:course/quizzes/:tutorialQuiz/submit-question', controllers.Question.addQuestion);
-router.get('/file/:id', controllers.File.getFileLinkById);
+router.get('/courses/:course/quizzes/:tutorialQuiz/submit-question', questionController.getQuestionForm);
+router.post('/courses/:course/quizzes/:tutorialQuiz/submit-question', questionController.addQuestion);
+router.get('/file/:id', fileController.getFileLinkById);
 
 module.exports = router;
