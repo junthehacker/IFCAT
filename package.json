@@ -5,7 +5,7 @@
   "private": true,
   "description": "no description yet",
   "scripts": {
-    "start": "BUILD=`git rev-parse --short HEAD` NODE_ENV=development node app.js",
+    "start": "BUILD=`git rev-parse --short HEAD` NODE_ENV=development nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json --readme DEVELOPER.md"
   },
@@ -66,6 +66,7 @@
     "babel-preset-react": "^6.24.1",
     "docdash": "^1.0.0",
     "es2015": "0.0.0",
-    "jsdoc": "^3.5.5"
+    "jsdoc": "^3.5.5",
+    "nodemon": "^1.18.7"
   }
 }
