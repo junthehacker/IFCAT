@@ -13,12 +13,15 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </ol>
 </nav>
 
-<h3>All Courses</h3>
+<h3>
+    <i class="fa fa-television" aria-hidden="true"></i> All Courses
+</h3>
+<hr/>
 
 <% include ../Partials/Flash.ejs %>
 
 <form method="post">
-    <table class="table table-hover">
+    <table class="table table-hover table-bordered table-light">
         <thead>
         <tr>
             <th class="code">Code</th>
@@ -40,8 +43,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                     <td class="name"><%= course.getDisplayName() %></td>
                     <td class="actions">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                                Actions <span class="caret"/>
+                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Actions
                             </button>
                             <div class="dropdown-menu">
                                 <a class="dropdown-item"

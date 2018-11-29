@@ -24,12 +24,14 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <% include ../Partials/Flash.ejs %>
 
 <form method="post">
+    <hr/>
     <div class="nav-actions">
         <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/new`) %>" class="btn btn-primary btn-raised">
             <i class="fa fa-plus" aria-hidden="true"></i> Add New Question
         </a>
         <div class="btn-group">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-sort-by-attributes"></span> Sort By <span class="caret"></span>
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Sort By
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="?sort=">Default</a>
@@ -41,6 +43,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
             Save Order
         </button>
     </div>
+    <hr/>
     <table class="table table-hover">
         <thead>
             <tr>
@@ -99,8 +102,9 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <td class="createdAt"><%= moment(question.createdAt).format(DATEFORMAT) %></td>
                         <td class="actions">
                             <div class="dropdown">
-                                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
-                                <div class="dropdown-menu">
+                                <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Actions
+                                </button>                                <div class="dropdown-menu">
                                     <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
                                         Edit Question
                                     </a>

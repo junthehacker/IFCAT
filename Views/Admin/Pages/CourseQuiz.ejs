@@ -29,105 +29,125 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <input type="hidden" name="courseId" value="<%= course.getId() %>"/>
 
-    <div class="form-group required">
-        <label class="control-label">Name</label>
-        <input type="text" name="name" value="<%= quiz.name %>" class="form-control" required/>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">Available to</label>
-        <select name="tutorials[]" multiple class="form-control">
-            <% _.each(course.tutorials, tutorial => { %>
-            <option value="<%= tutorial.getId() %>"<%= quiz.isNew || quiz.isLinkedTo(tutorial) ? ' selected' : '' %>><%= tutorial.getDisplayName() %></option>
-            <% }) %>
-        </select>
-        <small class="text-muted">Tip: Hold down Ctrl or Command key while clicking to select more than one option.
-        </small>
-    </div>
-
-    <div class="form-group">
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="studentChoice" value="1" <%= quiz.studentChoice ? ' checked' : '' %>>
-                Enable student choice?
-            </label>
+    <hr/>
+    <h5>Basic Settings</h5>
+    <small class="text-muted">Basic information about the quiz.</small>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="form-group required">
+                <label class="control-label">Name</label>
+                <input type="text" name="name" placeholder="My Awesome Quiz" value="<%= quiz.name %>" class="form-control" required/>
+            </div>
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="studentChoice" value="1" <%= quiz.studentChoice ? ' checked' : '' %>>
+                    Enable student choice?
+                </label>
+            </div>
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="voting" value="1" <%= quiz.voting ? ' checked' : '' %>> Enable student
+                    voting?
+                </label>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Available to</label>
+                <select name="tutorials[]" multiple class="form-control">
+                    <% _.each(course.tutorials, tutorial => { %>
+                    <option value="<%= tutorial.getId() %>"<%= quiz.isNew || quiz.isLinkedTo(tutorial) ? ' selected' : '' %>><%= tutorial.getDisplayName() %></option>
+                    <% }) %>
+                </select>
+                <small class="text-muted">Tip: Hold down Ctrl or Command key while clicking to select more than one
+                    option.
+                </small>
+            </div>
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="voting" value="1" <%= quiz.voting ? ' checked' : '' %>> Enable student
-                voting?
-            </label>
-        </div>
-    </div>
 
     <!-- default options -->
-    <div class="form-group">
+    <div class="form-group" style="display: none;">
         <label class="control-label">Tags</label>
         <input type="text" name="default[_tags]" value="<%= _.join(quiz.default.tags, ', ') %>" class="form-control"
                maxlength="70">
     </div>
 
-    <div class="form-group">
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="default[shuffleChoices]"
-                       value="1" <%= quiz.default.shuffleChoices ? ' checked' : '' %>> Shuffle choices? (Multiple Choice
-                / Select)
-            </label>
+    <hr/>
+    <h5>Question Behaviours</h5>
+    <small class="text-muted">How should questions behave for this quiz?</small>
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="default[shuffleChoices]"
+                           value="1" <%= quiz.default.shuffleChoices ? ' checked' : '' %>>
+                    Shuffle choices? (Multiple Choice / Select)
+                </label>
+            </div>
+
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="default[useLaTeX]"
+                           value="1" <%= quiz.default.useLaTeX ? ' checked' : '' %>> Format questions using LaTeX?
+                </label>
+            </div>
+
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="default[caseSensitive]"
+                           value="1" <%= quiz.default.shuffleChoices ? ' checked' : '' %>> Case-sensitive (Short Answer)
+                </label>
+            </div>
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="default[useLaTeX]"
-                       value="1" <%= quiz.default.useLaTeX ? ' checked' : '' %>> Format questions using LaTeX?
-            </label>
+    <hr/>
+    <h5>Score Behaviours</h5>
+    <small class="text-muted">How should IFCAT allocate score for this quiz?</small>
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="control-label">Points per line (Code Tracing)</label>
+                <input type="number" name="default[maxPointsPerLine]" value="<%= quiz.default.maxPointsPerLine %>"
+                       min="1"
+                       class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Maximum attempts per line (Code Tracing)</label>
+                <input type="number" name="default[maxAttemptsPerLine]" value="<%= quiz.default.maxAttemptsPerLine %>"
+                       min="1"
+                       class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Points possible (Multiple Choice / Select, Short Answer)</label>
+                <input type="number" name="default[points]" value="<%= quiz.default.points %>" min="0"
+                       class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">First-try bonus (Multiple Choice / Select, Short Answer)</label>
+                <input type="number" name="default[firstTryBonus]" value="<%= quiz.default.firstTryBonus %>" min="0"
+                       class="form-control"/>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Penalty per attempt (Multiple Choice / Select, Short Answer)</label>
+                <input type="number" name="default[penalty]" value="<%= quiz.default.penalty %>" min="0"
+                       class="form-control"/>
+            </div>
+            <div class="form-group" style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary btn-raised"><i class="fa fa-check" aria-hidden="true"></i>
+                    Save
+                </button>
+                <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>"
+                   class="btn btn-default">Cancel</a>
+            </div>
         </div>
-    </div>
-
-    <div class="form-group">
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="default[caseSensitive]"
-                       value="1" <%= quiz.default.shuffleChoices ? ' checked' : '' %>> Case-sensitive (Short Answer)
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">Points per line (Code Tracing)</label>
-        <input type="number" name="default[maxPointsPerLine]" value="<%= quiz.default.maxPointsPerLine %>" min="1"
-               class="form-control"/>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">Maximum attempts per line (Code Tracing)</label>
-        <input type="number" name="default[maxAttemptsPerLine]" value="<%= quiz.default.maxAttemptsPerLine %>" min="1"
-               class="form-control"/>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">Points possible (Multiple Choice / Select, Short Answer)</label>
-        <input type="number" name="default[points]" value="<%= quiz.default.points %>" min="0" class="form-control"/>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">First-try bonus (Multiple Choice / Select, Short Answer)</label>
-        <input type="number" name="default[firstTryBonus]" value="<%= quiz.default.firstTryBonus %>" min="0"
-               class="form-control"/>
-    </div>
-
-    <div class="form-group">
-        <label class="control-label">Penalty per attempt (Multiple Choice / Select, Short Answer)</label>
-        <input type="number" name="default[penalty]" value="<%= quiz.default.penalty %>" min="0" class="form-control"/>
-    </div>
-    <div class="form-group" style="margin-top: 30px;">
-        <button type="submit" class="btn btn-primary btn-raised">Save</button>
-        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>" class="btn btn-default">Cancel</a>
     </div>
 </form>
 
