@@ -28,7 +28,7 @@ class StudentController extends Controller {
      */
     async getCourses(req, res) {
         let courses = await req.user.getCourses();
-        res.render('Student/Courses', {courses});
+        res.render('Student/Pages/Courses', {courses});
     }
 
     /**
@@ -49,7 +49,7 @@ class StudentController extends Controller {
 
             await asyncForEach(tutorialQuizzes, async tutorialQuiz => await tutorialQuiz.fillTutorialFromRemote());
 
-            res.render('Student/TutorialQuizzes', {
+            res.render('Student/Pages/TutorialQuizzes', {
                 course: req.course,
                 tutorials,
                 tutorialQuizzes

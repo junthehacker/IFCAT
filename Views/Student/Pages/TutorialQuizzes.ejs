@@ -1,4 +1,11 @@
-<% include ./Header.ejs %>
+<% include ../Partials/Header.ejs %>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="<%= getAbsUrl('/student/courses') %>">Courses</a></li>
+        <li class="breadcrumb-item active"><%= course.getDisplayName() %></li>
+    </ol>
+</nav>
 
 <h3><%= course.getDisplayName() %></h3>
 
@@ -16,4 +23,5 @@
         <h4><%= tutorialQuiz.quiz.name %> <small><%= tutorialQuiz.tutorial.getDisplayName() %></small></h4>
     <% }) %>
 <% } %>
-<% include ./Footer.ejs %>
+
+<% include ../Partials/Footer.ejs %>

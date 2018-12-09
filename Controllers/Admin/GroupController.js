@@ -43,7 +43,7 @@ class GroupController extends Controller {
 
             res.render('Admin/Pages/TutorialQuiz', {
                 bodyClass: 'tutorial-quiz-page',
-                title: `Conduct ${req.tutorialQuiz.quiz.name} in Tutorial ${req.tutorialQuiz.tutorial.number}`,
+                title: `Conduct ${req.tutorialQuiz.quiz.name} in ${req.tutorialQuiz.tutorial.getDisplayName()}`,
                 course: req.course,
                 tutorialQuiz: req.tutorialQuiz,
                 tutorial: req.tutorialQuiz.tutorial,

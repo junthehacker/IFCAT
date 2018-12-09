@@ -1,6 +1,12 @@
-<% include ./Header.ejs %>
+<% include ../Partials/Header.ejs %>
 
-<h3>Your Courses</h3>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Courses</li>
+    </ol>
+</nav>
+
+<h2>Your Courses</h2>
 
 <% if (!_.isEmpty(courses)) { %>
     <div class="list-group">
@@ -13,4 +19,4 @@
     </div>
 <% } %>
 
-<% include ./Footer.ejs %>
+<% include ../Partials/Footer.ejs %>

@@ -4,10 +4,11 @@ Controller for admin tutorial quiz management.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-const Controller        = require('../Controller');
-const TutorialQuiz      = require('../../Models/TutorialQuiz');
-const asyncForEach      = require('../../Utils/asyncForEach');
-const _                 = require('lodash');
+const Controller   = require('../Controller');
+const TutorialQuiz = require('../../Models/TutorialQuiz');
+const asyncForEach = require('../../Utils/asyncForEach');
+const _            = require('lodash');
+const getAbsUrl    = require('../../Utils/getAbsUrl');
 
 /**
  * Controller for admin tutorial quiz management.
