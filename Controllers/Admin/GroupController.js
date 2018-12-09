@@ -8,6 +8,7 @@ const Controller   = require('../Controller');
 const Group        = require('../../Models/Group');
 const asyncForEach = require('../../Utils/asyncForEach');
 const _            = require('lodash');
+const getAbsUrl    = require('../../Utils/getAbsUrl');
 
 /**
  * Controller for admin quiz group management.

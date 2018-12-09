@@ -3,7 +3,8 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<%= getAbsUrl('/admin/courses') %>">Courses</a></li>
-        <li class="breadcrumb-item"><a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">Tutorials and Quizzes</a></li>
+        <li class="breadcrumb-item"><a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">Tutorials
+                and Quizzes</a></li>
         <li class="breadcrumb-item active">Conduct</li>
     </ol>
 </nav>
@@ -22,38 +23,47 @@
     <!-- settings -->
     <div class="tab-pane active" id="settings">
         <br>
-        <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}?_method=patch`) %>" method="post" class="form-horizontal">
+        <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}?_method=patch`) %>"
+              method="post" class="form-horizontal">
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Allocate members by</label>
                 <div class="col-xs-7 col-sm-8">
                     <select name="allocateMembers" class="form-control">
-                        <option value="automatically"<%= tutorialQuiz.allocateMembers === 'automatically' ? ' selected' : '' %>>automatically assigning users to groups as they sign in</option>
-                        <option value="self-selection"<%= tutorialQuiz.allocateMembers === 'self-selection' ? ' selected' : '' %>>allowing users to assign themselves to groups as they sign in</option> 
+                        <option value="automatically"<%= tutorialQuiz.allocateMembers === 'automatically' ? ' selected' : '' %>>
+                            automatically assigning users to groups as they sign in
+                        </option>
+                        <option value="self-selection"<%= tutorialQuiz.allocateMembers === 'self-selection' ? ' selected' : '' %>>
+                            allowing users to assign themselves to groups as they sign in
+                        </option>
                     </select>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Set group size</label>
                 <div class="col-xs-4 col-sm-3">
-                    <input type="number" name="maxMembersPerGroup" value="<%= tutorialQuiz.maxMembersPerGroup %>" min="1" class="form-control">
+                    <input type="number" name="maxMembersPerGroup" value="<%= tutorialQuiz.maxMembersPerGroup %>"
+                           min="1" class="form-control">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Publish quiz?</label>
                 <div class="col-xs-4 col-sm-8">
-                    <input type="checkbox" value="1" class="bootstrap-switch" name="published"<%= tutorialQuiz.published ? ' checked' : '' %>>
+                    <input type="checkbox" value="1" class="bootstrap-switch"
+                           name="published"<%= tutorialQuiz.published ? ' checked' : '' %>>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Activate quiz?</label>
                 <div class="col-xs-4 col-sm-8">
-                    <input type="checkbox" value="1" class="bootstrap-switch" name="active"<%= tutorialQuiz.active ? ' checked' : '' %>>
+                    <input type="checkbox" value="1" class="bootstrap-switch"
+                           name="active"<%= tutorialQuiz.active ? ' checked' : '' %>>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-4 col-sm-4 control-label">Archive quiz?</label>
                 <div class="col-xs-4 col-sm-8">
-                    <input type="checkbox" value="1" class="bootstrap-switch" name="archived"<%= tutorialQuiz.archived ? ' checked' : '' %>>
+                    <input type="checkbox" value="1" class="bootstrap-switch"
+                           name="archived"<%= tutorialQuiz.archived ? ' checked' : '' %>>
                 </div>
             </div>
             <div class="form-group">
@@ -67,45 +77,51 @@
 
     <!-- groups -->
     <div class="tab-pane" id="groups">
-        <form method="post">
+        <form method="post"
+              action="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/groups?_method=patch`) %>">
+            <br/>
             <div class="nav-actions">
 
-                <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/groups/generate`) %>" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-random"></span> Randomize Groups
+                <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/groups/generate`) %>"
+                   class="btn btn-default">
+                    Randomize Groups
                 </a>
 
-                <button type="button" class="btn btn-default btn-sm btn-add"><span class="glyphicon glyphicon-plus"></span> Add New Group</button>
+                <button type="button" class="btn btn-default btn-add" v-on:click="addGroup">Add New Group</button>
 
-                <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/groups?_method=patch`) %>"
-                   class="btn btn-default btn-sm btn-primary btn-save">
-                    <span class="glyphicon glyphicon-ok"></span> Save Groups
-                </a>
+                <button
+                        class="btn btn-default btn-primary btn-save">
+                    Save Groups
+                </button>
 
             </div>
+            <br/>
             <table class="table table-hover table-nofluid">
                 <thead>
-                    <tr>
-                        <th>Student</th>
-                        <th>Groups</th>
-                    </tr>
+                <tr>
+                    <th>Student</th>
+                    <th>Groups</th>
+                </tr>
                 </thead>
                 <tbody>
-                <% if (_.isEmpty(students)) { %>
-                    <tr><td colspan="2">No students have been added into the tutorial yet.</td></tr>
-                <% } else { %>
-                    <% _.each(students, student => { %>
-                        <tr>
-                            <td class="student"><%= student.getUsername() %></td>
-                            <td class="groups">
-                                <input type="hidden" name="users[]" value="<%= student.getId() %>">
-                            <% _.each(groups, group => { %>
-                                <input type="checkbox" name="+users[<%= student.getId() %>]" value="<%= group.isNew ? group.name : group._id %>" data-label="<%= group.name %>"<%= group.hasMember(student.getId()) ? ' checked' : '' %>>
-                            <% }) %>
-                                <input type="checkbox" name="+users[<%= student.getId() %>]" value="_" data-label="_">
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } %>
+                <tr v-if="students.length === 0">
+                    <td colspan="2">No students have been added into the tutorial yet.</td>
+                </tr>
+                <tr v-for="student in students">
+                    <td class="student">{{ student.username }}</td>
+                    <td class="groups">
+                        <input type="hidden" name="users[]" v-bind:value="student._id">
+                        <span v-for="group, key in groups">
+                            <input type="checkbox"
+                                   v-bind:name="'+users[' + student._id+ ']'"
+                                   v-bind:value="group.isNew ? group.name : group._id"
+                                   v-bind:data-label="group.name"
+                                   v-on:change="changeStudentGroup(student, group)"
+                                   v-bind:checked="groupContainsStudent(group, student)">
+                            [{{ key + 1 }}]
+                        </span>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </form>
@@ -115,3 +131,69 @@
 </div>
 
 <% include ../Partials/Footer.ejs %>
+<script>
+    let groupsApp = new Vue({
+        el: '#groups',
+        data: {
+            students: JSON.parse(`<%- JSON.stringify(students) %>`),
+            groups: JSON.parse(`<%- JSON.stringify(groups) %>`)
+        },
+        methods: {
+            /**
+             * Return true is group contains student as a member.
+             */
+            groupContainsStudent: function (group, student) {
+                for (let i = 0; i < group.members.length; i++) {
+                    if (group.members[i] === student._id) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            /**
+             * Get next available group name to use.
+             */
+            getNextGroupName: function () {
+                let maxName = 0;
+                this.groups.forEach(function (group) {
+                    if (parseInt(group.name) > maxName) {
+                        maxName = parseInt(group.name);
+                    }
+                })
+                return maxName + 1;
+            },
+            /**
+             * Add a new group to the group list.
+             */
+            addGroup: function () {
+                let newGroup = {
+                    _id: null, // New group doesn't have mongo ID yet
+                    name: this.getNextGroupName(),
+                    members: [],
+                    isNew: true, // Set to new, since it is not in database
+                };
+                this.groups.push(newGroup);
+            },
+            /**
+             * Change a student's group to new one
+             */
+            changeStudentGroup: function (student, newGroup) {
+                // Remove the student from all groups
+                this.groups.forEach((function (group) {
+                    this.removeStudentFromGroup(group, student);
+                }).bind(this));
+                // Add student to new group
+                newGroup.members.push(student._id);
+            },
+            /**
+             * Remove a student from a specific group
+             */
+            removeStudentFromGroup(group, student) {
+                let index = group.members.indexOf(student._id);
+                if (index > -1) {
+                    group.members.splice(index, 1);
+                }
+            }
+        }
+    })
+</script>

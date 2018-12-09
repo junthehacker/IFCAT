@@ -128,6 +128,14 @@ class RemoteUser {
                 .catch(e => reject(e));
         })
     }
+
+    /**
+     * Convert user to JSON
+     * @returns {*}
+     */
+    toJSON() {
+        return this.user;
+    }
 }
 
 module.exports = RemoteUser;
