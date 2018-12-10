@@ -16,6 +16,7 @@
 <ul class="nav nav-tabs">
     <li class="nav-item"><a class="nav-link active" href="#settings" data-toggle="tab">Settings</a></li>
     <li class="nav-item"><a class="nav-link" href="#groups" data-toggle="tab">Groups</a></li>
+    <li class="nav-item"><a class="nav-link" href="#status" data-toggle="tab">Status</a></li>
 </ul>
 
 <div class="tab-content">
@@ -122,9 +123,12 @@
     </div>
     <!-- /groups -->
 
+    <% include TutorialQuiz/Status.ejs %>
+
 </div>
 
 <% include ../Partials/Footer.ejs %>
+
 <script>
     let groupsApp = new Vue({
         el: '#groups',

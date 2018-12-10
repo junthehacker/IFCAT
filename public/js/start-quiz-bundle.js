@@ -187,12 +187,12 @@
 	            this.socket.emit('REQUEST_QUIZ', quizId);
 
 	            this.socket.on('setGroup', function (id) {
-	                if (id != _this2.state.groupId) window.location.href = window.location.href;
+	                if (id !== _this2.state.groupId) window.location.href = window.location.href;
 	            });
 
 	            this.socket.on('groupsUpdated', function (data) {});
 
-	            this.socket.on('quizData', function (tutorialQuiz) {
+	            this.socket.on('QUIZ_DATA', function (tutorialQuiz) {
 	                _this2.setState({
 	                    quiz: tutorialQuiz.quiz,
 	                    groupId: tutorialQuiz.groupId || _this2.state.groupId,
@@ -203,7 +203,7 @@
 	                });
 	            });
 
-	            this.socket.on('resetDriver', function (data) {
+	            this.socket.on('RESET_DRIVER', function (data) {
 	                swal('New Driver', 'Your group now has a new driver.', 'info');
 	                if (_this2.state.groupId != data.groupId) return;
 	                _this2.setState({

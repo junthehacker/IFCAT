@@ -17,7 +17,7 @@ socket.on('setGroup', function(id) {
     groupId = id;
 })
 
-socket.on('quizData', function (tutorialQuiz) {
+socket.on('QUIZ_DATA', function (tutorialQuiz) {
     
     quizData = quizData || tutorialQuiz.quiz;
     groupId = tutorialQuiz.groupId;
@@ -86,7 +86,7 @@ socket.on('groupAttempt', function(data) {
     $('#currentScore').html(score);
 })
 
-socket.on('resetDriver', function(data) {
+socket.on('RESET_DRIVER', function(data) {
     console.log('resetDriver');
     if (groupId != data.groupId) return;
     $('.quizBtn').attr('disabled', true);

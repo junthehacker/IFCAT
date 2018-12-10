@@ -36,7 +36,7 @@ class GroupController extends Controller {
             // split into chunks of size + shuffle chunks
             let chunks   = _.chunk(students, req.tutorialQuiz.maxMembersPerGroup);
             // map chunks to groups
-            let groups   = _.map(chunks, (members, i) => new Group({name: i + 1, members}));
+            let groups   = _.map(chunks, (members, i) => ({name: i + 1, members, isNew: true}));
             // add warning
             req.flash('warning', 'Below is an <b><u>unsaved</u></b> list of new groups.');
             res.locals.flash = req.flash();

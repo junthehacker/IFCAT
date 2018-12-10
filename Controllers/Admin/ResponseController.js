@@ -4,11 +4,12 @@ Controller for admin quiz response management.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-const Controller = require('../Controller');
-const _          = require('lodash');
-const async      = require('async');
-const csv        = require('csv');
-const models     = require('../../Models');
+const Controller   = require('../Controller');
+const _            = require('lodash');
+const async        = require('async');
+const csv          = require('csv');
+const models       = require('../../Models');
+const asyncForEach = require('../../Utils/asyncForEach');
 
 /**
  * Controller for admin quiz response management.
@@ -152,7 +153,7 @@ class ResponseController extends Controller {
                 // normalize answers
                 if (!question.caseSensitive) {
                     question.answers = _.map(question.answers, answer => _.toLower(answer));
-                    response.answer = _.map(response.answer, answer => _.toLower(answer));
+                    response.answer  = _.map(response.answer, answer => _.toLower(answer));
                 }
                 // correct if one of the answers was selected
                 response.correct = _.intersection(question.answers, response.answer).length > 0;
@@ -186,7 +187,7 @@ class ResponseController extends Controller {
                 return next(err);
             let [question, response] = results;
 
-            response.group = req.group._id;
+            response.group  = req.group._id;
             response.answer = [];
             response.set(req.body);
             // check answers
@@ -197,7 +198,7 @@ class ResponseController extends Controller {
                 // normalize answers
                 if (!question.caseSensitive) {
                     question.answers = _.map(question.answers, answer => _.toLower(answer));
-                    response.answer = _.map(response.answer, answer => _.toLower(answer));
+                    response.answer  = _.map(response.answer, answer => _.toLower(answer));
                 }
                 // correct if one of the answers was selected
                 response.correct = _.intersection(question.answers, response.answer).length > 0;
@@ -224,34 +225,34 @@ class ResponseController extends Controller {
      */
     async getMarksByStudent(req, res, next) {
         models.TutorialQuiz.aggregate([{
-            $match: { tutorial: { $in: req.course.tutorials }}
+            $match: {tutorial: {$in: req.course.tutorials}}
         }, {
-            $lookup: { from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial' }
+            $lookup: {from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial'}
         }, {
             $unwind: '$tutorial'
         }, {
-            $lookup: { from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz' }
+            $lookup: {from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz'}
         }, {
             $unwind: '$quiz'
         }, {
             $unwind: '$groups'
         }, {
-            $lookup: { from: 'groups', localField: 'groups', foreignField: '_id', as: 'group' }
+            $lookup: {from: 'groups', localField: 'groups', foreignField: '_id', as: 'group'}
         }, {
             $unwind: '$group'
         }, {
-            $match: { 'group.members': { $in: [req.student._id] }}
+            $match: {'group.members': {$in: [req.student._id]}}
         }, {
-            $lookup: { from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response' }
+            $lookup: {from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response'}
         }, {
-            $unwind: { path: '$response', preserveNullAndEmptyArrays: true }
+            $unwind: {path: '$response', preserveNullAndEmptyArrays: true}
         }, {
             $group: {
                 _id: '$_id',
-                tutorial: { $first: '$tutorial' },
-                quiz: { $first: '$quiz' },
-                group: { $first: '$group' },
-                totalPoints: { $sum: '$response.points' }
+                tutorial: {$first: '$tutorial'},
+                quiz: {$first: '$quiz'},
+                group: {$first: '$group'},
+                totalPoints: {$sum: '$response.points'}
             }
         }], (err, tutorialQuizzes) => {
             if (err)
@@ -274,76 +275,107 @@ class ResponseController extends Controller {
      * @returns {Promise<void>}
      */
     async getMarksByTutorialQuiz(req, res, next) {
-        models.TutorialQuiz.aggregate([{
-            $match: { _id: req.tutorialQuiz._id }
-        }, {
-            $lookup: { from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial' }
-        }, {
-            $unwind: '$tutorial'
-        }, {
-            $lookup: { from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz' }
-        }, {
-            $unwind: '$quiz'
-        }, {
-            $unwind: '$groups'
-        }, {
-            $lookup: { from: 'groups', localField: 'groups', foreignField: '_id', as: 'group' }
-        }, {
-            $unwind: '$group'
-        }, {
-            $unwind: '$group.members'
-        }, {
-            $lookup: { from: 'users', localField: 'group.members', foreignField: '_id', as: 'member' }
-        }, {
-            $unwind: '$member'
-        }, {
-            $lookup: { from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response' }
-        }, {
-            $unwind: { path: '$response', preserveNullAndEmptyArrays: true }
-        }, {
-            $group: {
-                _id: '$member._id',
-                tutorial: { $first: '$tutorial' },
-                quiz: { $first: '$quiz' },
-                member: { $first: '$member' },
-                group: { $first: '$group' },
-                totalPoints: { $sum: '$response.points' }
-            }
-        }, {
-            $sort: { _id: 1 }
-        }], (err, data) => {
-            if (err)
-                return next(err);
-            // export marks into CSV
-            if (req.query.export === 'true') {
-                data = _.map(data, d => [
-                    d.member.UTORid,
-                    d.member.studentNumber,
-                    `${d.member.name.first} ${d.member.name.last}`,
-                    d.tutorial.number,
-                    d.quiz.name,
-                    d.group.name,
-                    d.totalPoints
-                ]);
-                // set headings
-                data.unshift(['UTORid', 'Student No.', 'Name', 'Tutorial', 'Quiz', 'Group', 'Mark']);
-                // send CSV
-                res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
-                res.set('Content-Type', 'text/csv');
-                return csv.stringify(data, (err, output) => {
-                    if (err)
-                        return next(err);
-                    return res.send(output);
-                });
-            }
 
-            res.render('Admin/Pages/TutorialQuizMarks', {
-                title: 'Marks',
-                course: req.course,
-                tutorialQuiz: req.tutorialQuiz,
-                data: data
+        await req.tutorialQuiz.populate('quiz groups').execPopulate();
+        await asyncForEach(req.tutorialQuiz.groups, async group => {
+            await group.populate('responses').execPopulate();
+            await group.fillMembersFromRemote();
+        });
+
+        let data = [];
+
+        req.tutorialQuiz.groups.forEach(group => {
+            let groupScore = 0;
+            group.responses.forEach(response => {
+                groupScore += response.points;
+            });
+            group.members.forEach(member => {
+                let memberData = {};
+                memberData.score = groupScore; // Individual score is the group score.
+                memberData.member = member;
+                memberData.group = group;
+                data.push(memberData);
             });
         });
+
+        res.render('Admin/Pages/TutorialQuizMarks', {
+            title: 'Marks',
+            course: req.course,
+            tutorialQuiz: req.tutorialQuiz,
+            data
+        });
+
+
+        // models.TutorialQuiz.aggregate([{
+        //     $match: {_id: req.tutorialQuiz._id} // DONE
+        // }, {
+        //     $lookup: {from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial'} // FILLED
+        // }, {
+        //     $unwind: '$tutorial' // FILLED
+        // }, {
+        //     $lookup: {from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz'} // FILLED
+        // }, {
+        //     $unwind: '$quiz' // FILLED
+        // }, {
+        //     $unwind: '$groups' // FILLED
+        // }, {
+        //     $lookup: {from: 'groups', localField: 'groups', foreignField: '_id', as: 'group'} // FILLED
+        // }, {
+        //     $unwind: '$group' // FILLED
+        // }, {
+        //     $unwind: '$group.members' // FILLED
+        // }, {
+        //     $lookup: {from: 'users', localField: 'group.members', foreignField: '_id', as: 'member'} // FILLED
+        // }, {
+        //     $unwind: '$member' // FILLED
+        // }, {
+        //     $lookup: {from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response'} // FILLED
+        // }, {
+        //     $unwind: {path: '$response', preserveNullAndEmptyArrays: true} // FILLED
+        // }, {
+        //     $group: {
+        //         _id: '$member._id',
+        //         tutorial: {$first: '$tutorial'},
+        //         quiz: {$first: '$quiz'},
+        //         member: {$first: '$member'},
+        //         group: {$first: '$group'},
+        //         totalPoints: {$sum: '$response.points'}
+        //     }
+        // }, {
+        //     $sort: {_id: 1}
+        // }], (err, data) => {
+        //     if (err)
+        //         return next(err);
+        //     // export marks into CSV
+        //     if (req.query.export === 'true') {
+        //         data = _.map(data, d => [
+        //             d.member.UTORid,
+        //             d.member.studentNumber,
+        //             `${d.member.name.first} ${d.member.name.last}`,
+        //             d.tutorial.number,
+        //             d.quiz.name,
+        //             d.group.name,
+        //             d.totalPoints
+        //         ]);
+        //         // set headings
+        //         data.unshift(['UTORid', 'Student No.', 'Name', 'Tutorial', 'Quiz', 'Group', 'Mark']);
+        //         // send CSV
+        //         res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
+        //         res.set('Content-Type', 'text/csv');
+        //         return csv.stringify(data, (err, output) => {
+        //             if (err)
+        //                 return next(err);
+        //             return res.send(output);
+        //         });
+        //     }
+        //
+        //     res.render('Admin/Pages/TutorialQuizMarks', {
+        //         title: 'Marks',
+        //         course: req.course,
+        //         tutorialQuiz: req.tutorialQuiz,
+        //         data: data
+        //     });
+        // });
     }
 
     /**
@@ -355,42 +387,42 @@ class ResponseController extends Controller {
      */
     async getMarksByCourse(req, res, next) {
         models.TutorialQuiz.aggregate([{
-            $match: { _id: { $in: req.body.tutorialQuizzes || [] }}
+            $match: {_id: {$in: req.body.tutorialQuizzes || []}}
         }, {
-            $lookup: { from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial' }
+            $lookup: {from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial'}
         }, {
             $unwind: '$tutorial'
         }, {
-            $lookup: { from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz' }
+            $lookup: {from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz'}
         }, {
             $unwind: '$quiz'
         }, {
             $unwind: '$groups'
         }, {
-            $lookup: { from: 'groups', localField: 'groups', foreignField: '_id', as: 'group' }
+            $lookup: {from: 'groups', localField: 'groups', foreignField: '_id', as: 'group'}
         }, {
             $unwind: '$group'
         }, {
             $unwind: '$group.members'
         }, {
-            $lookup: { from: 'users', localField: 'group.members', foreignField: '_id', as: 'member' }
+            $lookup: {from: 'users', localField: 'group.members', foreignField: '_id', as: 'member'}
         }, {
             $unwind: '$member'
         }, {
-            $lookup: { from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response' }
+            $lookup: {from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response'}
         }, {
-            $unwind: { path: '$response', preserveNullAndEmptyArrays: true }
+            $unwind: {path: '$response', preserveNullAndEmptyArrays: true}
         }, {
             $group: {
-                _id: { tutorialQuiz: '_id', member: '$member._id' },
-                tutorial: { $first: '$tutorial' },
-                quiz: { $first: '$quiz' },
-                group: { $first: '$group' },
-                member: { $first: '$member' },
-                totalPoints: { $sum: '$response.points' }
+                _id: {tutorialQuiz: '_id', member: '$member._id'},
+                tutorial: {$first: '$tutorial'},
+                quiz: {$first: '$quiz'},
+                group: {$first: '$group'},
+                member: {$first: '$member'},
+                totalPoints: {$sum: '$response.points'}
             }
         }, {
-            $sort: { 'member.UTORid': 1, 'tutorialQuiz.quiz.name': 1 }
+            $sort: {'member.UTORid': 1, 'tutorialQuiz.quiz.name': 1}
         }], (err, data) => {
             if (err)
                 return next(err);

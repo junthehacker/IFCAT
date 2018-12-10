@@ -16,10 +16,6 @@
     <thead>
         <tr>
             <th>UTORid</th>
-            <th>Student No.</th>
-            <th>Name</th>
-            <th class="text-center">Tutorial</th>
-            <th>Quiz</th>
             <th class="text-center">Group</th>
             <th class="text-center">Mark</th>
             <th class="actions"></th>
@@ -29,21 +25,17 @@
     <% if (_.isEmpty(data)) { %>
         <tr><td colspan="8">No students have been added yet.</td></tr>
     <% } else { %>
-        <% _.each(data, d => { %>
+        <% _.each(data, row => { %>
             <tr>
-                <td><%= d.member.UTORid %></td>
-                <td><%= d.member.studentNumber %></td>
-                <td><%= `${d.member.name.first} ${d.member.name.last}` %></td>
-                <td class="text-center"><%= d.tutorial.number %></td>
-                <td><%= d.quiz.name %></td>
-                <td class="text-center"><%= d.group.name %></td>
-                <td class="text-center"><%= d.totalPoints %></td>
+                <td><%= row.member.getUsername() %></td>
+                <td><%= row.group.name %></td>
+                <td><%= row.score %></td>
                 <td class="actions">
                     <div class="dropdown">
-                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions<span class="caret"></span></button>
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Actions</button>
                         <ul class="dropdown-menu">
-                            <li><a href="/admin/courses/<%= course._id %>/tutorials-quizzes/<%= tutorialQuiz._id %>/groups/<%= d.group._id %>/responses">View Group Responses</a></li>
-                            <li><a href="/admin/courses/<%= course._id %>/students/<%= d.member._id %>/marks">View Student Marks</a></li>
+                            <li><a href="/admin/courses/<%= course.getId() %>/tutorials-quizzes/<%= tutorialQuiz._id %>/groups/<%= row.group._id %>/responses">View Group Responses</a></li>
+                            <li><a href="/admin/courses/<%= course.getId() %>/students/<%= row.member.getId() %>/marks">View Student Marks</a></li>
                         </ul>
                     </div>
                 </td>

@@ -19,6 +19,9 @@ const app  = express(),
       http = require('http').Server(app),
       io   = require('socket.io')(http, {path: config.baseDir + '/socket.io'});
 
+const connectionPool = require('./SocketIO/ConnectionPool').getInstance();
+connectionPool.setSocketIOInstance(io);
+
 // local variables
 app.locals._          = lodash;
 app.locals.DATEFORMAT = 'YYYY-MM-DD';
@@ -118,7 +121,7 @@ io.use(passportSocketIo.authorize({
 }));
 
 // socket io handler for quizzes
-io.on('connection', require('./socket.io/quizHandlers.js')(io));
+io.on('connection', require('./SocketIO/EventHandlers')(io));
 
 
 // server

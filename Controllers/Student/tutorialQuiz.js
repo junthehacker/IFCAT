@@ -22,7 +22,7 @@ exports.startQuiz = (req, res) => {
         
     }
     else{
-        res.render('student/start-quiz.ejs', {
+        res.render('Student/Pages/StartQuiz.ejs', {
             course: req.course,
             tutorialQuiz: req.tutorialQuiz,
             quiz: req.tutorialQuiz.quiz,
@@ -40,7 +40,7 @@ exports.nominateDriver = (socket, emitters) => (function(data) {
         models.Group.findByIdAndUpdate(data.groupId, { driver : socket.request.user.getId() })
         .exec()
         .then(function() {
-            emitters.emitToGroup(data.groupId, 'resetDriver', { groupId : data.groupId });
+            emitters.emitToGroup(data.groupId, 'RESET_DRIVER', { groupId : data.groupId });
             socket.emit('ASSIGNED_AS_DRIVER', { groupId : data.groupId } );
             emitters.emitToGroup(data.groupId, 'startQuiz', {});
         });
@@ -81,7 +81,7 @@ exports.joinGroup = (socket, emitters) => (function(data) {
                     socket.emit('setGroup', data.newGroup)
                     socket.emit('info', {message : 'Joined Group ' + group.name });
                     emitters.emitToTutorialQuiz(tutQuiz._id, 'groupsUpdated', { groups : populatedTQ.groups })
-                    socket.emit('quizData', 
+                    socket.emit('QUIZ_DATA',
                     { userId : socket.request.user._id,
                         quiz : populatedTQ,
                         groupName : group.name,
@@ -126,7 +126,7 @@ exports.createGroup = (socket, emitters) => (function(data){
                 emitters.emitToTutorialQuiz(tutQuiz._id, 'groupsUpdated', 
                 { groups : populatedTQ.groups })
 
-                socket.emit('quizData', 
+                socket.emit('QUIZ_DATA',
                 { userId : socket.request.user._id,
                     quiz : populatedTQ,
                     groupName : group.name,

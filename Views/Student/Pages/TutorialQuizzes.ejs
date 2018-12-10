@@ -9,8 +9,6 @@
 
 <h3><%= course.getDisplayName() %></h3>
 
-<br>
-
 <% if(!tutorialQuizzes.length){ %>
 <p>There is no quiz currently available to you.</p>
 <% } else { %>
@@ -18,9 +16,9 @@
         <hr class="my-2"/>
 
         <a href="<%= getAbsUrl(`/student/courses/${course.getId()}/quizzes/${tutorialQuiz._id}/start`) %>"
-           class="btn btn-primary pull-right">Enter</a>
+           class="btn btn-primary btn-sm float-right">Enter</a>
 
-        <h4><%= tutorialQuiz.quiz.name %> <small><%= tutorialQuiz.tutorial.getDisplayName() %></small></h4>
+        <b><%= tutorialQuiz.quiz.name %> <small><%= tutorialQuiz.tutorial.getDisplayName() %></small></b>
     <% }) %>
 <% } %>
 

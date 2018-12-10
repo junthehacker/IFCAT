@@ -59,6 +59,16 @@ class IAServiceProvider {
     }
 
     /**
+     * Get a specific user by ID.
+     * @param id
+     * @returns {Promise<*>}
+     */
+    static async getUserById(id) {
+        let data = await axios.get(`${config.root}/api/users/${id}`, IAServiceProvider.defaultAxiosConfig);
+        return new (require('../Models/RemoteUser'))(data.data);
+    }
+
+    /**
      * Get logout URL.
      * @returns {string} Logout URL.
      */

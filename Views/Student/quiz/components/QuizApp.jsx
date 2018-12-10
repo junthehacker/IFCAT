@@ -66,14 +66,14 @@ export default class QuizApp extends React.Component {
         this.socket.emit('REQUEST_QUIZ', quizId);
 
         this.socket.on('setGroup', (id) => {
-            if (id != this.state.groupId)
+            if (id !== this.state.groupId)
                 window.location.href = window.location.href;
         });
 
         this.socket.on('groupsUpdated', (data) => {
         });
 
-        this.socket.on('quizData', (tutorialQuiz) => {
+        this.socket.on('QUIZ_DATA', (tutorialQuiz) => {
             this.setState({
                 quiz: tutorialQuiz.quiz,
                 groupId: tutorialQuiz.groupId || this.state.groupId,
@@ -85,7 +85,7 @@ export default class QuizApp extends React.Component {
         });
 
 
-        this.socket.on('resetDriver', (data) => {
+        this.socket.on('RESET_DRIVER', (data) => {
             swal('New Driver', 'Your group now has a new driver.', 'info');
             if (this.state.groupId != data.groupId) return;
             this.setState({

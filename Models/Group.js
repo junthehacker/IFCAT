@@ -6,18 +6,33 @@ Author(s): Jun Zheng [me at jackzh dot com]
            Neeilan Selvalingam
 -------------------------------------*/
 
-const _        = require('lodash');
-const mongoose = require('mongoose');
+const _                    = require('lodash');
+const mongoose             = require('mongoose');
+const getIAServiceProvider = () => require('../Providers/IAServiceProvider');
+const asyncForEach         = require('../Utils/asyncForEach');
 
 const groupSchema = new mongoose.Schema({
     name: {type: String, required: true},
-    members: [String],
+    members: [mongoose.SchemaTypes.Mixed], // Must be mixed as we manually populate
     driver: String,
     teachingPoints: [String]
 });
 
 // Populate responses
 groupSchema.virtual('responses', {ref: 'Response', localField: '_id', foreignField: 'group'});
+
+/**
+ * Populate all members from remote.
+ * @returns {Promise<void>}
+ */
+groupSchema.methods.fillMembersFromRemote = async function () {
+    let users = [];
+    await asyncForEach(this.members, async memberId => {
+        let user = await getIAServiceProvider().getUserById(memberId);
+        users.push(user);
+    });
+    this.members = users;
+};
 
 // Check if user belongs to group
 groupSchema.methods.hasMember = function (userId) {

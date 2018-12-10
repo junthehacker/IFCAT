@@ -1,0 +1,128 @@
+<div class="tab-pane" id="status">
+    <div v-if="socket && socket.connected">
+        <br/>
+        <h4>Real-time Quiz Status <small class="text-muted">Last Ping: {{ moment(lastPing).format("LTS") }}</small></h4>
+
+        <h5>Joined Students ({{ students.length }})</h5>
+        <ul>
+            <li v-for="student in students">{{ student.username }} <small>{{ student._id }}</small></li>
+        </ul>
+    </div>
+</div>
+
+<script src="<%= getAbsUrl('/socketioclient/socket.io.js') %>"></script>
+<script>
+    let statusApp = new Vue({
+        el: "#status",
+        data: {
+            socket: null,
+            lastPing: new Date(),
+            students: [],
+            pingInterval: null
+        },
+        methods: {
+            /**
+             * Connect to socket and bind all handlers.
+             */
+            connectSocket: function() {
+                this.socket = io.connect({
+                    path: `<%= getAbsUrl('/socket.io') %>`
+                });
+
+                this.socket.on('connect', this.initializeSocket);
+                this.socket.on('disconnect', this.socketDisconnectHandler);
+
+                this.socket.on("PONG", (function(data) {
+                    this.lastPing = new Date(data);
+                }).bind(this))
+                this.socket.on("ADMIN_JOIN_TUTORIAL_QUIZ_SUCCESS", this.socketJoinTutorialQuizSuccessHandler);
+                this.socket.on("ADMIN_GET_JOINED_STUDENTS_SUCCESS", this.socketGetJoinedStudentsSuccessHandler);
+                this.socket.on("ADMIN_TUTORIAL_QUIZ_NEW_STUDENT", this.socketNewStudentHandler)
+                this.socket.on("ADMIN_TUTORIAL_QUIZ_USERS", this.setTutorialQuizUsers);
+                this.socket.on("ADMIN_TUTORIAL_QUIZ_LEAVE_STUDENT", this.socketLeaveStudentHandler);
+            },
+
+            /**
+             * Upon connection, initialize the socket.
+             */
+            initializeSocket: function() {
+                console.log("Initializing socket...");
+                this.students = [];
+                this.pingInterval = setInterval((function() {
+                    this.socket.emit("PING", new Date().toISOString());
+                }).bind(this), 5000);
+                this.socketJoinTutorialQuiz();
+            },
+
+            /**
+             * Handle socket disconnect.
+             */
+            socketDisconnectHandler: function() {
+                console.log("Socket disconnected...");
+            },
+
+            /**
+             * Join the monitoring group for quiz.
+             */
+            socketJoinTutorialQuiz: function() {
+                this.socket.emit("ADMIN_JOIN_TUTORIAL_QUIZ", `<%= tutorialQuiz._id %>`);
+            },
+
+            /**
+             * Request a list of students
+             */
+            socketGetJoinedStudents: function() {
+                this.socket.emit("ADMIN_GET_JOINED_STUDENTS", `<%= tutorialQuiz._id %>`);
+            },
+
+            /**
+             * Set a list of users that is currently within the quiz.
+             * @param data
+             */
+            setTutorialQuizUsers: function(data) {
+
+            },
+
+            /**
+             * Handle ADMIN_JOIN_TUTORIAL_QUIZ_SUCCESS event.
+             */
+            socketJoinTutorialQuizSuccessHandler: function(data) {
+                console.log(data);
+                // At this point, we request a list of users that have joined the quiz.
+                this.socketGetJoinedStudents();
+            },
+
+            /**
+             * Handle ADMIN_GET_JOINED_STUDENTS_SUCCESS event.
+             * @param data
+             */
+            socketGetJoinedStudentsSuccessHandler: function(data) {
+                this.students = data;
+            },
+
+            /**
+             * Handle ADMIN_TUTORIAL_QUIZ_NEW_STUDENT event.
+             * @param data
+             */
+            socketNewStudentHandler: function(data) {
+                this.students.push(data);
+            },
+
+            /**
+             * Handle ADMIN_TUTORIAL_QUIZ_LEAVE_STUDENT event.
+             * @param data
+             */
+            socketLeaveStudentHandler: function(data) {
+                for(let i = 0; i < this.students.length; i++) {
+                    if(this.students[i]._id === data._id) {
+                        this.students.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        },
+        mounted() {
+            this.connectSocket();
+        }
+    })
+</script>
