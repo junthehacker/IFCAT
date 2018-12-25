@@ -90,7 +90,7 @@ class TutorialQuizController extends Controller {
                 tutorialQuiz: req.tutorialQuiz,
                 tutorial: req.tutorialQuiz.tutorial,
                 quiz: req.tutorialQuiz.quiz,
-                students: req.tutorialQuiz.tutorial.getStudents(),
+                students: _.map(req.tutorialQuiz.tutorial.getStudents(), student => _.omit(student.user, ['attributes'])),
                 groups: _.sortBy(req.tutorialQuiz.groups, group => _.toInteger(group.name))
             });
         } catch (e) {
