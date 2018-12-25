@@ -50,6 +50,12 @@ I.A. configuration object
 * `root`: Server root.
 * `publicRoot`: Optional. You can optionally set this, and set `root` as a LAN url, this will make all API requests go through LAN. Can improve performance.
 
+#### log: Object
+
+Log configuration
+
+* `path`: Path to store logs.
+
 ## Contribution
 
 ### Code Format
@@ -69,20 +75,6 @@ File description
 Author(s): Your name [me at myname dot com]
 -------------------------------------*/
 ```
-
-### ESDoc
-
-Always include ESDoc, unless it is something very obvious, for example:
-
-```javascript
-class User extends Model {
-    toString() {
-        return this.name;
-    }
-}
-```
-
-In above case, you don't have to have ESDoc.
 
 ### Promises / Callbacks
 

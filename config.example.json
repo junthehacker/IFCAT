@@ -1,0 +1,36 @@
+{
+  "production": {
+    "baseDir": "/ifcat",
+    "database": {
+      "url": "mongodb://localhost:27017/ifcat_prod"
+    },
+    "session": {
+      "secret": "mysupersecretpassword"
+    },
+    "ia": {
+      "applicationId": "",
+      "secretKey": "",
+      "root": "https://tracademic.utsc.utoronto.ca"
+    },
+    "log": {
+      "path": "./logs"
+    }
+  },
+  "development": {
+    "baseDir": "/ifcat",
+    "database": {
+      "url": "mongodb://localhost:27017/ifcat"
+    },
+    "session": {
+      "secret": "test"
+    },
+    "ia": {
+      "applicationId": "",
+      "secretKey": "",
+      "root": "https://tracademic.utsc.utoronto.ca"
+    },
+    "log": {
+      "path": "./logs"
+    }
+  }
+}
