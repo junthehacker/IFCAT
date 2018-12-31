@@ -16,8 +16,6 @@ $(function () {
             $('td:eq(' + index + ') > :checkbox:not(:disabled)', this).prop('checked', checkbox[0].checked);
         });
     });
-    // convert form checkboxes to switch control
-    $(':checkbox.bootstrap-switch').bootstrapSwitch({ inverse: true, offText: 'No', onText: 'Yes' });
     // cache last opened tab
     $('a[data-toggle=tab]').on('shown.bs.tab', function () {
         localStorage.setItem('tab-open', $(this).attr('href'));

@@ -44,26 +44,12 @@ export default class QuizApp extends React.Component {
     }
 
     componentWillMount() {
-        var url = window.location.href;
-        var quizId = url.slice(url.indexOf('/quizzes/') + 9, url.indexOf('/start'));
+        // var url = window.location.href;
+        // var quizId = url.slice(url.indexOf('/quizzes/') + 9, url.indexOf('/start'));
 
-        this.socket = this.props.io.connect({
-            path: '/ifcat/socket.io'
-        });
-        window.socket = this.socket;
-
-        console.log(this.socket);
-
-        this.socket.on('connect', (socket) => {
-            console.log("CONNECTED");
-        });
-
-        this.socket.on('connect_failed', function(){
-            console.log('Connection Failed');
-        });
 
         // Request quiz data
-        this.socket.emit('REQUEST_QUIZ', quizId);
+        // this.socket.emit('REQUEST_QUIZ', quizId);
 
         this.socket.on('setGroup', (id) => {
             if (id !== this.state.groupId)
@@ -72,17 +58,17 @@ export default class QuizApp extends React.Component {
 
         this.socket.on('groupsUpdated', (data) => {
         });
-
-        this.socket.on('QUIZ_DATA', (tutorialQuiz) => {
-            this.setState({
-                quiz: tutorialQuiz.quiz,
-                groupId: tutorialQuiz.groupId || this.state.groupId,
-                userId: tutorialQuiz.userId || this.state.userId,
-                groupName: tutorialQuiz.groupName,
-                active: tutorialQuiz.quiz.active,
-                selectedQuestion: tutorialQuiz.quiz.quiz.questions[0],
-            });
-        });
+        //
+        // this.socket.on('QUIZ_DATA', (tutorialQuiz) => {
+        //     this.setState({
+        //         quiz: tutorialQuiz.quiz,
+        //         groupId: tutorialQuiz.groupId || this.state.groupId,
+        //         userId: tutorialQuiz.userId || this.state.userId,
+        //         groupName: tutorialQuiz.groupName,
+        //         active: tutorialQuiz.quiz.active,
+        //         selectedQuestion: tutorialQuiz.quiz.quiz.questions[0],
+        //     });
+        // });
 
 
         this.socket.on('RESET_DRIVER', (data) => {

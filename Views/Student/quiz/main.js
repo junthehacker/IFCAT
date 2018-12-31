@@ -1,7 +1,7 @@
-import QuizApp from './components/QuizApp.jsx';
+import App from './App';
 
-import React from 'react'
-import ReactDOM from 'react-dom';
+import React                       from 'react'
+import ReactDOM                    from 'react-dom';
 
-ReactDOM.render(<QuizApp io={io}/>, document.getElementById('quizAppDiv'));
-// ReactDOM.render(<CodeOutputQuestion question={question}/>, document.getElementById('hello2'));
+// Render the quiz application with Socket.io instance
+ReactDOM.render(<App/>, document.getElementById('quizAppDiv'));

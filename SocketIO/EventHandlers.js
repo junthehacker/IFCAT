@@ -12,7 +12,6 @@ const guestSocketController = require('../Controllers/Guest/GuestSocketControlle
 const connectionPool = require('./ConnectionPool').getInstance();
 
 module.exports = io => (socket => {
-
     let connection = new Connection.Builder(socket)
         .setUser(socket.request.user)
         .build();
@@ -42,7 +41,6 @@ module.exports = io => (socket => {
     socket.on('CODE_TRACING_ANSWER_ATTEMPT', fetchHandler('codeTracingAttempt'));
 
     socket.on('REQUEST_QUIZ', function (tutQuizId) {
-
         models.TutorialQuiz.findById(tutQuizId)
             .populate([{
                 path: 'quiz',
@@ -83,7 +81,7 @@ module.exports = io => (socket => {
                         studentsGroup   = group.name;
                         studentsGroupId = group._id;
                         socket.emit('QUIZ_DATA', {
-                            userId: socket.request.user._id,
+                            userId: connection.getUser().getId(),
                             quiz: tutQuiz,
                             groupName: studentsGroup,
                             groupId: group._id
@@ -113,13 +111,13 @@ module.exports = io => (socket => {
                 // if there's already a group with room, we can put the student there
                 if (groupsWithRoom.length > 0) {
                     // there is a group with room, let's add the student to it
-                    models.Group.findByIdAndUpdate(groupsWithRoom[0]._id, {$push: {members: socket.request.user._id}}, {new: true}, function (err, doc) {
+                    models.Group.findByIdAndUpdate(groupsWithRoom[0]._id, {$push: {members: connection.getUser().getId()}}, {new: true}, function (err, doc) {
                         if (err) throw err;
 
                         // Join an existing group with room
                         socket.join('group:' + groupsWithRoom[0]._id);
                         socket.emit('QUIZ_DATA', {
-                            userId: socket.request.user._id,
+                            userId: connection.getUser().getId(),
                             quiz: tutQuiz,
                             groupName: groupsWithRoom[0].name,
                             groupId: groupsWithRoom[0]._id
@@ -133,7 +131,7 @@ module.exports = io => (socket => {
                     // there are no groups with room - let's make a new group
                     var group     = new models.Group();
                     group.name    = (tutQuiz.groups.length + 1).toString();
-                    group.members = [socket.request.user._id];
+                    group.members = [connection.getUser().getId()];
                     group.save(function (err, group) {
                         if (err) console.log(err);
                         // we also need to add the group to this tutorialQuiz
@@ -142,7 +140,7 @@ module.exports = io => (socket => {
                             // Create and join a new group
                             socket.join('group:' + group._id);
                             socket.emit('QUIZ_DATA', {
-                                userId: socket.request.user._id,
+                                userId: connection.getUser().getId(),
                                 quiz: tutQuiz,
                                 groupName: group.name,
                                 groupId: group._id
