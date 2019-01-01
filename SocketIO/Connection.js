@@ -84,6 +84,15 @@ class Connection {
         this.socket.disconnect();
         connectionPool.removeConnection(this);
     }
+
+    /**
+     * Emit an event to this connection.
+     * @param event
+     * @param data
+     */
+    emit(event, data) {
+        this.socket.emit(event, data);
+    }
 }
 
 /**

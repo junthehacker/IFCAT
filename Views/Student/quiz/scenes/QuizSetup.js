@@ -9,9 +9,7 @@ const Container = styled.div`
 `;
 
 class QuizSetup extends Component {
-
     render() {
-
         const {quiz, groupName} = this.props.globalContext.data;
 
         const quizNotActive = (
