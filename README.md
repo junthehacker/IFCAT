@@ -24,6 +24,9 @@ Application configuration is stored within `config.json`, and is in the followin
 
 CONFIG_OBJECT contains following properties:
 
+#### name: String
+
+Application name, usually just use `ifcat`.
 
 #### baseDir: String
 
