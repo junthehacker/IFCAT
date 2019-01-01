@@ -37502,14 +37502,19 @@
 /* 370 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	exports.registerReceiveQuizData = registerReceiveQuizData;
+	exports.registerQuizActiveStatusChange = registerQuizActiveStatusChange;
 	exports.register = register;
 	var EVENT_QUIZ_DATA = 'QUIZ_DATA';
+	var EVENT_QUIZ_ACTIVE_STATUS_CHANGE = 'QUIZ_ACTIVE_STATUS_CHANGE';
 
 	function registerReceiveQuizData(socket, reduce, getData) {
 	    socket.on(EVENT_QUIZ_DATA, function (data) {
@@ -37522,10 +37527,20 @@
 	    });
 	}
 
+	function registerQuizActiveStatusChange(socket, reduce, getData) {
+	    socket.on(EVENT_QUIZ_ACTIVE_STATUS_CHANGE, function (data) {
+	        console.log("Quiz active status changed to", data.active);
+	        var newTutorialQuiz = _extends({}, getData().quiz);
+	        newTutorialQuiz.active = data.active;
+	        reduce({ quiz: newTutorialQuiz });
+	    });
+	}
+
 	function register(socket, reduce, getData) {
 
 	    console.log("quizHandlers registered.");
 	    registerReceiveQuizData(socket, reduce, getData);
+	    registerQuizActiveStatusChange(socket, reduce, getData);
 	}
 
 /***/ },
@@ -37599,6 +37614,27 @@
 	                'Loading quiz...'
 	            );
 
+	            var driverSelect = _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    'Do you want to be the driver for your group?'
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Each group must have a dedicated driver who will answer questions and facilitate this quiz.'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { className: "btn btn-primary" },
+	                    'Yes! I will be the driver.'
+	                )
+	            );
+
 	            if (quiz) {
 	                return _react2.default.createElement(
 	                    Container,
@@ -37613,7 +37649,7 @@
 	                        null,
 	                        groupName
 	                    ) : groupNotAvailable,
-	                    quiz.active ? null : quizNotActive
+	                    quiz.active ? driverSelect : quizNotActive
 	                );
 	            } else {
 	                return loadingQuiz;

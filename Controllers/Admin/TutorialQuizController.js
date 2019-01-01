@@ -4,11 +4,12 @@ Controller for admin tutorial quiz management.
 Author(s): Jun Zheng [me at jackzh dot com]
 -------------------------------------*/
 
-const Controller   = require('../Controller');
-const TutorialQuiz = require('../../Models/TutorialQuiz');
-const asyncForEach = require('../../Utils/asyncForEach');
-const _            = require('lodash');
-const getAbsUrl    = require('../../Utils/getAbsUrl');
+const Controller     = require('../Controller');
+const TutorialQuiz   = require('../../Models/TutorialQuiz');
+const asyncForEach   = require('../../Utils/asyncForEach');
+const _              = require('lodash');
+const getAbsUrl      = require('../../Utils/getAbsUrl');
+const connectionPool = require('../../SocketIO/ConnectionPool').getInstance();
 
 /**
  * Controller for admin tutorial quiz management.
@@ -59,7 +60,7 @@ class TutorialQuizController extends Controller {
 
             await asyncForEach(items, async (id) => {
                 await TutorialQuiz.findByIdAndUpdate(id, update, {new: true});
-                req.app.locals.io.in('tutorialQuiz:' + tutorialQuiz._id).emit('quizActivated', tutorialQuiz);
+                connectionPool.emitToRoom(`tutorialQuiz:${tutorialQuiz._id}`, 'QUIZ_ACTIVE_STATUS_CHANGE', tutorialQuiz);
             });
 
             req.flash('success', 'List of quizzes have been updated.');
@@ -118,7 +119,7 @@ class TutorialQuizController extends Controller {
                 active: !!req.body.active,
                 archived: !!req.body.archived
             }).save();
-            req.app.locals.io.in('tutorialQuiz:' + req.tutorialQuiz._id).emit('quizActivated', req.tutorialQuiz);
+            connectionPool.emitToRoom(`tutorialQuiz:${req.tutorialQuiz._id}`, 'QUIZ_ACTIVE_STATUS_CHANGE', req.tutorialQuiz);
             req.flash('success', '<b>%s</b> settings have been updated for <b>TUT %s</b>.', req.tutorialQuiz.quiz.name, req.tutorialQuiz.tutorial.getDisplayName());
             res.redirect(getAbsUrl(`/admin/courses/${req.course.getId()}/tutorials-quizzes/${req.tutorialQuiz._id}`));
         } catch (e) {
