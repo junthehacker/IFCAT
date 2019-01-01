@@ -171,21 +171,6 @@ export default class QuizApp extends React.Component {
             });
         });
 
-        this.socket.on('quizActivated', (data) => {
-            if (data.active) {
-                swal('Quiz activated', 'You can pick a driver and start the quiz', 'info');
-                this.setState({active : true});
-            } else {
-                swal('Quiz de-activated', 'Your answers have been submitted', 'info');
-                this.setState({active : false});
-
-            }
-            this.setState({
-                complete: !data.active,
-                inProgress: false
-            });
-        });
-
         this.socket.on('SYNC_RESPONSE', (data) => {
             var responses = this.state.responses;
             responses[data.questionId] = data.response;

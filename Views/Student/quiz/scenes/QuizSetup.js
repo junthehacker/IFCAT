@@ -28,6 +28,15 @@ class QuizSetup extends Component {
             <div>Loading quiz...</div>
         );
 
+        const driverSelect = (
+            <div>
+                <hr/>
+                <h3>Do you want to be the driver for your group?</h3>
+                <p>Each group must have a dedicated driver who will answer questions and facilitate this quiz.</p>
+                <button className={"btn btn-primary"}>Yes! I will be the driver.</button>
+            </div>
+        );
+
         if(quiz) {
             return (
                 <Container>
@@ -35,7 +44,7 @@ class QuizSetup extends Component {
                     {groupName ? (
                         <h1>{groupName}</h1>
                     ): groupNotAvailable}
-                    {quiz.active ? null: quizNotActive}
+                    {quiz.active ? driverSelect: quizNotActive}
                 </Container>
             )
         } else {
