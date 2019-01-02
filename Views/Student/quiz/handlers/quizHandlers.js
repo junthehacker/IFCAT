@@ -6,6 +6,7 @@ export function registerReceiveQuizData(socket, reduce, getData) {
     socket.on(EVENT_QUIZ_DATA, data => {
         console.log("Quiz data received", data);
         reduce({
+            user: data.user,
             quiz: data.quiz,
             selectedQuestion: 0,
             group: data.group

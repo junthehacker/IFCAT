@@ -1,9 +1,32 @@
-import React, {Component}     from 'react';
+import React, {Component}  from 'react';
+import {withGlobalContext} from "../contexts/GlobalContext";
+import QuizStatus          from "../components/QuizStatus";
+import QuestionSelector    from "../components/QuestionSelector";
 
 class Quiz extends Component {
+
+    onChangeQuestion = (index) => {
+        const {reduce} = this.props.globalContext;
+        reduce({selectedQuestion: index});
+    };
+
     render() {
-        return <div>QUIZ</div>
+
+        const {quiz, selectedQuestion} = this.props.globalContext.data;
+
+        return (
+            <div>
+                <QuizStatus/>
+                <div>
+                    <QuestionSelector
+                        questions={quiz.quiz.questions}
+                        selectedIndex={selectedQuestion}
+                        onSelectionChange={this.onChangeQuestion}
+                    />
+                </div>
+            </div>
+        )
     }
 }
 
-export default Quiz;
+export default withGlobalContext(Quiz);

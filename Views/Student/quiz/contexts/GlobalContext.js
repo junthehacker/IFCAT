@@ -25,7 +25,8 @@ export function withGlobalContextProvider(WrappedComponent) {
                     connectionFailure: false,
                     quiz: null,
                     group: null,
-                    selectedQuestion: 0
+                    selectedQuestion: 0,
+                    user: null
                 }
             };
         }
