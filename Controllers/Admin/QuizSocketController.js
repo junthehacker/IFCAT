@@ -42,20 +42,18 @@ class QuizSocketController extends Controller {
 
                 let quizData = {
                     userId: connection.getUser().getId(),
-                    groupName: null,
-                    groupId: null,
+                    group: null,
                     quiz: tutorialQuiz
                 };
 
                 tutorialQuiz.groups.forEach(group => {
                     if (group.members.indexOf(connection.getUser().getId()) > -1) {
-                        quizData.groupName = group.name;
-                        quizData.groupId   = group._id;
+                        quizData.group = group;
                     }
                 });
 
                 // If a student does not belong to any group
-                if (!quizData.groupId) {
+                if (!quizData.group) {
                     // If quiz is not yet active, we can auto join them to a group
                     if (!tutorialQuiz.active) {
                         // TODO: tutorialQuiz.allocateMembers = 'self-selection' case
@@ -72,8 +70,7 @@ class QuizSocketController extends Controller {
                                 groupsWithRoom[0]._id,
                                 {$push: {members: connection.getUser().getId()}},
                                 {new: true});
-                            quizData.groupName = groupsWithRoom[0].name;
-                            quizData.groupId   = groupsWithRoom[0]._id;
+                            quizData.group = groupsWithRoom[0];
                         } else {
                             // We have to make a new group
                             let group     = new Group();
@@ -81,18 +78,35 @@ class QuizSocketController extends Controller {
                             group.members = [connection.getUser().getId()];
                             await group.save();
                             await TutorialQuiz.update({_id: tutorialQuiz._id}, {$push: {groups: group._id}}, {new: true});
-                            quizData.groupName = group.name;
-                            quizData.groupId   = group._id;
+                            quizData.group = group;
                         }
                     } else {
                         // TODO: Emit an error if trying to enter a new group while session active
                     }
                 }
 
-                if(quizData.groupId) connection.join(`group:${quizData.groupId}`);
+                if(quizData.group) connection.join(`group:${quizData.group._id}`);
                 connection.emit("QUIZ_DATA", quizData);
 
             }
+        }
+    }
+
+    /**
+     * Handles:
+     * - NOMINATE_SELF_AS_DRIVER
+     * Emits:
+     * - GROUP_DRIVER_CHANGED
+     * @param connection
+     * @returns {Function}
+     */
+    setCurrentConnectionAsDriver(connection) {
+        return async groupId => {
+            let group = await Group.findOne({_id: groupId});
+            group.driver = connection.getUser().getId();
+            await group.save();
+
+            connectionPool.emitToRoom(`group:${groupId}`, 'GROUP_DRIVER_CHANGED', group);
         }
     }
 }

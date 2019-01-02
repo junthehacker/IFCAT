@@ -24,6 +24,7 @@ export function withGlobalContextProvider(WrappedComponent) {
                     connected: false,
                     connectionFailure: false,
                     quiz: null,
+                    group: null,
                     selectedQuestion: 0
                 }
             };

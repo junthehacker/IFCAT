@@ -1,6 +1,7 @@
-import React, {Component}  from 'react';
-import styled              from 'styled-components';
-import {withGlobalContext} from "../contexts/GlobalContext";
+import React, {Component}     from 'react';
+import styled                 from 'styled-components';
+import {withGlobalContext}    from "../contexts/GlobalContext";
+import {nominateSelfAsDriver} from "../actions/quizActions";
 
 const Container = styled.div`
     text-align: center;
@@ -10,7 +11,7 @@ const Container = styled.div`
 
 class QuizSetup extends Component {
     render() {
-        const {quiz, groupName} = this.props.globalContext.data;
+        const {quiz, group} = this.props.globalContext.data;
 
         const quizNotActive = (
             <div className="alert alert-primary" role="alert">
@@ -33,7 +34,14 @@ class QuizSetup extends Component {
                 <hr/>
                 <h3>Do you want to be the driver for your group?</h3>
                 <p>Each group must have a dedicated driver who will answer questions and facilitate this quiz.</p>
-                <button className={"btn btn-primary"}>Yes! I will be the driver.</button>
+                <button
+                    className={"btn btn-primary"}
+                    onClick={() => {
+                        nominateSelfAsDriver(group._id)
+                    }}
+                >
+                    Yes! I will be the driver.
+                </button>
             </div>
         );
 
@@ -41,8 +49,8 @@ class QuizSetup extends Component {
             return (
                 <Container>
                     <h2>You are in group</h2>
-                    {groupName ? (
-                        <h1>{groupName}</h1>
+                    {group ? (
+                        <h1>{group.name}</h1>
                     ): groupNotAvailable}
                     {quiz.active ? driverSelect: quizNotActive}
                 </Container>

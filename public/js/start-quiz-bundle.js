@@ -9359,6 +9359,10 @@
 
 	var _QuizSetup2 = _interopRequireDefault(_QuizSetup);
 
+	var _Quiz = __webpack_require__(372);
+
+	var _Quiz2 = _interopRequireDefault(_Quiz);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9391,6 +9395,11 @@
 	                    _Route2.default,
 	                    { name: "quizSetup" },
 	                    _react2.default.createElement(_QuizSetup2.default, null)
+	                ),
+	                _react2.default.createElement(
+	                    _Route2.default,
+	                    { name: "quiz" },
+	                    _react2.default.createElement(_Quiz2.default, null)
 	                )
 	            );
 	        }
@@ -11803,6 +11812,7 @@
 	                    connected: false,
 	                    connectionFailure: false,
 	                    quiz: null,
+	                    group: null,
 	                    selectedQuestion: 0
 	                }
 	            };
@@ -37491,11 +37501,18 @@
 	    value: true
 	});
 	exports.requestQuizData = requestQuizData;
+	exports.nominateSelfAsDriver = nominateSelfAsDriver;
 	var REQUEST_QUIZ = "REQUEST_QUIZ";
+	var NOMINATE_SELF_AS_DRIVER = "NOMINATE_SELF_AS_DRIVER";
 
 	function requestQuizData(quizId) {
 	    console.log("Requesting quiz data...", quizId);
 	    window.quizSocket.emit(REQUEST_QUIZ, quizId);
+	}
+
+	function nominateSelfAsDriver(groupId) {
+	    console.log("Setting self as driver...", groupId);
+	    window.quizSocket.emit(NOMINATE_SELF_AS_DRIVER, groupId);
 	}
 
 /***/ },
@@ -37512,9 +37529,11 @@
 
 	exports.registerReceiveQuizData = registerReceiveQuizData;
 	exports.registerQuizActiveStatusChange = registerQuizActiveStatusChange;
+	exports.registerQuizGroupDriverChanged = registerQuizGroupDriverChanged;
 	exports.register = register;
 	var EVENT_QUIZ_DATA = 'QUIZ_DATA';
 	var EVENT_QUIZ_ACTIVE_STATUS_CHANGE = 'QUIZ_ACTIVE_STATUS_CHANGE';
+	var EVENT_QUIZ_GROUP_DRIVER_CHANGED = "GROUP_DRIVER_CHANGED";
 
 	function registerReceiveQuizData(socket, reduce, getData) {
 	    socket.on(EVENT_QUIZ_DATA, function (data) {
@@ -37522,8 +37541,13 @@
 	        reduce({
 	            quiz: data.quiz,
 	            selectedQuestion: 0,
-	            groupName: data.groupName
+	            group: data.group
 	        });
+	        // If the quiz already has a driver, we simply proceed to quiz without setup
+	        if (data.group.driver && data.quiz.active) {
+	            console.log("Driver already set", data.group.driver);
+	            reduce({ route: "quiz" });
+	        }
 	    });
 	}
 
@@ -37533,6 +37557,19 @@
 	        var newTutorialQuiz = _extends({}, getData().quiz);
 	        newTutorialQuiz.active = data.active;
 	        reduce({ quiz: newTutorialQuiz });
+	        if (getData().group.driver && data.active) {
+	            reduce({ route: "quiz" });
+	        }
+	    });
+	}
+
+	function registerQuizGroupDriverChanged(socket, reduce, getData) {
+	    socket.on(EVENT_QUIZ_GROUP_DRIVER_CHANGED, function (data) {
+	        console.log("Group driver changed...", data);
+	        if (getData().route === 'quizSetup') {
+	            reduce({ route: "quiz" });
+	        }
+	        reduce({ group: data });
 	    });
 	}
 
@@ -37541,6 +37578,7 @@
 	    console.log("quizHandlers registered.");
 	    registerReceiveQuizData(socket, reduce, getData);
 	    registerQuizActiveStatusChange(socket, reduce, getData);
+	    registerQuizGroupDriverChanged(socket, reduce, getData);
 	}
 
 /***/ },
@@ -37566,6 +37604,8 @@
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
 	var _GlobalContext = __webpack_require__(340);
+
+	var _quizActions = __webpack_require__(369);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37593,7 +37633,7 @@
 	        value: function render() {
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                quiz = _props$globalContext$.quiz,
-	                groupName = _props$globalContext$.groupName;
+	                group = _props$globalContext$.group;
 
 
 	            var quizNotActive = _react2.default.createElement(
@@ -37630,7 +37670,12 @@
 	                ),
 	                _react2.default.createElement(
 	                    'button',
-	                    { className: "btn btn-primary" },
+	                    {
+	                        className: "btn btn-primary",
+	                        onClick: function onClick() {
+	                            (0, _quizActions.nominateSelfAsDriver)(group._id);
+	                        }
+	                    },
 	                    'Yes! I will be the driver.'
 	                )
 	            );
@@ -37644,10 +37689,10 @@
 	                        null,
 	                        'You are in group'
 	                    ),
-	                    groupName ? _react2.default.createElement(
+	                    group ? _react2.default.createElement(
 	                        'h1',
 	                        null,
-	                        groupName
+	                        group.name
 	                    ) : groupNotAvailable,
 	                    quiz.active ? driverSelect : quizNotActive
 	                );
@@ -37661,6 +37706,55 @@
 	}(_react.Component);
 
 	exports.default = (0, _GlobalContext.withGlobalContext)(QuizSetup);
+
+/***/ },
+/* 372 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Quiz = function (_Component) {
+	    _inherits(Quiz, _Component);
+
+	    function Quiz() {
+	        _classCallCheck(this, Quiz);
+
+	        return _possibleConstructorReturn(this, (Quiz.__proto__ || Object.getPrototypeOf(Quiz)).apply(this, arguments));
+	    }
+
+	    _createClass(Quiz, [{
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                'QUIZ'
+	            );
+	        }
+	    }]);
+
+	    return Quiz;
+	}(_react.Component);
+
+	exports.default = Quiz;
 
 /***/ }
 /******/ ]);

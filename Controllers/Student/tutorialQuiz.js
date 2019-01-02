@@ -33,19 +33,6 @@ exports.startQuiz = (req, res) => {
 
 // WebSocket event handler generators - these are curried functions that take
 // the input (socket) and output (emitter) context, and return the actual handler
-exports.nominateDriver = (socket, emitters) => (function(data) {
-    models.Group.findById(data.groupId)
-    .exec()
-    .then(function(group) {
-        models.Group.findByIdAndUpdate(data.groupId, { driver : socket.request.user.getId() })
-        .exec()
-        .then(function() {
-            emitters.emitToGroup(data.groupId, 'RESET_DRIVER', { groupId : data.groupId });
-            socket.emit('ASSIGNED_AS_DRIVER', { groupId : data.groupId } );
-            emitters.emitToGroup(data.groupId, 'startQuiz', {});
-        });
-    });
-});
 
 exports.joinGroup = (socket, emitters) => (function(data) {
     models.TutorialQuiz.findById(data.quizId)

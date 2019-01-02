@@ -33,7 +33,6 @@ module.exports = io => (socket => {
     const emitters     = require('./emitters')(io);
     const fetchHandler = (handlerName) => (controllers.TutorialQuiz[handlerName])(socket, emitters);
 
-    socket.on('NOMINATE_SELF_AS_DRIVER', fetchHandler('nominateDriver'));
     socket.on('AWARD_POINT', fetchHandler('awardPoint'));
     socket.on('QUIZ_COMPLETE', fetchHandler('quizComplete'));
     socket.on('JOIN_GROUP', fetchHandler('joinGroup'));

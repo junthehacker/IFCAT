@@ -3,6 +3,7 @@ import {withGlobalContext, withGlobalContextProvider} from "./contexts/GlobalCon
 import Route                                          from "./components/Route";
 import Connect                                        from "./scenes/Connect";
 import QuizSetup                                      from "./scenes/QuizSetup";
+import Quiz                                           from "./scenes/Quiz";
 
 class App extends Component {
 
@@ -11,6 +12,7 @@ class App extends Component {
         return <div>
             <Route name="connect"><Connect /></Route>
             <Route name="quizSetup"><QuizSetup /></Route>
+            <Route name="quiz"><Quiz /></Route>
         </div>
     }
 }

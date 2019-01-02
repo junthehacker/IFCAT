@@ -15,7 +15,6 @@ export default class QuizApp extends React.Component {
     constructor(props) {
         super(props);
 
-        this.setDriverCb = this.setDriverCb.bind(this);
         this.awardPointCb = this.awardPointCb.bind(this);
         this.submitChoiceCb = this.submitChoiceCb.bind(this);
         this.selectQuestionCb = this.selectQuestionCb.bind(this);
@@ -288,35 +287,18 @@ export default class QuizApp extends React.Component {
 
     render() {
         var scoreIndicator = this.state.inProgress ? <span> Quiz: {this.state.score} </span> : null;
-        var preQuiz = this.state.inProgress ? null : <PreQuiz setDriverCb = {this.setDriverCb} groupName = {this.state.groupName} active={this.state.active}/>;
         var scoreBar = this.state.inProgress ? this.getScoreBar() : null;
         var question = this.state.inProgress ? this.getCurrentQuestion() : null;
         var postQuiz = this.state.complete ? this.getPostQuiz() : null;
         var groupBuilder = this.state.inProgress ? null : this.getGroupBuilder();
 
         return (<div> 
-                    {preQuiz} 
-                    {groupBuilder} 
+                    {groupBuilder}
                     {scoreBar}
                     {question} 
                     {postQuiz}
                     <EmptyLine/>
                 </div>);
-    }
-
-
-
-    setDriverCb(selfIsDriver) {
-        if (selfIsDriver) {
-            this.socket.emit('NOMINATE_SELF_AS_DRIVER', {
-                groupId: this.state.groupId
-            });
-        } else {
-            this.setState({
-                inProgress: true,
-                isDriver: false
-            });
-        }
     }
 
     createGroupCb() {
