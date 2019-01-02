@@ -41,7 +41,7 @@ class QuizSocketController extends Controller {
                 });
 
                 let quizData = {
-                    userId: connection.getUser().getId(),
+                    user: connection.getUser(),
                     group: null,
                     quiz: tutorialQuiz
                 };

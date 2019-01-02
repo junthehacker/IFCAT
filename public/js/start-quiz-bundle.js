@@ -11813,7 +11813,8 @@
 	                    connectionFailure: false,
 	                    quiz: null,
 	                    group: null,
-	                    selectedQuestion: 0
+	                    selectedQuestion: 0,
+	                    user: null
 	                }
 	            };
 	            return _this;
@@ -37539,6 +37540,7 @@
 	    socket.on(EVENT_QUIZ_DATA, function (data) {
 	        console.log("Quiz data received", data);
 	        reduce({
+	            user: data.user,
 	            quiz: data.quiz,
 	            selectedQuestion: 0,
 	            group: data.group
@@ -37711,7 +37713,7 @@
 /* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -37722,6 +37724,16 @@
 	var _react = __webpack_require__(333);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _GlobalContext = __webpack_require__(340);
+
+	var _QuizStatus = __webpack_require__(373);
+
+	var _QuizStatus2 = _interopRequireDefault(_QuizStatus);
+
+	var _QuestionSelector = __webpack_require__(374);
+
+	var _QuestionSelector2 = _interopRequireDefault(_QuestionSelector);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37735,18 +37747,44 @@
 	    _inherits(Quiz, _Component);
 
 	    function Quiz() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
 	        _classCallCheck(this, Quiz);
 
-	        return _possibleConstructorReturn(this, (Quiz.__proto__ || Object.getPrototypeOf(Quiz)).apply(this, arguments));
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Quiz.__proto__ || Object.getPrototypeOf(Quiz)).call.apply(_ref, [this].concat(args))), _this), _this.onChangeQuestion = function (index) {
+	            var reduce = _this.props.globalContext.reduce;
+
+	            reduce({ selectedQuestion: index });
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
 	    _createClass(Quiz, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                quiz = _props$globalContext$.quiz,
+	                selectedQuestion = _props$globalContext$.selectedQuestion;
+
+
 	            return _react2.default.createElement(
-	                'div',
+	                "div",
 	                null,
-	                'QUIZ'
+	                _react2.default.createElement(_QuizStatus2.default, null),
+	                _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    _react2.default.createElement(_QuestionSelector2.default, {
+	                        questions: quiz.quiz.questions,
+	                        selectedIndex: selectedQuestion,
+	                        onSelectionChange: this.onChangeQuestion
+	                    })
+	                )
 	            );
 	        }
 	    }]);
@@ -37754,7 +37792,239 @@
 	    return Quiz;
 	}(_react.Component);
 
-	exports.default = Quiz;
+	exports.default = (0, _GlobalContext.withGlobalContext)(Quiz);
+
+/***/ },
+/* 373 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _templateObject = _taggedTemplateLiteral(['\n    background-color: rgba(0,0,0,0.1);\n    border-radius: 3px;\n    padding: 10px;\n'], ['\n    background-color: rgba(0,0,0,0.1);\n    border-radius: 3px;\n    padding: 10px;\n']);
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GlobalContext = __webpack_require__(340);
+
+	var _styledComponents = __webpack_require__(346);
+
+	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+	var Container = _styledComponents2.default.div(_templateObject);
+
+	var QuizStatus = function (_Component) {
+	    _inherits(QuizStatus, _Component);
+
+	    function QuizStatus() {
+	        _classCallCheck(this, QuizStatus);
+
+	        return _possibleConstructorReturn(this, (QuizStatus.__proto__ || Object.getPrototypeOf(QuizStatus)).apply(this, arguments));
+	    }
+
+	    _createClass(QuizStatus, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                group = _props$globalContext$.group,
+	                user = _props$globalContext$.user;
+
+
+	            return _react2.default.createElement(
+	                Container,
+	                null,
+	                'Group: ',
+	                group.name,
+	                group.driver === user._id ? _react2.default.createElement(
+	                    'span',
+	                    null,
+	                    ' | You are the driver.'
+	                ) : _react2.default.createElement(
+	                    'span',
+	                    { className: "text-muted" },
+	                    ' | You are not the driver.'
+	                )
+	            );
+	        }
+	    }]);
+
+	    return QuizStatus;
+	}(_react.Component);
+
+	exports.default = (0, _GlobalContext.withGlobalContext)(QuizStatus);
+
+/***/ },
+/* 374 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _templateObject = _taggedTemplateLiteral(['\n    text-align: center;\n    padding-top: 15px;\n    padding-bottom: 15px;\n'], ['\n    text-align: center;\n    padding-top: 15px;\n    padding-bottom: 15px;\n']);
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _QuestionSelectorButton = __webpack_require__(375);
+
+	var _QuestionSelectorButton2 = _interopRequireDefault(_QuestionSelectorButton);
+
+	var _propTypes = __webpack_require__(342);
+
+	var _propTypes2 = _interopRequireDefault(_propTypes);
+
+	var _styledComponents = __webpack_require__(346);
+
+	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+	var Container = _styledComponents2.default.div(_templateObject);
+
+	var QuestionSelector = function (_Component) {
+	    _inherits(QuestionSelector, _Component);
+
+	    function QuestionSelector() {
+	        _classCallCheck(this, QuestionSelector);
+
+	        return _possibleConstructorReturn(this, (QuestionSelector.__proto__ || Object.getPrototypeOf(QuestionSelector)).apply(this, arguments));
+	    }
+
+	    _createClass(QuestionSelector, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props,
+	                questions = _props.questions,
+	                selectedIndex = _props.selectedIndex,
+	                onSelectionChange = _props.onSelectionChange;
+
+
+	            return _react2.default.createElement(
+	                Container,
+	                null,
+	                questions.map(function (question, key) {
+	                    return _react2.default.createElement(_QuestionSelectorButton2.default, {
+	                        question: question,
+	                        selected: selectedIndex === key,
+	                        onClick: function onClick() {
+	                            onSelectionChange(key);
+	                        },
+	                        key: key
+	                    });
+	                })
+	            );
+	        }
+	    }]);
+
+	    return QuestionSelector;
+	}(_react.Component);
+
+	QuestionSelector.propTypes = {
+	    selectedIndex: _propTypes2.default.number,
+	    questions: _propTypes2.default.any,
+	    onSelectionChange: _propTypes2.default.func
+	};
+
+	exports.default = QuestionSelector;
+
+/***/ },
+/* 375 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _propTypes = __webpack_require__(342);
+
+	var _propTypes2 = _interopRequireDefault(_propTypes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var QuestionSelectorButton = function (_Component) {
+	    _inherits(QuestionSelectorButton, _Component);
+
+	    function QuestionSelectorButton() {
+	        _classCallCheck(this, QuestionSelectorButton);
+
+	        return _possibleConstructorReturn(this, (QuestionSelectorButton.__proto__ || Object.getPrototypeOf(QuestionSelectorButton)).apply(this, arguments));
+	    }
+
+	    _createClass(QuestionSelectorButton, [{
+	        key: 'render',
+	        value: function render() {
+	            var _props = this.props,
+	                question = _props.question,
+	                selected = _props.selected,
+	                onClick = _props.onClick;
+
+
+	            return _react2.default.createElement(
+	                'button',
+	                {
+	                    onClick: onClick,
+	                    className: "btn btn-default" + (selected ? " btn-primary" : "")
+	                },
+	                question.number
+	            );
+	        }
+	    }]);
+
+	    return QuestionSelectorButton;
+	}(_react.Component);
+
+	QuestionSelectorButton.propTypes = {
+	    question: _propTypes2.default.any,
+	    selected: _propTypes2.default.bool,
+	    onClick: _propTypes2.default.func
+	};
+
+	exports.default = QuestionSelectorButton;
 
 /***/ }
 /******/ ]);
