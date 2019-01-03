@@ -2,6 +2,7 @@ import React, {Component}  from 'react';
 import {withGlobalContext} from "../contexts/GlobalContext";
 import QuizStatus          from "../components/QuizStatus";
 import QuestionSelector    from "../components/QuestionSelector";
+import Question            from "../components/Question";
 
 class Quiz extends Component {
 
@@ -12,7 +13,7 @@ class Quiz extends Component {
 
     render() {
 
-        const {quiz, selectedQuestion} = this.props.globalContext.data;
+        const {quiz, selectedQuestion, group, user} = this.props.globalContext.data;
 
         return (
             <div>
@@ -22,6 +23,10 @@ class Quiz extends Component {
                         questions={quiz.quiz.questions}
                         selectedIndex={selectedQuestion}
                         onSelectionChange={this.onChangeQuestion}
+                    />
+                    <Question
+                        question={quiz.quiz.questions[selectedQuestion]}
+                        isDriver={group.driver === user._id}
                     />
                 </div>
             </div>
