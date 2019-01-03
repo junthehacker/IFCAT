@@ -38638,7 +38638,7 @@
 /* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -38646,9 +38646,24 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _templateObject = _taggedTemplateLiteral(["\n    text-align: center;\n"], ["\n    text-align: center;\n"]),
+	    _templateObject2 = _taggedTemplateLiteral(["\n    text-align: left;\n"], ["\n    text-align: left;\n"]);
+
 	var _react = __webpack_require__(333);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _styledComponents = __webpack_require__(346);
+
+	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	var _QuestionTitle = __webpack_require__(381);
+
+	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
+
+	var _SubmitButton = __webpack_require__(380);
+
+	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38658,22 +38673,67 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+	var Container = _styledComponents2.default.div(_templateObject);
+
+	var CodeBlock = _styledComponents2.default.pre(_templateObject2);
+
 	var CodeTracingQuestion = function (_Component) {
 	    _inherits(CodeTracingQuestion, _Component);
 
-	    function CodeTracingQuestion() {
+	    function CodeTracingQuestion(props) {
 	        _classCallCheck(this, CodeTracingQuestion);
 
-	        return _possibleConstructorReturn(this, (CodeTracingQuestion.__proto__ || Object.getPrototypeOf(CodeTracingQuestion)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (CodeTracingQuestion.__proto__ || Object.getPrototypeOf(CodeTracingQuestion)).call(this, props));
+
+	        _this.state = {
+	            answer: ""
+	        };
+	        return _this;
 	    }
 
 	    _createClass(CodeTracingQuestion, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
+	            var _this2 = this;
+
+	            var _props = this.props,
+	                question = _props.question,
+	                isDriver = _props.isDriver;
+
 	            return _react2.default.createElement(
-	                'div',
+	                Container,
 	                null,
-	                'Code tracing'
+	                _react2.default.createElement(_QuestionTitle2.default, { question: question }),
+	                _react2.default.createElement(
+	                    CodeBlock,
+	                    null,
+	                    _react2.default.createElement(
+	                        "code",
+	                        null,
+	                        question.code
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "small",
+	                    { className: "text-muted" },
+	                    "What should be the next line of output?"
+	                ),
+	                _react2.default.createElement("br", null),
+	                _react2.default.createElement("br", null),
+	                _react2.default.createElement("input", {
+	                    type: "text",
+	                    className: "form-control",
+	                    disabled: !isDriver,
+	                    placeholder: "Enter next line of output here...",
+	                    onChange: function onChange(e) {
+	                        _this2.setState({ answer: e.target.value });
+	                    }
+	                }),
+	                _react2.default.createElement("hr", null),
+	                _react2.default.createElement(_SubmitButton2.default, { isDriver: isDriver, disabled: this.state.answer === "" }),
+	                _react2.default.createElement("br", null)
 	            );
 	        }
 	    }]);
