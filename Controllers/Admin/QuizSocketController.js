@@ -1,6 +1,9 @@
 const Controller     = require('../Controller');
 const TutorialQuiz   = require('../../Models/TutorialQuiz');
 const Group          = require('../../Models/Group');
+const Question       = require('../../Models/Question');
+const Response       = require('../../Models/Response');
+const QuestionType   = require('../../Enums/QuestionType');
 const connectionPool = require('../../SocketIO/ConnectionPool').getInstance();
 
 
@@ -43,6 +46,7 @@ class QuizSocketController extends Controller {
                 let quizData = {
                     user: connection.getUser(),
                     group: null,
+                    responses: [],
                     quiz: tutorialQuiz
                 };
 
@@ -85,7 +89,10 @@ class QuizSocketController extends Controller {
                     }
                 }
 
-                if(quizData.group) connection.join(`group:${quizData.group._id}`);
+                if (quizData.group) {
+                    connection.join(`group:${quizData.group._id}`);
+                    quizData.responses = await Response.find({group: quizData.group._id});
+                }
                 connection.emit("QUIZ_DATA", quizData);
 
             }
@@ -102,11 +109,79 @@ class QuizSocketController extends Controller {
      */
     setCurrentConnectionAsDriver(connection) {
         return async groupId => {
-            let group = await Group.findOne({_id: groupId});
+            let group    = await Group.findOne({_id: groupId});
             group.driver = connection.getUser().getId();
             await group.save();
 
             connectionPool.emitToRoom(`group:${groupId}`, 'GROUP_DRIVER_CHANGED', group);
+        }
+    }
+
+    /**
+     * Attempt an answer for the quiz
+     * Handles:
+     * - ANSWER_ATTEMPT
+     * {questionId: String, groupId: String, answer: String[]}
+     * Emits:
+     * - GROUP_ATTEMPT
+     * @param connection
+     * @returns {Function}
+     */
+    attemptAnswer(connection) {
+        return async data => {
+            console.log(data);
+            let question = await Question.findById(data.questionId);
+            let answerIsCorrect;
+            if (question.type === QuestionType.MULTIPLE_CHOICE) {
+                answerIsCorrect = (question.answers.indexOf(data.answer[0]) !== -1);
+            } else if (question.type === QuestionType.MULTIPLE_SELECT) {
+                answerIsCorrect = false;
+                if (data.answer.length === question.answers.length) {
+                    answerIsCorrect = true;
+                    data.answer.forEach((ans) => {
+                        if (question.answers.indexOf(ans) === -1) answerIsCorrect = false;
+                    })
+                }
+            } else if (question.type === QuestionType.SHORT_ANSWER) {
+                if (!question.caseSensitive) {
+                    let answer         = data.answer[0].toLowerCase();
+                    let correctAnswers = question.answers.map(ans => ans.toLowerCase());
+                    answerIsCorrect    = (correctAnswers.indexOf(answer) > -1);
+                } else {
+                    answerIsCorrect = (question.answers.indexOf(data.answer[0]) > -1);
+                }
+            }
+
+            let response = await Response.findOne({group: data.groupId, question: data.questionId});
+            if (!response) {
+                response          = new Response();
+                response.group    = data.groupId;
+                response.question = data.questionId;
+                response.correct  = answerIsCorrect;
+                response.attempts = answerIsCorrect ? 0 : 1;
+                response.points   = answerIsCorrect ? (question.points + question.firstTryBonus) : 0;
+                response.answer   = data.answer;
+                await response.save();
+            } else {
+                // Some logic to prevent students from being dumb and reanswering correct questions and losing points
+                // Basically, if they get it right once, they can't worsen their score
+                let attemptsInc = (response.correct) ? 0 : (answerIsCorrect) ? 0 : 1;
+                let newScore    = (response.correct) ? response.points : (answerIsCorrect) ? (question.points - (response.attempts * question.penalty)) : 0;
+                // If they got it correct before, don't increment
+                response = await Response.findByIdAndUpdate(
+                    response._id,
+                    {
+                        correct: (response.correct || answerIsCorrect), $inc: {attempts: attemptsInc},
+                        points: (newScore > 0) ? newScore : 0, answer: data.answer
+                    },
+                    {new: true}
+                );
+            }
+
+            connectionPool.emitToRoom(`group:${data.groupId}`, 'GROUP_ATTEMPT', {
+                response: response,
+                groupId: data.groupId
+            });
         }
     }
 }

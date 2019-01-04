@@ -5,4 +5,6 @@ module.exports = (io, connection) => {
 
     connection.onEvent("REQUEST_QUIZ").invoke(quizSocketController.requestQuizData);
     connection.onEvent("NOMINATE_SELF_AS_DRIVER").invoke(quizSocketController.setCurrentConnectionAsDriver);
+    connection.onEvent("ANSWER_ATTEMPT").invoke(quizSocketController.attemptAnswer);
+
 };

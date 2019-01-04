@@ -6,4 +6,4 @@ exports.Question = require('./Question');
 exports.File = require('./File');
 exports.TutorialQuiz = require('./TutorialQuiz');
 exports.Group = require('./Group');
-exports.Response = require('./response');
+exports.Response = require('./Response');

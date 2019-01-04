@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
-import styled             from 'styled-components';
-import SubmitButton       from "../SubmitButton";
-import QuestionTitle      from "../QuestionTitle";
+import React, {Component}  from 'react';
+import styled              from 'styled-components';
+import SubmitButton        from "../SubmitButton";
+import QuestionTitle       from "../QuestionTitle";
+import {withGlobalContext} from "../../contexts/GlobalContext";
+import {attemptAnswer}     from "../../actions/quizActions";
+import QuestionScore       from "../QuestionScore";
 
 const Container = styled.div`
     text-align: center;
@@ -21,9 +24,21 @@ class MultipleChoiceQuestion extends Component {
         return this.props.question.choices;
     };
 
+    getResponse = () => {
+        const {question}  = this.props;
+        const {responses} = this.props.globalContext.data;
+        for (let response of responses) {
+            if (response.question === question._id) {
+                return response;
+            }
+        }
+    };
+
     render() {
 
         const {question, isDriver} = this.props;
+        const {group}              = this.props.globalContext.data;
+        const response             = this.getResponse();
 
         return (
             <Container>
@@ -36,9 +51,9 @@ class MultipleChoiceQuestion extends Component {
                     return (
                         <React.Fragment key={key}>
                             <button
-                                className={"btn" + (this.state.selectedChoice === key ? " btn-primary": " btn-link")}
+                                className={"btn" + (this.state.selectedChoice === key ? " btn-primary" : " btn-link")}
                                 onClick={() => this.setState({selectedChoice: key})}
-                                disabled={!isDriver}
+                                disabled={!isDriver || (response && response.correct)}
                             >
                                 {choice}
                             </button>
@@ -47,11 +62,20 @@ class MultipleChoiceQuestion extends Component {
                     );
                 })}
                 <hr/>
-                <SubmitButton isDriver={isDriver} disabled={this.state.selectedChoice === null}/>
+                <QuestionScore response={response}/>
+                {!response || !response.correct ? (
+                    <SubmitButton
+                        isDriver={isDriver}
+                        disabled={this.state.selectedChoice === null}
+                        onClick={() => {
+                            attemptAnswer(question._id, group._id, [this.getChoices()[this.state.selectedChoice]]);
+                        }}
+                    />
+                ): null}
                 <br/>
             </Container>
         )
     }
 }
 
-export default MultipleChoiceQuestion;
+export default withGlobalContext(MultipleChoiceQuestion);

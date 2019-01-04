@@ -139,7 +139,7 @@ export default class QuizApp extends React.Component {
                 responses: responsesStore,
                 quiz: this.state.quiz
             });
-        })
+        });
 
         this.socket.on('updateScores', (data) => {
             if (this.state.groupId && data.groupId != this.state.groupId) return;
@@ -158,15 +158,6 @@ export default class QuizApp extends React.Component {
                 numCorrect: this.state.numCorrect + numCorrectInc,
                 responses: responsesStore,
                 score: newScore
-            });
-        });
-
-        this.socket.on('ASSIGNED_AS_DRIVER', (data) => {
-            if (!this.state.groupId || data.groupId != this.state.groupId) return;
-            // enable choices and submit buttons (disabled by default)
-            this.setState({
-                isDriver: true,
-                inProgress: true
             });
         });
 

@@ -37503,8 +37503,10 @@
 	});
 	exports.requestQuizData = requestQuizData;
 	exports.nominateSelfAsDriver = nominateSelfAsDriver;
+	exports.attemptAnswer = attemptAnswer;
 	var REQUEST_QUIZ = "REQUEST_QUIZ";
 	var NOMINATE_SELF_AS_DRIVER = "NOMINATE_SELF_AS_DRIVER";
+	var ANSWER_ATTEMPT = "ANSWER_ATTEMPT";
 
 	function requestQuizData(quizId) {
 	    console.log("Requesting quiz data...", quizId);
@@ -37514,6 +37516,13 @@
 	function nominateSelfAsDriver(groupId) {
 	    console.log("Setting self as driver...", groupId);
 	    window.quizSocket.emit(NOMINATE_SELF_AS_DRIVER, groupId);
+	}
+
+	function attemptAnswer(questionId, groupId, answer) {
+	    console.log("Attempting question", questionId, "for group", groupId, "with answer", answer);
+	    window.quizSocket.emit(ANSWER_ATTEMPT, {
+	        questionId: questionId, groupId: groupId, answer: answer
+	    });
 	}
 
 /***/ },
@@ -37531,10 +37540,15 @@
 	exports.registerReceiveQuizData = registerReceiveQuizData;
 	exports.registerQuizActiveStatusChange = registerQuizActiveStatusChange;
 	exports.registerQuizGroupDriverChanged = registerQuizGroupDriverChanged;
+	exports.registerGroupAttempt = registerGroupAttempt;
 	exports.register = register;
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 	var EVENT_QUIZ_DATA = 'QUIZ_DATA';
 	var EVENT_QUIZ_ACTIVE_STATUS_CHANGE = 'QUIZ_ACTIVE_STATUS_CHANGE';
 	var EVENT_QUIZ_GROUP_DRIVER_CHANGED = "GROUP_DRIVER_CHANGED";
+	var EVENT_GROUP_ATTEMPT = "GROUP_ATTEMPT";
 
 	function registerReceiveQuizData(socket, reduce, getData) {
 	    socket.on(EVENT_QUIZ_DATA, function (data) {
@@ -37543,7 +37557,8 @@
 	            user: data.user,
 	            quiz: data.quiz,
 	            selectedQuestion: 0,
-	            group: data.group
+	            group: data.group,
+	            responses: data.responses
 	        });
 	        // If the quiz already has a driver, we simply proceed to quiz without setup
 	        if (data.group.driver && data.quiz.active) {
@@ -37575,12 +37590,56 @@
 	    });
 	}
 
+	function registerGroupAttempt(socket, reduce, getData) {
+	    socket.on(EVENT_GROUP_ATTEMPT, function (data) {
+	        console.log("New group attempt...", data);
+	        if (!data.response.correct) {
+	            swal("Incorrect answer :(", "Please try again.", "error");
+	        } else {
+	            swal("Answer is correct!", "Good job!", "success");
+	        }
+	        // Update the list of responses
+	        var newResponses = [].concat(_toConsumableArray(getData().responses));
+	        var i = 0;
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
+
+	        try {
+	            for (var _iterator = newResponses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                var response = _step.value;
+
+	                if (response._id === response._id) break;
+	                i++;
+	            }
+	        } catch (err) {
+	            _didIteratorError = true;
+	            _iteratorError = err;
+	        } finally {
+	            try {
+	                if (!_iteratorNormalCompletion && _iterator.return) {
+	                    _iterator.return();
+	                }
+	            } finally {
+	                if (_didIteratorError) {
+	                    throw _iteratorError;
+	                }
+	            }
+	        }
+
+	        if (i !== newResponses.length) newResponses.splice(i, 1);
+	        newResponses.push(data.response);
+	        reduce({ responses: newResponses });
+	    });
+	}
+
 	function register(socket, reduce, getData) {
 
 	    console.log("quizHandlers registered.");
 	    registerReceiveQuizData(socket, reduce, getData);
 	    registerQuizActiveStatusChange(socket, reduce, getData);
 	    registerQuizGroupDriverChanged(socket, reduce, getData);
+	    registerGroupAttempt(socket, reduce, getData);
 	}
 
 /***/ },
@@ -38058,19 +38117,19 @@
 
 	var _enums = __webpack_require__(377);
 
-	var _MultipleChoiceQuestion = __webpack_require__(379);
+	var _MultipleChoiceQuestion = __webpack_require__(380);
 
 	var _MultipleChoiceQuestion2 = _interopRequireDefault(_MultipleChoiceQuestion);
 
-	var _MultipleSelectQuestion = __webpack_require__(382);
+	var _MultipleSelectQuestion = __webpack_require__(384);
 
 	var _MultipleSelectQuestion2 = _interopRequireDefault(_MultipleSelectQuestion);
 
-	var _ShortAnswerQuestion = __webpack_require__(383);
+	var _ShortAnswerQuestion = __webpack_require__(385);
 
 	var _ShortAnswerQuestion2 = _interopRequireDefault(_ShortAnswerQuestion);
 
-	var _CodeTracingQuestion = __webpack_require__(384);
+	var _CodeTracingQuestion = __webpack_require__(386);
 
 	var _CodeTracingQuestion2 = _interopRequireDefault(_CodeTracingQuestion);
 
@@ -38164,6 +38223,18 @@
 	  });
 	});
 
+	var _SocketAction = __webpack_require__(379);
+
+	Object.keys(_SocketAction).forEach(function (key) {
+	  if (key === "default" || key === "__esModule") return;
+	  Object.defineProperty(exports, key, {
+	    enumerable: true,
+	    get: function get() {
+	      return _SocketAction[key];
+	    }
+	  });
+	});
+
 /***/ },
 /* 378 */
 /***/ function(module, exports) {
@@ -38182,6 +38253,20 @@
 
 /***/ },
 /* 379 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var SocketAction = exports.SocketAction = {
+	    ANSWER_ATTEMPT: 'attemptAnswer',
+	    CODE_TRACING_ANSWER_ATTEMPT: 'CODE_TRACING_ANSWER_ATTEMPT'
+	};
+
+/***/ },
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38202,13 +38287,21 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _SubmitButton = __webpack_require__(380);
+	var _SubmitButton = __webpack_require__(381);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
-	var _QuestionTitle = __webpack_require__(381);
+	var _QuestionTitle = __webpack_require__(382);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
+
+	var _GlobalContext = __webpack_require__(340);
+
+	var _quizActions = __webpack_require__(369);
+
+	var _QuestionScore = __webpack_require__(383);
+
+	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38235,6 +38328,37 @@
 	            return _this.props.question.choices;
 	        };
 
+	        _this.getResponse = function () {
+	            var question = _this.props.question;
+	            var responses = _this.props.globalContext.data.responses;
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var response = _step.value;
+
+	                    if (response.question === question._id) {
+	                        return response;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	        };
+
 	        _this.state = {
 	            selectedChoice: null
 	        };
@@ -38249,7 +38373,9 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
+	            var group = this.props.globalContext.data.group;
 
+	            var response = this.getResponse();
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38273,7 +38399,7 @@
 	                                onClick: function onClick() {
 	                                    return _this2.setState({ selectedChoice: key });
 	                                },
-	                                disabled: !isDriver
+	                                disabled: !isDriver || response && response.correct
 	                            },
 	                            choice
 	                        ),
@@ -38282,7 +38408,14 @@
 	                    );
 	                }),
 	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(_SubmitButton2.default, { isDriver: isDriver, disabled: this.state.selectedChoice === null }),
+	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
+	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
+	                    isDriver: isDriver,
+	                    disabled: this.state.selectedChoice === null,
+	                    onClick: function onClick() {
+	                        (0, _quizActions.attemptAnswer)(question._id, group._id, [_this2.getChoices()[_this2.state.selectedChoice]]);
+	                    }
+	                }) : null,
 	                _react2.default.createElement('br', null)
 	            );
 	        }
@@ -38291,10 +38424,10 @@
 	    return MultipleChoiceQuestion;
 	}(_react.Component);
 
-	exports.default = MultipleChoiceQuestion;
+	exports.default = (0, _GlobalContext.withGlobalContext)(MultipleChoiceQuestion);
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38338,7 +38471,11 @@
 	            } else {
 	                return _react2.default.createElement(
 	                    "button",
-	                    { className: "btn btn-success btn-lg", disabled: this.props.disabled },
+	                    {
+	                        className: "btn btn-success btn-lg",
+	                        disabled: this.props.disabled,
+	                        onClick: this.props.onClick
+	                    },
 	                    _react2.default.createElement("i", { className: "fa fa-check", "aria-hidden": "true" }),
 	                    " Submit"
 	                );
@@ -38352,7 +38489,7 @@
 	exports.default = SubmitButton;
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38410,7 +38547,79 @@
 	exports.default = QuestionTitle;
 
 /***/ },
-/* 382 */
+/* 383 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _templateObject = _taggedTemplateLiteral(['\n    padding-bottom: 10px;\n'], ['\n    padding-bottom: 10px;\n']);
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _styledComponents = __webpack_require__(346);
+
+	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+	var Container = _styledComponents2.default.div(_templateObject);
+
+	var QuestionScore = function (_Component) {
+	    _inherits(QuestionScore, _Component);
+
+	    function QuestionScore() {
+	        _classCallCheck(this, QuestionScore);
+
+	        return _possibleConstructorReturn(this, (QuestionScore.__proto__ || Object.getPrototypeOf(QuestionScore)).apply(this, arguments));
+	    }
+
+	    _createClass(QuestionScore, [{
+	        key: 'render',
+	        value: function render() {
+	            var response = this.props.response;
+
+
+	            return _react2.default.createElement(
+	                Container,
+	                null,
+	                response ? _react2.default.createElement(
+	                    'small',
+	                    null,
+	                    response.attempts,
+	                    ' Failed Attempts. ',
+	                    response.correct ? "Final Score: " + response.points : ""
+	                ) : _react2.default.createElement(
+	                    'small',
+	                    { className: 'text-muted' },
+	                    'You haven\'t attempted this question yet.'
+	                )
+	            );
+	        }
+	    }]);
+
+	    return QuestionScore;
+	}(_react.Component);
+
+	exports.default = QuestionScore;
+
+/***/ },
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38431,11 +38640,11 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(381);
+	var _QuestionTitle = __webpack_require__(382);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(380);
+	var _SubmitButton = __webpack_require__(381);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
@@ -38535,7 +38744,7 @@
 	exports.default = MultipleSelectQuestion;
 
 /***/ },
-/* 383 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38556,11 +38765,11 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(381);
+	var _QuestionTitle = __webpack_require__(382);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(380);
+	var _SubmitButton = __webpack_require__(381);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
@@ -38635,7 +38844,7 @@
 	exports.default = ShortAnswerQuestion;
 
 /***/ },
-/* 384 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38657,11 +38866,11 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(381);
+	var _QuestionTitle = __webpack_require__(382);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(380);
+	var _SubmitButton = __webpack_require__(381);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 

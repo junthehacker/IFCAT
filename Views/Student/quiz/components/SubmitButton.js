@@ -8,7 +8,11 @@ class SubmitButton extends Component {
             )
         } else {
             return (
-                <button className={"btn btn-success btn-lg"} disabled={this.props.disabled}>
+                <button
+                    className={"btn btn-success btn-lg"}
+                    disabled={this.props.disabled}
+                    onClick={this.props.onClick}
+                >
                     <i className="fa fa-check" aria-hidden="true" /> Submit
                 </button>
             )
