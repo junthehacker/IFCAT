@@ -38648,6 +38648,14 @@
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
+	var _QuestionScore = __webpack_require__(383);
+
+	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
+
+	var _quizActions = __webpack_require__(369);
+
+	var _GlobalContext = __webpack_require__(340);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -38686,6 +38694,37 @@
 	            _this.setState({ selectedChoices: newChoices });
 	        };
 
+	        _this.getResponse = function () {
+	            var question = _this.props.question;
+	            var responses = _this.props.globalContext.data.responses;
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var response = _step.value;
+
+	                    if (response.question === question._id) {
+	                        return response;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	        };
+
 	        _this.state = {
 	            selectedChoices: []
 	        };
@@ -38700,6 +38739,9 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
+	            var group = this.props.globalContext.data.group;
+
+	            var response = this.getResponse();
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38723,7 +38765,7 @@
 	                                onClick: function onClick() {
 	                                    return _this2.toggleChoice(key);
 	                                },
-	                                disabled: !isDriver
+	                                disabled: !isDriver || response && response.correct
 	                            },
 	                            choice
 	                        ),
@@ -38732,7 +38774,41 @@
 	                    );
 	                }),
 	                _react2.default.createElement("hr", null),
-	                _react2.default.createElement(_SubmitButton2.default, { isDriver: isDriver, disabled: this.state.selectedChoices.length === 0 }),
+	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
+	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
+	                    isDriver: isDriver,
+	                    disabled: this.state.selectedChoices.length === 0,
+	                    onClick: function onClick() {
+
+	                        var answer = [];
+	                        var _iteratorNormalCompletion2 = true;
+	                        var _didIteratorError2 = false;
+	                        var _iteratorError2 = undefined;
+
+	                        try {
+	                            for (var _iterator2 = _this2.state.selectedChoices[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                                var choice = _step2.value;
+
+	                                answer.push(_this2.getChoices()[choice]);
+	                            }
+	                        } catch (err) {
+	                            _didIteratorError2 = true;
+	                            _iteratorError2 = err;
+	                        } finally {
+	                            try {
+	                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                                    _iterator2.return();
+	                                }
+	                            } finally {
+	                                if (_didIteratorError2) {
+	                                    throw _iteratorError2;
+	                                }
+	                            }
+	                        }
+
+	                        (0, _quizActions.attemptAnswer)(question._id, group._id, answer);
+	                    }
+	                }) : null,
 	                _react2.default.createElement("br", null)
 	            );
 	        }
@@ -38741,7 +38817,7 @@
 	    return MultipleSelectQuestion;
 	}(_react.Component);
 
-	exports.default = MultipleSelectQuestion;
+	exports.default = (0, _GlobalContext.withGlobalContext)(MultipleSelectQuestion);
 
 /***/ },
 /* 385 */
@@ -38773,6 +38849,14 @@
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
+	var _GlobalContext = __webpack_require__(340);
+
+	var _QuestionScore = __webpack_require__(383);
+
+	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
+
+	var _quizActions = __webpack_require__(369);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -38793,6 +38877,37 @@
 
 	        var _this = _possibleConstructorReturn(this, (ShortAnswerQuestion.__proto__ || Object.getPrototypeOf(ShortAnswerQuestion)).call(this, props));
 
+	        _this.getResponse = function () {
+	            var question = _this.props.question;
+	            var responses = _this.props.globalContext.data.responses;
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var response = _step.value;
+
+	                    if (response.question === question._id) {
+	                        return response;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	        };
+
 	        _this.state = {
 	            answer: ""
 	        };
@@ -38807,7 +38922,9 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
+	            var group = this.props.globalContext.data.group;
 
+	            var response = this.getResponse();
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38829,10 +38946,17 @@
 	                            answer: e.target.value
 	                        });
 	                    },
-	                    disabled: !isDriver
+	                    disabled: !isDriver || response && response.correct
 	                }),
 	                _react2.default.createElement("hr", null),
-	                _react2.default.createElement(_SubmitButton2.default, { isDriver: isDriver, disabled: this.state.answer === "" }),
+	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
+	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
+	                    isDriver: isDriver,
+	                    disabled: this.state.answer === "",
+	                    onClick: function onClick() {
+	                        (0, _quizActions.attemptAnswer)(question._id, group._id, [_this2.state.answer]);
+	                    }
+	                }) : null,
 	                _react2.default.createElement("br", null)
 	            );
 	        }
@@ -38841,7 +38965,7 @@
 	    return ShortAnswerQuestion;
 	}(_react.Component);
 
-	exports.default = ShortAnswerQuestion;
+	exports.default = (0, _GlobalContext.withGlobalContext)(ShortAnswerQuestion);
 
 /***/ },
 /* 386 */

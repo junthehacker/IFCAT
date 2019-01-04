@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
-import styled             from "styled-components";
-import QuestionTitle      from "../QuestionTitle";
-import SubmitButton       from "../SubmitButton";
+import React, {Component}  from 'react';
+import styled              from "styled-components";
+import QuestionTitle       from "../QuestionTitle";
+import SubmitButton        from "../SubmitButton";
+import QuestionScore       from "../QuestionScore";
+import {attemptAnswer}     from "../../actions/quizActions";
+import {withGlobalContext} from "../../contexts/GlobalContext";
 
 const Container = styled.div`
     text-align: center;
@@ -22,9 +25,9 @@ class MultipleSelectQuestion extends Component {
     };
 
     toggleChoice = (index) => {
-        let newChoices = [...this.state.selectedChoices];
+        let newChoices  = [...this.state.selectedChoices];
         let choiceIndex = newChoices.indexOf(index);
-        if(choiceIndex >= 0) {
+        if (choiceIndex >= 0) {
             newChoices.splice(choiceIndex, 1);
         } else {
             newChoices.push(index);
@@ -32,8 +35,21 @@ class MultipleSelectQuestion extends Component {
         this.setState({selectedChoices: newChoices});
     };
 
+    getResponse = () => {
+        const {question}  = this.props;
+        const {responses} = this.props.globalContext.data;
+        for (let response of responses) {
+            if (response.question === question._id) {
+                return response;
+            }
+        }
+    };
+
     render() {
         const {question, isDriver} = this.props;
+        const {group}              = this.props.globalContext.data;
+        const response             = this.getResponse();
+
         return (
             <Container>
                 <QuestionTitle question={question}/>
@@ -45,7 +61,7 @@ class MultipleSelectQuestion extends Component {
                             <button
                                 className={"btn" + (this.state.selectedChoices.indexOf(key) >= 0 ? " btn-primary" : " btn-link")}
                                 onClick={() => this.toggleChoice(key)}
-                                disabled={!isDriver}
+                                disabled={!isDriver || (response && response.correct)}
                             >
                                 {choice}
                             </button>
@@ -54,11 +70,26 @@ class MultipleSelectQuestion extends Component {
                     )
                 })}
                 <hr/>
-                <SubmitButton isDriver={isDriver} disabled={this.state.selectedChoices.length === 0}/>
+                <QuestionScore response={response}/>
+                {!response || !response.correct ? (
+                    <SubmitButton
+                        isDriver={isDriver}
+                        disabled={this.state.selectedChoices.length === 0}
+                        onClick={() => {
+
+                            let answer = [];
+                            for (let choice of this.state.selectedChoices) {
+                                answer.push(this.getChoices()[choice]);
+                            }
+
+                            attemptAnswer(question._id, group._id, answer);
+                        }}
+                    />
+                ) : null}
                 <br/>
             </Container>
         )
     }
 }
 
-export default MultipleSelectQuestion;
+export default withGlobalContext(MultipleSelectQuestion);
