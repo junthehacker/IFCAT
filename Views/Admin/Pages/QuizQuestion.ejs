@@ -1,10 +1,9 @@
-<%/*----------------------------------
+<% /*----------------------------------
 Page used to edit or create an question.
 
 Author(s): Jun Zheng [me at jackzh dot com]
            Neeilan Selvalingam
------------------------------------*/%>
-
+-----------------------------------*/ %>
 <% include ../Partials/Header.ejs %>
 
 <nav aria-label="breadcrumb">
@@ -28,15 +27,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 <% include ../Partials/Flash.ejs %>
 
-<form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/` + (question.isNew ? '' : `${question._id}?_method=put`)) %>" method="post" autocomplete="off" class="form-horizontal">
+<form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/` + (question.isNew ? '' : `${question._id}?_method=put`)) %>"
+      method="post" autocomplete="off" class="form-horizontal">
 
     <% if (question.submitter) { %>
-    <div class="form-group" style="margin-top: 10px">
-        <label class="col-xs-7 col-sm-3 control-label">Submitted By</label>
-        <div class="col-xs-5 col-sm-9">
-            <p class="form-control-static"><%= question.submitter.name.full %></p>
+        <div class="form-group" style="margin-top: 10px">
+            <label class="col-xs-7 col-sm-3 control-label">Submitted By</label>
+            <div class="col-xs-5 col-sm-9">
+                <p class="form-control-static"><%= question.submitter.name.full %></p>
+            </div>
         </div>
-    </div>
     <% } %>
 
     <!-- number -->
@@ -49,16 +49,22 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <div class="form-group required">
         <label class="control-label">Type</label>
         <select name="type" class="form-control"<%= question.submitter ? ' disabled' : '' %>>
-        <% _.each(question.schema.path('type').enumValues, type => { %>
-            <option value="<%= type %>"<%= question.type === type ? ' selected' : '' %>><%= _.upperFirst(type) %></option>
-        <% }) %>
+            <% _.each(question.schema.path('type').enumValues, type => { %>
+                <option value="<%= type %>"<%= question.type === type ? ' selected' : '' %>><%= _.upperFirst(type) %></option>
+            <% }) %>
         </select>
     </div>
 
     <!-- question -->
     <div class="form-group required">
-        <label class="control-label">Question</label>
-        <textarea name="question" class="form-control" rows="3"><%= question.question %></textarea>
+        <label class="control-label">
+            Question
+            <a href="#question-format-help" data-toggle="modal" data-target="#question-format-help">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+            </a>
+        </label>
+        <input id="question-input-hidden" type="hidden" name="question"/>
+        <div id="question-input" class="form-control" style="height: 100px;"><%= question.question %></div>
     </div>
 
     <!-- files -->
@@ -66,7 +72,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <label class="control-label">Files</label>
         <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-files">
             <span class="glyphicon glyphicon-file"></span> Show files</a>
-        <a href="#" class="counter files" data-toggle="modal" data-target="#modal-show-files"><%= question.files.length != 1 ? question.files.length + ' files selected' : '1 file selected' %></a>
+        <a href="#" class="counter files" data-toggle="modal"
+           data-target="#modal-show-files"><%= question.files.length != 1 ? question.files.length + ' files selected' : '1 file selected' %></a>
     </div>
 
     <!-- links -->
@@ -74,7 +81,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <label class="control-label">Links</label>
         <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-links">
             <span class="glyphicon glyphicon-link"></span> Show links</a>
-        <a href="#" class="counter links" data-toggle="modal" data-target="#modal-show-links"><%= question.links.length != 1 ? question.links.length + ' links added' : '1 link added' %></a>
+        <a href="#" class="counter links" data-toggle="modal"
+           data-target="#modal-show-links"><%= question.links.length != 1 ? question.links.length + ' links added' : '1 link added' %></a>
     </div>
 
     <!-- multiple choice -->
@@ -85,14 +93,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <div class="form-group row">
                     <div class="col-1">
                         <div class="radio">
-                            <label><input type="radio" name="_answer" value="<%= i %>"<%= !i ? ' checked' : '' %>></label>
+                            <label><input type="radio" name="_answer"
+                                          value="<%= i %>"<%= !i ? ' checked' : '' %>></label>
                         </div>
                     </div>
                     <div class="col-8">
                         <textarea name="_choices[<%= i %>]" class="form-control" rows="1"></textarea>
                     </div>
                     <div class="col-2 radio">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% } %>
@@ -101,14 +111,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <div class="form-group row">
                     <div class="col-1">
                         <div class="radio">
-                            <label><input type="radio" name="_answer" value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
+                            <label><input type="radio" name="_answer"
+                                          value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
                         </div>
                     </div>
                     <div class="col-8">
                         <textarea name="_choices[<%= i %>]" class="form-control" rows="1"><%= choice %></textarea>
                     </div>
                     <div class="col-2 radio">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% }) %>
@@ -148,7 +160,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <textarea name="_choices[<%= i %>]" class="form-control" rows="1"></textarea>
                     </div>
                     <div class="col-2">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% } %>
@@ -157,14 +170,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <div class="form-group row">
                     <div class="col-1">
                         <div class="checkbox">
-                            <label><input type="checkbox" name="_answers[]" value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
+                            <label><input type="checkbox" name="_answers[]"
+                                          value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
                         </div>
                     </div>
                     <div class="col-8">
                         <textarea name="_choices[<%= i %>]" class="form-control" rows="1"><%= choice %></textarea>
                     </div>
                     <div class="col-2">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% }) %>
@@ -199,7 +214,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <textarea name="_answers[<%= i %>]" class="form-control" rows="1"></textarea>
                     </div>
                     <div class="col-4">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% } %>
@@ -210,7 +226,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <textarea name="_answers[<%= i %>]" class="form-control" rows="1"><%= answer %></textarea>
                     </div>
                     <div class="col-4">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
                     </div>
                 </div>
             <% }) %>
@@ -241,15 +258,15 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <% if (question.isNew || !question.isCodeTracing()) { %>
             <pre style="height: 100px;"><code contenteditable data-name="_answers"></code></pre>
         <% } else { %>
-            <pre style="height: 100px;"><code contenteditable data-name="_answers"><%= question.answers.join("\n") %></code></pre>
+            <pre style="height: 100px;"><code contenteditable
+                                              data-name="_answers"><%= question.answers.join("\n") %></code></pre>
         <% } %>
     </div>
 
     <!-- options -->
-    <div class="form-group">
-        <label class="control-label">Tags</label>
-        <input type="text" name="_tags" value="<%= question.tags.join(', ') %>" class="form-control" maxlength="70">
-    </div>
+
+    <!--TODO: Remove this tag feature for questions, not needed.-->
+    <input type="hidden" name="_tags" value="<%= question.tags.join(', ') %>" class="form-control" maxlength="70">
 
     <div class="form-group" data-type="short answer">
         <label class="control-label">Case-sensitive</label>
@@ -269,14 +286,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
         </div>
     </div>
 
-    <div class="form-group" data-type="multiple choice|multiple select|short answer">
-        <label class="control-label">Format using LaTeX?</label>
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="useLaTeX" value="1" <%= question.useLaTeX ? ' checked' : '' %>>
-            </label>
-        </div>
-    </div>
+    <!--TODO: This needs to be removed-->
+    <input type="hidden" name="useLaTeX" value="1" <%= question.useLaTeX ? ' checked' : '' %>>
 
     <div class="form-group" data-type="multiple choice|multiple select|short answer">
         <label class="control-label">Points possible</label>
@@ -290,17 +301,20 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <div class="form-group" data-type="code tracing">
         <label class="control-label">Disable immediate feedback?</label>
-        <input type="checkbox" name="immediateFeedbackDisabled" value="1" <%= question.immediateFeedbackDisabled ? ' checked' : '' %>>
+        <input type="checkbox" name="immediateFeedbackDisabled"
+               value="1" <%= question.immediateFeedbackDisabled ? ' checked' : '' %>>
     </div>
 
     <div class="form-group" data-type="code tracing">
         <label class="control-label">Points per line</label>
-        <input type="number" name="maxPointsPerLine" value="<%= question.maxPointsPerLine %>" min="0" class="form-control">
+        <input type="number" name="maxPointsPerLine" value="<%= question.maxPointsPerLine %>" min="0"
+               class="form-control">
     </div>
 
     <div class="form-group" data-type="code tracing">
         <label class="control-label">Attempts per line before revealing answer</label>
-        <input type="number" name="maxAttemptsPerLine" value="<%= question.maxAttemptsPerLine %>" placeholder="3" min="1" class="form-control">
+        <input type="number" name="maxAttemptsPerLine" value="<%= question.maxAttemptsPerLine %>" placeholder="3"
+               min="1" class="form-control">
     </div>
 
     <div class="form-group">
@@ -309,25 +323,29 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </div>
 
     <% if (question.submitter) { %>
-    <div class="form-group required">
-        <label class="control-label">Approved?</label>
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="approved" value="1" <%= question.approved ? ' checked' : '' %>>
-            </label>
+        <div class="form-group required">
+            <label class="control-label">Approved?</label>
+            <div class="switch">
+                <label>
+                    <input type="checkbox" name="approved" value="1" <%= question.approved ? ' checked' : '' %>>
+                </label>
+            </div>
         </div>
-    </div>
     <% } %>
 
     <br>
 
     <!-- buttons -->
     <div class="form-group">
-        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>" class="btn btn-default btn-sm">Cancel</a>
-        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/preview`) %>" target="blank" class="btn btn-default btn-sm" id="btn-preview">Preview</a>
+        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
+           class="btn btn-default btn-sm">Cancel</a>
+        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/preview`) %>"
+           target="blank" class="btn btn-default btn-sm" id="btn-preview">Preview</a>
         <% if (question.isNew) { %>
             <input type="hidden" id="back" name="back" value="1">
-            <button type="submit" class="btn btn-primary btn-raised" onclick="back.value=0">Save &amp; Add Another New Question</button>
+            <button type="submit" class="btn btn-primary btn-raised" onclick="back.value=0">Save &amp; Add Another New
+                Question
+            </button>
             <button type="submit" class="btn btn-primary btn-raised">Save &amp; Go Back To List</button>
         <% } else { %>
             <button type="submit" class="btn btn-primary btn-raised">Save</button>
@@ -339,6 +357,48 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <% include ../Partials/ModalShowLinks.ejs %>
 </form>
 
+<div class="modal fade" id="question-format-help" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">How to write questions.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>To write your question, simply write it in plain text. If you wish to include math expressions, you
+                    must
+                    wrap it around <code>$$</code>.</p>
+                <p>For example, if you typed the following content:</p>
+
+                <pre><code>Suppose you have $$F_X(x) = x^2$$ what is P(X < 1) ?</code></pre>
+
+                <p>Student will see the following on their screen:</p>
+
+                <p>Suppose you have $$F_X(x) = x^2$$ what is P(X < 1) ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <% include ../Partials/Footer.ejs %>
 
 <script src="<%= config.baseDir %>/js/admin/questions.js"></script>
+
+<script>
+    let questionInput = ace.edit("question-input");
+    questionInput.setTheme("ace/theme/github");
+    questionInput.session.setMode("ace/mode/markdown");
+
+    function questionInputUpdated() {
+        $("#question-input-hidden").val(questionInput.getValue());
+    }
+
+    questionInputUpdated();
+    questionInput.session.on('change', questionInputUpdated);
+    renderMathInElement(document.body);
+</script>

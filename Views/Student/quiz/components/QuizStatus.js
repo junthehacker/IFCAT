@@ -6,21 +6,75 @@ const Container = styled.div`
     background-color: rgba(0,0,0,0.1);
     border-radius: 3px;
     padding: 10px;
+    text-align: center;
 `;
 
+const ConnectedLabel = styled.span`
+    color: green;
+    i {
+        padding-right: 5px;
+    }
+`;
+
+const DisconnectedLabel = styled(ConnectedLabel)`
+    color: red;
+`;
+
+const verticalBar = <span> | </span>;
+
 class QuizStatus extends Component {
+
+    getTotalPossiblePoints = () => {
+        const {quiz} = this.props.globalContext.data;
+        let points = 0;
+        for(let question of quiz.quiz.questions) {
+            points += question.points;
+        }
+        return points;
+    };
+
+    getTotalPossibleBonusPoints = () => {
+        const {quiz} = this.props.globalContext.data;
+        let points = 0;
+        for(let question of quiz.quiz.questions) {
+            points += question.firstTryBonus;
+        }
+        return points;
+    };
+
+    getEarnedPoints = () => {
+        const {responses} = this.props.globalContext.data;
+        let points = 0;
+        for(let response of responses) {
+            if(response.correct) {
+                points += response.points;
+            }
+        }
+        return points;
+    };
+
     render() {
 
-        const {group, user} = this.props.globalContext.data;
+        const {group, connected} = this.props.globalContext.data;
 
         return (
             <Container>
                 Group: {group.name}
-                {group.driver === user._id ? (
-                    <span> | You are the driver.</span>
+                {verticalBar}
+                <span className={"text-muted"}>{this.getEarnedPoints()}/{this.getTotalPossiblePoints()} ({this.getTotalPossibleBonusPoints()} Bonus)</span>
+                {verticalBar}
+                {connected ? (
+                    <ConnectedLabel>
+                        <i className="fa fa-exchange" aria-hidden="true" />
+                        Connected
+                    </ConnectedLabel>
                 ): (
-                    <span className={"text-muted"}> | You are not the driver.</span>
+                    <DisconnectedLabel>
+                        <i className="fa fa-plug" aria-hidden="true" />
+                        Disconnected
+                    </DisconnectedLabel>
                 )}
+
             </Container>
         )
     }

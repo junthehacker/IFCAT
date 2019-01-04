@@ -38,6 +38,9 @@ export function withGlobalContextProvider(WrappedComponent) {
                     ...newState
                 }
             });
+
+            // TODO: This is so hacky, have to have a better way
+            setTimeout(() => renderMathInElement(document.body), 100);
         };
 
         getData = () => {
