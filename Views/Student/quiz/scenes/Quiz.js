@@ -13,7 +13,7 @@ class Quiz extends Component {
 
     render() {
 
-        const {quiz, selectedQuestion, group, user} = this.props.globalContext.data;
+        const {quiz, selectedQuestion, group, user, responses} = this.props.globalContext.data;
 
         return (
             <div>
@@ -22,6 +22,7 @@ class Quiz extends Component {
                     <QuestionSelector
                         questions={quiz.quiz.questions}
                         selectedIndex={selectedQuestion}
+                        responses={responses || []}
                         onSelectionChange={this.onChangeQuestion}
                     />
                     <Question

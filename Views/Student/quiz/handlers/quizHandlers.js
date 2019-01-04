@@ -55,11 +55,12 @@ export function registerGroupAttempt(socket, reduce, getData) {
         let newResponses = [...getData().responses];
         let i = 0;
         for(let response of newResponses) {
-            if(response._id === response._id) break;
+            if(response._id === data.response._id) break;
             i++;
         }
 
         if(i !== newResponses.length) newResponses.splice(i, 1);
+
         newResponses.push(data.response);
         reduce({responses: newResponses});
     })

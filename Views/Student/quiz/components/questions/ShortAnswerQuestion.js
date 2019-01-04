@@ -1,10 +1,11 @@
-import React, {Component}  from 'react';
-import styled              from "styled-components";
-import QuestionTitle       from "../QuestionTitle";
-import SubmitButton        from "../SubmitButton";
-import {withGlobalContext} from "../../contexts/GlobalContext";
-import QuestionScore       from "../QuestionScore";
-import {attemptAnswer}     from "../../actions/quizActions";
+import React, {Component}              from 'react';
+import styled                          from "styled-components";
+import QuestionTitle                   from "../QuestionTitle";
+import SubmitButton                    from "../SubmitButton";
+import {withGlobalContext}             from "../../contexts/GlobalContext";
+import QuestionScore                   from "../QuestionScore";
+import {attemptAnswer}                 from "../../actions/quizActions";
+import {selectResponseGivenQuestionID} from "../../selectors/quizSelectors";
 
 const Container = styled.div`
     text-align: center;
@@ -19,20 +20,10 @@ class ShortAnswerQuestion extends Component {
         }
     }
 
-    getResponse = () => {
-        const {question}  = this.props;
-        const {responses} = this.props.globalContext.data;
-        for (let response of responses) {
-            if (response.question === question._id) {
-                return response;
-            }
-        }
-    };
-
     render() {
         const {question, isDriver} = this.props;
-        const {group}              = this.props.globalContext.data;
-        const response             = this.getResponse();
+        const {group, responses}   = this.props.globalContext.data;
+        const response             = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>
@@ -62,7 +53,7 @@ class ShortAnswerQuestion extends Component {
                             attemptAnswer(question._id, group._id, [this.state.answer]);
                         }}
                     />
-                ): null}
+                ) : null}
                 <br/>
             </Container>
         )

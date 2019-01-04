@@ -1,10 +1,11 @@
-import React, {Component}  from 'react';
-import styled              from 'styled-components';
-import SubmitButton        from "../SubmitButton";
-import QuestionTitle       from "../QuestionTitle";
-import {withGlobalContext} from "../../contexts/GlobalContext";
-import {attemptAnswer}     from "../../actions/quizActions";
-import QuestionScore       from "../QuestionScore";
+import React, {Component}              from 'react';
+import styled                          from 'styled-components';
+import SubmitButton                    from "../SubmitButton";
+import QuestionTitle                   from "../QuestionTitle";
+import {withGlobalContext}             from "../../contexts/GlobalContext";
+import {attemptAnswer}                 from "../../actions/quizActions";
+import QuestionScore                   from "../QuestionScore";
+import {selectResponseGivenQuestionID} from "../../selectors/quizSelectors";
 
 const Container = styled.div`
     text-align: center;
@@ -37,8 +38,8 @@ class MultipleChoiceQuestion extends Component {
     render() {
 
         const {question, isDriver} = this.props;
-        const {group}              = this.props.globalContext.data;
-        const response             = this.getResponse();
+        const {group, responses}   = this.props.globalContext.data;
+        const response             = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>
@@ -71,7 +72,7 @@ class MultipleChoiceQuestion extends Component {
                             attemptAnswer(question._id, group._id, [this.getChoices()[this.state.selectedChoice]]);
                         }}
                     />
-                ): null}
+                ) : null}
                 <br/>
             </Container>
         )

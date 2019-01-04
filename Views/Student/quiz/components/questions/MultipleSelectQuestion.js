@@ -1,10 +1,11 @@
-import React, {Component}  from 'react';
-import styled              from "styled-components";
-import QuestionTitle       from "../QuestionTitle";
-import SubmitButton        from "../SubmitButton";
-import QuestionScore       from "../QuestionScore";
-import {attemptAnswer}     from "../../actions/quizActions";
-import {withGlobalContext} from "../../contexts/GlobalContext";
+import React, {Component}              from 'react';
+import styled                          from "styled-components";
+import QuestionTitle                   from "../QuestionTitle";
+import SubmitButton                    from "../SubmitButton";
+import QuestionScore                   from "../QuestionScore";
+import {attemptAnswer}                 from "../../actions/quizActions";
+import {withGlobalContext}             from "../../contexts/GlobalContext";
+import {selectResponseGivenQuestionID} from "../../selectors/quizSelectors";
 
 const Container = styled.div`
     text-align: center;
@@ -35,20 +36,10 @@ class MultipleSelectQuestion extends Component {
         this.setState({selectedChoices: newChoices});
     };
 
-    getResponse = () => {
-        const {question}  = this.props;
-        const {responses} = this.props.globalContext.data;
-        for (let response of responses) {
-            if (response.question === question._id) {
-                return response;
-            }
-        }
-    };
-
     render() {
         const {question, isDriver} = this.props;
-        const {group}              = this.props.globalContext.data;
-        const response             = this.getResponse();
+        const {group, responses}   = this.props.globalContext.data;
+        const response             = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>

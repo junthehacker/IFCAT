@@ -1,7 +1,8 @@
-import React, {Component}     from 'react';
-import QuestionSelectorButton from "./QuestionSelectorButton";
-import PropTypes              from 'prop-types';
-import styled                 from 'styled-components';
+import React, {Component}              from 'react';
+import QuestionSelectorButton          from "./QuestionSelectorButton";
+import PropTypes                       from 'prop-types';
+import styled                          from 'styled-components';
+import {selectResponseGivenQuestionID} from "../selectors/quizSelectors";
 
 const Container = styled.div`
     text-align: center;
@@ -12,7 +13,7 @@ const Container = styled.div`
 class QuestionSelector extends Component {
     render() {
 
-        const {questions, selectedIndex, onSelectionChange} = this.props;
+        const {questions, selectedIndex, onSelectionChange, responses} = this.props;
 
         return (
             <Container>
@@ -20,6 +21,7 @@ class QuestionSelector extends Component {
                     return (
                         <QuestionSelectorButton
                             question={question}
+                            response={selectResponseGivenQuestionID(responses, question._id)}
                             selected={selectedIndex === key}
                             onClick={() => {
                                 onSelectionChange(key);
@@ -36,7 +38,8 @@ class QuestionSelector extends Component {
 QuestionSelector.propTypes = {
     selectedIndex: PropTypes.number,
     questions: PropTypes.any,
-    onSelectionChange: PropTypes.func
+    onSelectionChange: PropTypes.func,
+    responses: PropTypes.any
 };
 
 export default QuestionSelector;

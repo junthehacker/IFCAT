@@ -37609,7 +37609,7 @@
 	            for (var _iterator = newResponses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                var response = _step.value;
 
-	                if (response._id === response._id) break;
+	                if (response._id === data.response._id) break;
 	                i++;
 	            }
 	        } catch (err) {
@@ -37628,6 +37628,7 @@
 	        }
 
 	        if (i !== newResponses.length) newResponses.splice(i, 1);
+
 	        newResponses.push(data.response);
 	        reduce({ responses: newResponses });
 	    });
@@ -37794,7 +37795,7 @@
 
 	var _QuestionSelector2 = _interopRequireDefault(_QuestionSelector);
 
-	var _Question = __webpack_require__(376);
+	var _Question = __webpack_require__(377);
 
 	var _Question2 = _interopRequireDefault(_Question);
 
@@ -37834,7 +37835,8 @@
 	                quiz = _props$globalContext$.quiz,
 	                selectedQuestion = _props$globalContext$.selectedQuestion,
 	                group = _props$globalContext$.group,
-	                user = _props$globalContext$.user;
+	                user = _props$globalContext$.user,
+	                responses = _props$globalContext$.responses;
 
 
 	            return _react2.default.createElement(
@@ -37847,6 +37849,7 @@
 	                    _react2.default.createElement(_QuestionSelector2.default, {
 	                        questions: quiz.quiz.questions,
 	                        selectedIndex: selectedQuestion,
+	                        responses: responses || [],
 	                        onSelectionChange: this.onChangeQuestion
 	                    }),
 	                    _react2.default.createElement(_Question2.default, {
@@ -37969,6 +37972,8 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
+	var _quizSelectors = __webpack_require__(376);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -37996,7 +38001,8 @@
 	            var _props = this.props,
 	                questions = _props.questions,
 	                selectedIndex = _props.selectedIndex,
-	                onSelectionChange = _props.onSelectionChange;
+	                onSelectionChange = _props.onSelectionChange,
+	                responses = _props.responses;
 
 
 	            return _react2.default.createElement(
@@ -38005,6 +38011,7 @@
 	                questions.map(function (question, key) {
 	                    return _react2.default.createElement(_QuestionSelectorButton2.default, {
 	                        question: question,
+	                        response: (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id),
 	                        selected: selectedIndex === key,
 	                        onClick: function onClick() {
 	                            onSelectionChange(key);
@@ -38022,7 +38029,8 @@
 	QuestionSelector.propTypes = {
 	    selectedIndex: _propTypes2.default.number,
 	    questions: _propTypes2.default.any,
-	    onSelectionChange: _propTypes2.default.func
+	    onSelectionChange: _propTypes2.default.func,
+	    responses: _propTypes2.default.any
 	};
 
 	exports.default = QuestionSelector;
@@ -38065,6 +38073,17 @@
 	    }
 
 	    _createClass(QuestionSelectorButton, [{
+	        key: 'getStatusIcon',
+	        value: function getStatusIcon() {
+	            var response = this.props.response;
+
+	            if (!response || !response.correct) {
+	                return _react2.default.createElement('i', { className: 'fa fa-question', 'aria-hidden': 'true' });
+	            } else {
+	                return _react2.default.createElement('i', { className: 'fa fa-check', 'aria-hidden': 'true' });
+	            }
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _props = this.props,
@@ -38077,9 +38096,11 @@
 	                'button',
 	                {
 	                    onClick: onClick,
-	                    className: "btn btn-default" + (selected ? " btn-primary" : "")
+	                    className: "btn " + (selected ? " btn-primary" : " btn-link")
 	                },
-	                question.number
+	                question.number,
+	                ' ',
+	                this.getStatusIcon()
 	            );
 	        }
 	    }]);
@@ -38090,13 +38111,53 @@
 	QuestionSelectorButton.propTypes = {
 	    question: _propTypes2.default.any,
 	    selected: _propTypes2.default.bool,
-	    onClick: _propTypes2.default.func
+	    onClick: _propTypes2.default.func,
+	    response: _propTypes2.default.any
 	};
 
 	exports.default = QuestionSelectorButton;
 
 /***/ },
 /* 376 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.selectResponseGivenQuestionID = selectResponseGivenQuestionID;
+	function selectResponseGivenQuestionID(responses, questionId) {
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	        for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var response = _step.value;
+
+	            if (response.question === questionId) {
+	                return response;
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	}
+
+/***/ },
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38115,21 +38176,21 @@
 
 	var _propTypes2 = _interopRequireDefault(_propTypes);
 
-	var _enums = __webpack_require__(377);
+	var _enums = __webpack_require__(378);
 
-	var _MultipleChoiceQuestion = __webpack_require__(380);
+	var _MultipleChoiceQuestion = __webpack_require__(381);
 
 	var _MultipleChoiceQuestion2 = _interopRequireDefault(_MultipleChoiceQuestion);
 
-	var _MultipleSelectQuestion = __webpack_require__(384);
+	var _MultipleSelectQuestion = __webpack_require__(385);
 
 	var _MultipleSelectQuestion2 = _interopRequireDefault(_MultipleSelectQuestion);
 
-	var _ShortAnswerQuestion = __webpack_require__(385);
+	var _ShortAnswerQuestion = __webpack_require__(386);
 
 	var _ShortAnswerQuestion2 = _interopRequireDefault(_ShortAnswerQuestion);
 
-	var _CodeTracingQuestion = __webpack_require__(386);
+	var _CodeTracingQuestion = __webpack_require__(387);
 
 	var _CodeTracingQuestion2 = _interopRequireDefault(_CodeTracingQuestion);
 
@@ -38202,7 +38263,7 @@
 	exports.default = Question;
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38211,7 +38272,7 @@
 	  value: true
 	});
 
-	var _QuestionType = __webpack_require__(378);
+	var _QuestionType = __webpack_require__(379);
 
 	Object.keys(_QuestionType).forEach(function (key) {
 	  if (key === "default" || key === "__esModule") return;
@@ -38223,7 +38284,7 @@
 	  });
 	});
 
-	var _SocketAction = __webpack_require__(379);
+	var _SocketAction = __webpack_require__(380);
 
 	Object.keys(_SocketAction).forEach(function (key) {
 	  if (key === "default" || key === "__esModule") return;
@@ -38236,7 +38297,7 @@
 	});
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38252,7 +38313,7 @@
 	};
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38266,7 +38327,7 @@
 	};
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38287,11 +38348,11 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _SubmitButton = __webpack_require__(381);
+	var _SubmitButton = __webpack_require__(382);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
-	var _QuestionTitle = __webpack_require__(382);
+	var _QuestionTitle = __webpack_require__(383);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
@@ -38299,9 +38360,11 @@
 
 	var _quizActions = __webpack_require__(369);
 
-	var _QuestionScore = __webpack_require__(383);
+	var _QuestionScore = __webpack_require__(384);
 
 	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
+
+	var _quizSelectors = __webpack_require__(376);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38373,9 +38436,11 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
-	            var group = this.props.globalContext.data.group;
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                group = _props$globalContext$.group,
+	                responses = _props$globalContext$.responses;
 
-	            var response = this.getResponse();
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38427,7 +38492,7 @@
 	exports.default = (0, _GlobalContext.withGlobalContext)(MultipleChoiceQuestion);
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38489,7 +38554,7 @@
 	exports.default = SubmitButton;
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38547,7 +38612,7 @@
 	exports.default = QuestionTitle;
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38619,7 +38684,7 @@
 	exports.default = QuestionScore;
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38640,21 +38705,23 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(382);
+	var _QuestionTitle = __webpack_require__(383);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(381);
+	var _SubmitButton = __webpack_require__(382);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
-	var _QuestionScore = __webpack_require__(383);
+	var _QuestionScore = __webpack_require__(384);
 
 	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
 
 	var _quizActions = __webpack_require__(369);
 
 	var _GlobalContext = __webpack_require__(340);
+
+	var _quizSelectors = __webpack_require__(376);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38694,37 +38761,6 @@
 	            _this.setState({ selectedChoices: newChoices });
 	        };
 
-	        _this.getResponse = function () {
-	            var question = _this.props.question;
-	            var responses = _this.props.globalContext.data.responses;
-	            var _iteratorNormalCompletion = true;
-	            var _didIteratorError = false;
-	            var _iteratorError = undefined;
-
-	            try {
-	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                    var response = _step.value;
-
-	                    if (response.question === question._id) {
-	                        return response;
-	                    }
-	                }
-	            } catch (err) {
-	                _didIteratorError = true;
-	                _iteratorError = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion && _iterator.return) {
-	                        _iterator.return();
-	                    }
-	                } finally {
-	                    if (_didIteratorError) {
-	                        throw _iteratorError;
-	                    }
-	                }
-	            }
-	        };
-
 	        _this.state = {
 	            selectedChoices: []
 	        };
@@ -38739,9 +38775,11 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
-	            var group = this.props.globalContext.data.group;
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                group = _props$globalContext$.group,
+	                responses = _props$globalContext$.responses;
 
-	            var response = this.getResponse();
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38781,27 +38819,27 @@
 	                    onClick: function onClick() {
 
 	                        var answer = [];
-	                        var _iteratorNormalCompletion2 = true;
-	                        var _didIteratorError2 = false;
-	                        var _iteratorError2 = undefined;
+	                        var _iteratorNormalCompletion = true;
+	                        var _didIteratorError = false;
+	                        var _iteratorError = undefined;
 
 	                        try {
-	                            for (var _iterator2 = _this2.state.selectedChoices[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	                                var choice = _step2.value;
+	                            for (var _iterator = _this2.state.selectedChoices[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                                var choice = _step.value;
 
 	                                answer.push(_this2.getChoices()[choice]);
 	                            }
 	                        } catch (err) {
-	                            _didIteratorError2 = true;
-	                            _iteratorError2 = err;
+	                            _didIteratorError = true;
+	                            _iteratorError = err;
 	                        } finally {
 	                            try {
-	                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                                    _iterator2.return();
+	                                if (!_iteratorNormalCompletion && _iterator.return) {
+	                                    _iterator.return();
 	                                }
 	                            } finally {
-	                                if (_didIteratorError2) {
-	                                    throw _iteratorError2;
+	                                if (_didIteratorError) {
+	                                    throw _iteratorError;
 	                                }
 	                            }
 	                        }
@@ -38820,7 +38858,7 @@
 	exports.default = (0, _GlobalContext.withGlobalContext)(MultipleSelectQuestion);
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38841,21 +38879,23 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(382);
+	var _QuestionTitle = __webpack_require__(383);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(381);
+	var _SubmitButton = __webpack_require__(382);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
 	var _GlobalContext = __webpack_require__(340);
 
-	var _QuestionScore = __webpack_require__(383);
+	var _QuestionScore = __webpack_require__(384);
 
 	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
 
 	var _quizActions = __webpack_require__(369);
+
+	var _quizSelectors = __webpack_require__(376);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38877,37 +38917,6 @@
 
 	        var _this = _possibleConstructorReturn(this, (ShortAnswerQuestion.__proto__ || Object.getPrototypeOf(ShortAnswerQuestion)).call(this, props));
 
-	        _this.getResponse = function () {
-	            var question = _this.props.question;
-	            var responses = _this.props.globalContext.data.responses;
-	            var _iteratorNormalCompletion = true;
-	            var _didIteratorError = false;
-	            var _iteratorError = undefined;
-
-	            try {
-	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                    var response = _step.value;
-
-	                    if (response.question === question._id) {
-	                        return response;
-	                    }
-	                }
-	            } catch (err) {
-	                _didIteratorError = true;
-	                _iteratorError = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion && _iterator.return) {
-	                        _iterator.return();
-	                    }
-	                } finally {
-	                    if (_didIteratorError) {
-	                        throw _iteratorError;
-	                    }
-	                }
-	            }
-	        };
-
 	        _this.state = {
 	            answer: ""
 	        };
@@ -38922,9 +38931,11 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
-	            var group = this.props.globalContext.data.group;
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                group = _props$globalContext$.group,
+	                responses = _props$globalContext$.responses;
 
-	            var response = this.getResponse();
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38968,7 +38979,7 @@
 	exports.default = (0, _GlobalContext.withGlobalContext)(ShortAnswerQuestion);
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -38990,11 +39001,11 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _QuestionTitle = __webpack_require__(382);
+	var _QuestionTitle = __webpack_require__(383);
 
 	var _QuestionTitle2 = _interopRequireDefault(_QuestionTitle);
 
-	var _SubmitButton = __webpack_require__(381);
+	var _SubmitButton = __webpack_require__(382);
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
