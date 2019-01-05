@@ -9363,6 +9363,10 @@
 
 	var _Quiz2 = _interopRequireDefault(_Quiz);
 
+	var _Report = __webpack_require__(388);
+
+	var _Report2 = _interopRequireDefault(_Report);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9400,6 +9404,11 @@
 	                    _Route2.default,
 	                    { name: "quiz" },
 	                    _react2.default.createElement(_Quiz2.default, null)
+	                ),
+	                _react2.default.createElement(
+	                    _Route2.default,
+	                    { name: "report" },
+	                    _react2.default.createElement(_Report2.default, null)
 	                )
 	            );
 	        }
@@ -11799,6 +11808,8 @@
 	                _this.setState({
 	                    data: _extends({}, _this.state.data, newState)
 	                });
+
+	                // TODO: This is so hacky, have to have a better way
 	                setTimeout(function () {
 	                    return renderMathInElement(document.body);
 	                }, 100);
@@ -37883,7 +37894,8 @@
 
 	var _templateObject = _taggedTemplateLiteral(['\n    background-color: rgba(0,0,0,0.1);\n    border-radius: 3px;\n    padding: 10px;\n    text-align: center;\n'], ['\n    background-color: rgba(0,0,0,0.1);\n    border-radius: 3px;\n    padding: 10px;\n    text-align: center;\n']),
 	    _templateObject2 = _taggedTemplateLiteral(['\n    color: green;\n    i {\n        padding-right: 5px;\n    }\n'], ['\n    color: green;\n    i {\n        padding-right: 5px;\n    }\n']),
-	    _templateObject3 = _taggedTemplateLiteral(['\n    color: red;\n'], ['\n    color: red;\n']);
+	    _templateObject3 = _taggedTemplateLiteral(['\n    color: red;\n'], ['\n    color: red;\n']),
+	    _templateObject4 = _taggedTemplateLiteral(['\n    font-size: 18px;\n'], ['\n    font-size: 18px;\n']);
 
 	var _react = __webpack_require__(333);
 
@@ -37910,6 +37922,8 @@
 	var ConnectedLabel = _styledComponents2.default.span(_templateObject2);
 
 	var DisconnectedLabel = (0, _styledComponents2.default)(ConnectedLabel)(_templateObject3);
+
+	var FinishedQuizContainer = _styledComponents2.default.div(_templateObject4);
 
 	var verticalBar = _react2.default.createElement(
 	    'span',
@@ -38032,6 +38046,7 @@
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                group = _props$globalContext$.group,
 	                connected = _props$globalContext$.connected;
+	            var reduce = this.props.globalContext.reduce;
 
 
 	            return _react2.default.createElement(
@@ -38042,7 +38057,8 @@
 	                verticalBar,
 	                _react2.default.createElement(
 	                    'span',
-	                    { className: "text-muted" },
+	                    {
+	                        className: "text-muted" },
 	                    this.getEarnedPoints(),
 	                    '/',
 	                    this.getTotalPossiblePoints(),
@@ -38061,6 +38077,23 @@
 	                    null,
 	                    _react2.default.createElement('i', { className: 'fa fa-plug', 'aria-hidden': 'true' }),
 	                    'Disconnected'
+	                ),
+	                _react2.default.createElement(
+	                    FinishedQuizContainer,
+	                    null,
+	                    _react2.default.createElement('hr', null),
+	                    '\uD83C\uDF89 Hooray! You have finished the quiz!',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'button',
+	                        {
+	                            className: 'btn btn-success',
+	                            onClick: function onClick() {
+	                                return reduce({ route: "report" });
+	                            }
+	                        },
+	                        'View Score & Report'
+	                    )
 	                )
 	            );
 	        }
@@ -39215,6 +39248,254 @@
 	}(_react.Component);
 
 	exports.default = CodeTracingQuestion;
+
+/***/ },
+/* 388 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _templateObject = _taggedTemplateLiteral(['\n    padding-top: 20px;\n    padding-bottom: 20px;\n'], ['\n    padding-top: 20px;\n    padding-bottom: 20px;\n']),
+	    _templateObject2 = _taggedTemplateLiteral(['\n    font-size: 30px;\n'], ['\n    font-size: 30px;\n']),
+	    _templateObject3 = _taggedTemplateLiteral(['\n    font-size: 18px;\n'], ['\n    font-size: 18px;\n']);
+
+	var _react = __webpack_require__(333);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GlobalContext = __webpack_require__(340);
+
+	var _styledComponents = __webpack_require__(346);
+
+	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	var _quizSelectors = __webpack_require__(376);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+	var Container = _styledComponents2.default.div(_templateObject);
+
+	var Score = _styledComponents2.default.div(_templateObject2);
+
+	var QuestionScore = _styledComponents2.default.div(_templateObject3);
+
+	var Report = function (_Component) {
+	    _inherits(Report, _Component);
+
+	    function Report() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
+	        _classCallCheck(this, Report);
+
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Report.__proto__ || Object.getPrototypeOf(Report)).call.apply(_ref, [this].concat(args))), _this), _this.getTotalPossiblePoints = function () {
+	            var quiz = _this.props.globalContext.data.quiz;
+
+	            var points = 0;
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = quiz.quiz.questions[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var question = _step.value;
+
+	                    points += question.points;
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+
+	            return points;
+	        }, _this.getTotalPossibleBonusPoints = function () {
+	            var quiz = _this.props.globalContext.data.quiz;
+
+	            var points = 0;
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
+
+	            try {
+	                for (var _iterator2 = quiz.quiz.questions[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var question = _step2.value;
+
+	                    points += question.firstTryBonus;
+	                }
+	            } catch (err) {
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
+	                    }
+	                }
+	            }
+
+	            return points;
+	        }, _this.getEarnedPoints = function () {
+	            var responses = _this.props.globalContext.data.responses;
+
+	            var points = 0;
+	            var _iteratorNormalCompletion3 = true;
+	            var _didIteratorError3 = false;
+	            var _iteratorError3 = undefined;
+
+	            try {
+	                for (var _iterator3 = responses[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                    var response = _step3.value;
+
+	                    if (response.correct) {
+	                        points += response.points;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError3 = true;
+	                _iteratorError3 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                        _iterator3.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError3) {
+	                        throw _iteratorError3;
+	                    }
+	                }
+	            }
+
+	            return points;
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+
+	    _createClass(Report, [{
+	        key: 'render',
+	        value: function render() {
+	            var reduce = this.props.globalContext.reduce;
+	            var _props$globalContext$ = this.props.globalContext.data,
+	                group = _props$globalContext$.group,
+	                quiz = _props$globalContext$.quiz,
+	                responses = _props$globalContext$.responses;
+
+
+	            return _react2.default.createElement(
+	                Container,
+	                null,
+	                _react2.default.createElement(
+	                    'button',
+	                    {
+	                        className: 'btn btn-link',
+	                        onClick: function onClick() {
+	                            return reduce({ route: "quiz" });
+	                        }
+	                    },
+	                    _react2.default.createElement('i', { className: 'fa fa-angle-left', 'aria-hidden': 'true' }),
+	                    ' Back'
+	                ),
+	                _react2.default.createElement(
+	                    'h3',
+	                    null,
+	                    'Quiz Report'
+	                ),
+	                _react2.default.createElement(
+	                    'h4',
+	                    null,
+	                    'You scored'
+	                ),
+	                _react2.default.createElement(
+	                    Score,
+	                    null,
+	                    this.getEarnedPoints(),
+	                    ' / ',
+	                    this.getTotalPossiblePoints()
+	                ),
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(
+	                    'h4',
+	                    null,
+	                    'Detailed Report'
+	                ),
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Your Group: ',
+	                    group.name
+	                ),
+	                quiz.quiz.questions.map(function (question) {
+	                    var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { key: question._id },
+	                        _react2.default.createElement(
+	                            'h5',
+	                            null,
+	                            'Question ',
+	                            question.number
+	                        ),
+	                        response && response.correct ? _react2.default.createElement(
+	                            _react2.default.Fragment,
+	                            null,
+	                            _react2.default.createElement('i', { className: 'fa fa-check', 'aria-hidden': 'true' }),
+	                            ' Your group correctly attempted this question. There were ',
+	                            response.attempts,
+	                            ' failed attempts.',
+	                            _react2.default.createElement(
+	                                QuestionScore,
+	                                null,
+	                                response.points,
+	                                ' / ',
+	                                question.points
+	                            )
+	                        ) : _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            'Your group failed to answer this question.'
+	                        ),
+	                        _react2.default.createElement('br', null)
+	                    );
+	                })
+	            );
+	        }
+	    }]);
+
+	    return Report;
+	}(_react.Component);
+
+	exports.default = (0, _GlobalContext.withGlobalContext)(Report);
 
 /***/ }
 /******/ ]);
