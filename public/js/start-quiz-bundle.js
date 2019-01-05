@@ -37591,6 +37591,10 @@
 	        if (getData().group.driver && data.active) {
 	            reduce({ route: "quiz" });
 	        }
+	        if (!data.active) {
+	            console.log("Deactivating quiz...");
+	            reduce({ route: "quizSetup" });
+	        }
 	    });
 	}
 
