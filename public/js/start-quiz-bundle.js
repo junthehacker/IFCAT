@@ -37552,7 +37552,7 @@
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	exports.registerReceiveQuizData = registerReceiveQuizData;
-	exports.registerQuizActiveStatusChange = registerQuizActiveStatusChange;
+	exports.registerQuizStatusChange = registerQuizStatusChange;
 	exports.registerQuizGroupDriverChanged = registerQuizGroupDriverChanged;
 	exports.registerGroupAttempt = registerGroupAttempt;
 	exports.register = register;
@@ -37560,7 +37560,7 @@
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	var EVENT_QUIZ_DATA = 'QUIZ_DATA';
-	var EVENT_QUIZ_ACTIVE_STATUS_CHANGE = 'QUIZ_ACTIVE_STATUS_CHANGE';
+	var EVENT_QUIZ_STATUS_CHANGE = 'QUIZ_STATUS_CHANGE';
 	var EVENT_QUIZ_GROUP_DRIVER_CHANGED = "GROUP_DRIVER_CHANGED";
 	var EVENT_GROUP_ATTEMPT = "GROUP_ATTEMPT";
 
@@ -37582,11 +37582,12 @@
 	    });
 	}
 
-	function registerQuizActiveStatusChange(socket, reduce, getData) {
-	    socket.on(EVENT_QUIZ_ACTIVE_STATUS_CHANGE, function (data) {
+	function registerQuizStatusChange(socket, reduce, getData) {
+	    socket.on(EVENT_QUIZ_STATUS_CHANGE, function (data) {
 	        console.log("Quiz active status changed to", data.active);
 	        var newTutorialQuiz = _extends({}, getData().quiz);
 	        newTutorialQuiz.active = data.active;
+	        newTutorialQuiz.archived = data.archived;
 	        reduce({ quiz: newTutorialQuiz });
 	        if (getData().group.driver && data.active) {
 	            reduce({ route: "quiz" });
@@ -37656,7 +37657,7 @@
 
 	    console.log("quizHandlers registered.");
 	    registerReceiveQuizData(socket, reduce, getData);
-	    registerQuizActiveStatusChange(socket, reduce, getData);
+	    registerQuizStatusChange(socket, reduce, getData);
 	    registerQuizGroupDriverChanged(socket, reduce, getData);
 	    registerGroupAttempt(socket, reduce, getData);
 	}
