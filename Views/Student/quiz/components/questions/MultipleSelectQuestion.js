@@ -37,9 +37,9 @@ class MultipleSelectQuestion extends Component {
     };
 
     render() {
-        const {question, isDriver} = this.props;
-        const {group, responses}   = this.props.globalContext.data;
-        const response             = selectResponseGivenQuestionID(responses, question._id);
+        const {question, isDriver}     = this.props;
+        const {group, responses, quiz} = this.props.globalContext.data;
+        const response                 = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>
@@ -52,7 +52,7 @@ class MultipleSelectQuestion extends Component {
                             <button
                                 className={"btn" + (this.state.selectedChoices.indexOf(key) >= 0 ? " btn-primary" : " btn-link")}
                                 onClick={() => this.toggleChoice(key)}
-                                disabled={!isDriver || (response && response.correct)}
+                                disabled={!isDriver || (response && response.correct) || quiz.archived}
                             >
                                 {choice}
                             </button>
@@ -65,7 +65,7 @@ class MultipleSelectQuestion extends Component {
                 {!response || !response.correct ? (
                     <SubmitButton
                         isDriver={isDriver}
-                        disabled={this.state.selectedChoices.length === 0}
+                        disabled={this.state.selectedChoices.length === 0 || quiz.archived}
                         onClick={() => {
 
                             let answer = [];

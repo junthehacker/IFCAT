@@ -21,9 +21,9 @@ class ShortAnswerQuestion extends Component {
     }
 
     render() {
-        const {question, isDriver} = this.props;
-        const {group, responses}   = this.props.globalContext.data;
-        const response             = selectResponseGivenQuestionID(responses, question._id);
+        const {question, isDriver}     = this.props;
+        const {group, responses, quiz} = this.props.globalContext.data;
+        const response                 = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>
@@ -41,14 +41,14 @@ class ShortAnswerQuestion extends Component {
                             answer: e.target.value
                         })
                     }}
-                    disabled={!isDriver || (response && response.correct)}
+                    disabled={!isDriver || (response && response.correct) || quiz.archived}
                 />
                 <hr/>
                 <QuestionScore response={response}/>
                 {!response || !response.correct ? (
                     <SubmitButton
                         isDriver={isDriver}
-                        disabled={this.state.answer === ""}
+                        disabled={this.state.answer === "" || quiz.archived}
                         onClick={() => {
                             attemptAnswer(question._id, group._id, [this.state.answer]);
                         }}

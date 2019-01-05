@@ -37805,7 +37805,7 @@
 
 	var _QuizStatus2 = _interopRequireDefault(_QuizStatus);
 
-	var _QuestionSelector = __webpack_require__(374);
+	var _QuestionSelector = __webpack_require__(375);
 
 	var _QuestionSelector2 = _interopRequireDefault(_QuestionSelector);
 
@@ -37906,6 +37906,8 @@
 	var _styledComponents = __webpack_require__(346);
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
+
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38037,6 +38039,37 @@
 	            }
 
 	            return points;
+	        }, _this.isQuizFinished = function () {
+	            var _this$props$globalCon = _this.props.globalContext.data,
+	                quiz = _this$props$globalCon.quiz,
+	                responses = _this$props$globalCon.responses;
+	            var _iteratorNormalCompletion4 = true;
+	            var _didIteratorError4 = false;
+	            var _iteratorError4 = undefined;
+
+	            try {
+	                for (var _iterator4 = quiz.quiz.questions[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	                    var question = _step4.value;
+
+	                    var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+	                    if (!response || !response.correct) return false;
+	                }
+	            } catch (err) {
+	                _didIteratorError4 = true;
+	                _iteratorError4 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+	                        _iterator4.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError4) {
+	                        throw _iteratorError4;
+	                    }
+	                }
+	            }
+
+	            return true;
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
@@ -38045,7 +38078,8 @@
 	        value: function render() {
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                group = _props$globalContext$.group,
-	                connected = _props$globalContext$.connected;
+	                connected = _props$globalContext$.connected,
+	                quiz = _props$globalContext$.quiz;
 	            var reduce = this.props.globalContext.reduce;
 
 
@@ -38078,11 +38112,11 @@
 	                    _react2.default.createElement('i', { className: 'fa fa-plug', 'aria-hidden': 'true' }),
 	                    'Disconnected'
 	                ),
-	                _react2.default.createElement(
+	                this.isQuizFinished() || quiz.archived ? _react2.default.createElement(
 	                    FinishedQuizContainer,
 	                    null,
 	                    _react2.default.createElement('hr', null),
-	                    '\uD83C\uDF89 Hooray! You have finished the quiz!',
+	                    !quiz.archived ? "🎉 Hooray! You have finished the quiz!" : "Quiz is closed",
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
 	                        'button',
@@ -38094,7 +38128,7 @@
 	                        },
 	                        'View Score & Report'
 	                    )
-	                )
+	                ) : null
 	            );
 	        }
 	    }]);
@@ -38106,6 +38140,45 @@
 
 /***/ },
 /* 374 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.selectResponseGivenQuestionID = selectResponseGivenQuestionID;
+	function selectResponseGivenQuestionID(responses, questionId) {
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	        for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var response = _step.value;
+
+	            if (response.question === questionId) {
+	                return response;
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	}
+
+/***/ },
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38122,7 +38195,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _QuestionSelectorButton = __webpack_require__(375);
+	var _QuestionSelectorButton = __webpack_require__(376);
 
 	var _QuestionSelectorButton2 = _interopRequireDefault(_QuestionSelectorButton);
 
@@ -38134,7 +38207,7 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _quizSelectors = __webpack_require__(376);
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38198,7 +38271,7 @@
 	exports.default = QuestionSelector;
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38278,45 +38351,6 @@
 	};
 
 	exports.default = QuestionSelectorButton;
-
-/***/ },
-/* 376 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.selectResponseGivenQuestionID = selectResponseGivenQuestionID;
-	function selectResponseGivenQuestionID(responses, questionId) {
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	        for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var response = _step.value;
-
-	            if (response.question === questionId) {
-	                return response;
-	            }
-	        }
-	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
-	            }
-	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
-	            }
-	        }
-	    }
-	}
 
 /***/ },
 /* 377 */
@@ -38526,7 +38560,7 @@
 
 	var _QuestionScore2 = _interopRequireDefault(_QuestionScore);
 
-	var _quizSelectors = __webpack_require__(376);
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38600,7 +38634,8 @@
 	                isDriver = _props.isDriver;
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                group = _props$globalContext$.group,
-	                responses = _props$globalContext$.responses;
+	                responses = _props$globalContext$.responses,
+	                quiz = _props$globalContext$.quiz;
 
 	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
@@ -38626,7 +38661,7 @@
 	                                onClick: function onClick() {
 	                                    return _this2.setState({ selectedChoice: key });
 	                                },
-	                                disabled: !isDriver || response && response.correct
+	                                disabled: !isDriver || response && response.correct || quiz.archived
 	                            },
 	                            choice
 	                        ),
@@ -38638,7 +38673,7 @@
 	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
 	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
 	                    isDriver: isDriver,
-	                    disabled: this.state.selectedChoice === null,
+	                    disabled: this.state.selectedChoice === null || quiz.archived,
 	                    onClick: function onClick() {
 	                        (0, _quizActions.attemptAnswer)(question._id, group._id, [_this2.getChoices()[_this2.state.selectedChoice]]);
 	                    }
@@ -38883,7 +38918,7 @@
 
 	var _GlobalContext = __webpack_require__(340);
 
-	var _quizSelectors = __webpack_require__(376);
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38939,7 +38974,8 @@
 	                isDriver = _props.isDriver;
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                group = _props$globalContext$.group,
-	                responses = _props$globalContext$.responses;
+	                responses = _props$globalContext$.responses,
+	                quiz = _props$globalContext$.quiz;
 
 	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
@@ -38965,7 +39001,7 @@
 	                                onClick: function onClick() {
 	                                    return _this2.toggleChoice(key);
 	                                },
-	                                disabled: !isDriver || response && response.correct
+	                                disabled: !isDriver || response && response.correct || quiz.archived
 	                            },
 	                            choice
 	                        ),
@@ -38977,7 +39013,7 @@
 	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
 	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
 	                    isDriver: isDriver,
-	                    disabled: this.state.selectedChoices.length === 0,
+	                    disabled: this.state.selectedChoices.length === 0 || quiz.archived,
 	                    onClick: function onClick() {
 
 	                        var answer = [];
@@ -39057,7 +39093,7 @@
 
 	var _quizActions = __webpack_require__(369);
 
-	var _quizSelectors = __webpack_require__(376);
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -39095,7 +39131,8 @@
 	                isDriver = _props.isDriver;
 	            var _props$globalContext$ = this.props.globalContext.data,
 	                group = _props$globalContext$.group,
-	                responses = _props$globalContext$.responses;
+	                responses = _props$globalContext$.responses,
+	                quiz = _props$globalContext$.quiz;
 
 	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
 
@@ -39119,13 +39156,13 @@
 	                            answer: e.target.value
 	                        });
 	                    },
-	                    disabled: !isDriver || response && response.correct
+	                    disabled: !isDriver || response && response.correct || quiz.archived
 	                }),
 	                _react2.default.createElement("hr", null),
 	                _react2.default.createElement(_QuestionScore2.default, { response: response }),
 	                !response || !response.correct ? _react2.default.createElement(_SubmitButton2.default, {
 	                    isDriver: isDriver,
-	                    disabled: this.state.answer === "",
+	                    disabled: this.state.answer === "" || quiz.archived,
 	                    onClick: function onClick() {
 	                        (0, _quizActions.attemptAnswer)(question._id, group._id, [_this2.state.answer]);
 	                    }
@@ -39171,6 +39208,8 @@
 
 	var _SubmitButton2 = _interopRequireDefault(_SubmitButton);
 
+	var _GlobalContext = __webpack_require__(340);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -39207,6 +39246,7 @@
 	            var _props = this.props,
 	                question = _props.question,
 	                isDriver = _props.isDriver;
+	            var quiz = this.props.globalContext.data.quiz;
 
 	            return _react2.default.createElement(
 	                Container,
@@ -39231,14 +39271,17 @@
 	                _react2.default.createElement("input", {
 	                    type: "text",
 	                    className: "form-control",
-	                    disabled: !isDriver,
+	                    disabled: !isDriver || quiz.archived,
 	                    placeholder: "Enter next line of output here...",
 	                    onChange: function onChange(e) {
 	                        _this2.setState({ answer: e.target.value });
 	                    }
 	                }),
 	                _react2.default.createElement("hr", null),
-	                _react2.default.createElement(_SubmitButton2.default, { isDriver: isDriver, disabled: this.state.answer === "" }),
+	                _react2.default.createElement(_SubmitButton2.default, {
+	                    isDriver: isDriver,
+	                    disabled: this.state.answer === "" || quiz.archived
+	                }),
 	                _react2.default.createElement("br", null)
 	            );
 	        }
@@ -39247,7 +39290,7 @@
 	    return CodeTracingQuestion;
 	}(_react.Component);
 
-	exports.default = CodeTracingQuestion;
+	exports.default = (0, _GlobalContext.withGlobalContext)(CodeTracingQuestion);
 
 /***/ },
 /* 388 */
@@ -39275,7 +39318,7 @@
 
 	var _styledComponents2 = _interopRequireDefault(_styledComponents);
 
-	var _quizSelectors = __webpack_require__(376);
+	var _quizSelectors = __webpack_require__(374);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

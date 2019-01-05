@@ -26,8 +26,7 @@
         <br>
         <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}?_method=patch`) %>"
               method="post" class="form-horizontal">
-            <div class="form-group">
-                <label>Allocate members by</label>
+            <div class="form-group" style="display: none;">
                 <div>
                     <select name="allocateMembers" class="form-control">
                         <option value="automatically"<%= tutorialQuiz.allocateMembers === 'automatically' ? ' selected' : '' %>>
@@ -39,8 +38,11 @@
                     </select>
                 </div>
             </div>
+            <p class="text-muted">
+                <i class="fa fa-info-circle" aria-hidden="true"></i> You can manually assign user to groups on Groups tab. If a student is not assigned to a group, they will be automatically assigned one upon login.
+            </p>
             <div class="form-group">
-                <label>Set group size</label>
+                <label>Maximum number of students per group</label>
                 <div>
                     <input type="number" name="maxMembersPerGroup" value="<%= tutorialQuiz.maxMembersPerGroup %>"
                            min="1" class="form-control">
@@ -53,15 +55,15 @@
             <% } %>
             <div class="form-group">
                 <input type="checkbox" value="1" name="published"<%= tutorialQuiz.published ? ' checked' : '' %>>
-                &nbsp;<label>Published</label>
+                &nbsp;<label>Published (Make the quiz visible to students)</label>
             </div>
             <div class="form-group">
                 <input type="checkbox" value="1" name="active"<%= tutorialQuiz.active ? ' checked' : '' %>>
-                &nbsp;<label>Activated</label>
+                &nbsp;<label>Activated (Start the quiz, no more group joining is allowed)</label>
             </div>
             <div class="form-group">
                 <input type="checkbox" value="1" name="archived"<%= tutorialQuiz.archived ? ' checked' : '' %>>
-                <label>Archived</label>
+                <label>Archived (Finish the quiz)</label>
             </div>
             <div class="form-group">
                 &nbsp;<button type="submit" class="btn btn-primary">Save</button>

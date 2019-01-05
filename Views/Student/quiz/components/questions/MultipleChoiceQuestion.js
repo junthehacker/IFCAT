@@ -37,9 +37,9 @@ class MultipleChoiceQuestion extends Component {
 
     render() {
 
-        const {question, isDriver} = this.props;
-        const {group, responses}   = this.props.globalContext.data;
-        const response             = selectResponseGivenQuestionID(responses, question._id);
+        const {question, isDriver}     = this.props;
+        const {group, responses, quiz} = this.props.globalContext.data;
+        const response                 = selectResponseGivenQuestionID(responses, question._id);
 
         return (
             <Container>
@@ -54,7 +54,7 @@ class MultipleChoiceQuestion extends Component {
                             <button
                                 className={"btn" + (this.state.selectedChoice === key ? " btn-primary" : " btn-link")}
                                 onClick={() => this.setState({selectedChoice: key})}
-                                disabled={!isDriver || (response && response.correct)}
+                                disabled={!isDriver || (response && response.correct) || quiz.archived}
                             >
                                 {choice}
                             </button>
@@ -67,7 +67,7 @@ class MultipleChoiceQuestion extends Component {
                 {!response || !response.correct ? (
                     <SubmitButton
                         isDriver={isDriver}
-                        disabled={this.state.selectedChoice === null}
+                        disabled={this.state.selectedChoice === null || quiz.archived}
                         onClick={() => {
                             attemptAnswer(question._id, group._id, [this.getChoices()[this.state.selectedChoice]]);
                         }}

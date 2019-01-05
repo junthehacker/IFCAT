@@ -1,34 +1,12 @@
 const models = require('../../Models');
 
 exports.startQuiz = (req, res) => {
-    if (req.tutorialQuiz.archived){
-        req.tutorialQuiz.quiz.withQuestions().execPopulate()
-        .then((quiz)=>{
-            return models.Group.findOne({ _id : { $in : req.tutorialQuiz.groups }, members :  req.user._id })
-            .exec()
-            .then(function(group){
-                models.Response.find({ group : group._id }).exec()
-                .then(function(responses){
-                    var responsesMap = {};
-                    responses.forEach(res => {responsesMap[res.question] = res}); // easier to do rendering logic with a question to response map
-                    res.render('student/archived-quiz.ejs',{
-                    quiz : quiz,
-                    responses: responsesMap,
-                    group : group.name
-                    });
-                })
-            })
-        })
-        
-    }
-    else{
-        res.render('Student/Pages/StartQuiz.ejs', {
-            course: req.course,
-            tutorialQuiz: req.tutorialQuiz,
-            quiz: req.tutorialQuiz.quiz,
-            initSocket: true
-        });
-    }
+    res.render('Student/Pages/StartQuiz.ejs', {
+        course: req.course,
+        tutorialQuiz: req.tutorialQuiz,
+        quiz: req.tutorialQuiz.quiz,
+        initSocket: true
+    });
 };
 
 // WebSocket event handler generators - these are curried functions that take

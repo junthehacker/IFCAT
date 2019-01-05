@@ -1,7 +1,8 @@
-import React, {Component} from 'react';
-import styled             from "styled-components";
-import QuestionTitle      from "../QuestionTitle";
-import SubmitButton       from "../SubmitButton";
+import React, {Component}  from 'react';
+import styled              from "styled-components";
+import QuestionTitle       from "../QuestionTitle";
+import SubmitButton        from "../SubmitButton";
+import {withGlobalContext} from "../../contexts/GlobalContext";
 
 const Container = styled.div`
     text-align: center;
@@ -22,6 +23,7 @@ class CodeTracingQuestion extends Component {
 
     render() {
         const {question, isDriver} = this.props;
+        const {quiz}               = this.props.globalContext.data;
         return (
             <Container>
                 <QuestionTitle question={question}/>
@@ -33,7 +35,7 @@ class CodeTracingQuestion extends Component {
                 <input
                     type="text"
                     className={"form-control"}
-                    disabled={!isDriver}
+                    disabled={!isDriver || quiz.archived}
                     placeholder={"Enter next line of output here..."}
                     onChange={e => {
                         this.setState({answer: e.target.value});
@@ -41,7 +43,10 @@ class CodeTracingQuestion extends Component {
                 />
 
                 <hr/>
-                <SubmitButton isDriver={isDriver} disabled={this.state.answer === ""}/>
+                <SubmitButton
+                    isDriver={isDriver}
+                    disabled={this.state.answer === "" || quiz.archived}
+                />
                 <br/>
 
             </Container>
@@ -49,4 +54,4 @@ class CodeTracingQuestion extends Component {
     }
 }
 
-export default CodeTracingQuestion;
+export default withGlobalContext(CodeTracingQuestion);
