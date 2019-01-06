@@ -9,6 +9,7 @@ const _            = require('lodash');
 const async        = require('async');
 const csv          = require('csv');
 const models       = require('../../Models');
+const TutorialQuiz = require('../../Models/TutorialQuiz');
 const asyncForEach = require('../../Utils/asyncForEach');
 
 /**
@@ -290,20 +291,41 @@ class ResponseController extends Controller {
                 groupScore += response.points;
             });
             group.members.forEach(member => {
-                let memberData = {};
-                memberData.score = groupScore; // Individual score is the group score.
-                memberData.member = member;
-                memberData.group = group;
+                let memberData      = {};
+                memberData.score    = groupScore; // Individual score is the group score.
+                memberData.member   = member;
+                memberData.group    = group;
+                memberData.quiz     = req.tutorialQuiz.quiz;
+                memberData.tutorial = req.tutorialQuiz.tutorial;
                 data.push(memberData);
             });
         });
 
-        res.render('Admin/Pages/TutorialQuizMarks', {
-            title: 'Marks',
-            course: req.course,
-            tutorialQuiz: req.tutorialQuiz,
-            data
-        });
+        if (req.query.export === 'true') {
+            data = _.map(data, d => [
+                d.member.getUsername(),
+                d.quiz.name,
+                d.tutorial.getDisplayName(),
+                d.group.name,
+                d.score
+            ]);
+            data.unshift(['Username', 'Quiz', 'Tutorial', 'Group', 'Mark']);
+            res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
+            res.set('Content-Type', 'text/csv');
+
+            return csv.stringify(data, (err, output) => {
+                if (err)
+                    return next(err);
+                return res.send(output);
+            });
+        } else {
+            res.render('Admin/Pages/TutorialQuizMarks', {
+                title: 'Marks',
+                course: req.course,
+                tutorialQuiz: req.tutorialQuiz,
+                data
+            });
+        }
 
 
         // models.TutorialQuiz.aggregate([{
@@ -386,70 +408,124 @@ class ResponseController extends Controller {
      * @returns {Promise<void>}
      */
     async getMarksByCourse(req, res, next) {
-        models.TutorialQuiz.aggregate([{
-            $match: {_id: {$in: req.body.tutorialQuizzes || []}}
-        }, {
-            $lookup: {from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial'}
-        }, {
-            $unwind: '$tutorial'
-        }, {
-            $lookup: {from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz'}
-        }, {
-            $unwind: '$quiz'
-        }, {
-            $unwind: '$groups'
-        }, {
-            $lookup: {from: 'groups', localField: 'groups', foreignField: '_id', as: 'group'}
-        }, {
-            $unwind: '$group'
-        }, {
-            $unwind: '$group.members'
-        }, {
-            $lookup: {from: 'users', localField: 'group.members', foreignField: '_id', as: 'member'}
-        }, {
-            $unwind: '$member'
-        }, {
-            $lookup: {from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response'}
-        }, {
-            $unwind: {path: '$response', preserveNullAndEmptyArrays: true}
-        }, {
-            $group: {
-                _id: {tutorialQuiz: '_id', member: '$member._id'},
-                tutorial: {$first: '$tutorial'},
-                quiz: {$first: '$quiz'},
-                group: {$first: '$group'},
-                member: {$first: '$member'},
-                totalPoints: {$sum: '$response.points'}
-            }
-        }, {
-            $sort: {'member.UTORid': 1, 'tutorialQuiz.quiz.name': 1}
-        }], (err, data) => {
-            if (err)
-                return next(err);
-            // export marks into CSV
-            if (req.query.export === 'true') {
-                data = _.map(data, d => [
-                    d.member.UTORid,
-                    d.member.studentNumber,
-                    `${d.member.name.first} ${d.member.name.last}`,
-                    d.tutorial.number,
-                    d.quiz.name,
-                    d.group.name,
-                    d.totalPoints
-                ]);
-                // set headings
-                data.unshift(['UTORid', 'Student No.', 'Name', 'Tutorial', 'Quiz', 'Group', 'Mark']);
-                // send CSV
-                res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
-                res.set('Content-Type', 'text/csv');
-                return csv.stringify(data, (err, output) => {
-                    if (err)
-                        return next(err);
-                    return res.send(output);
-                });
-            }
-            res.redirect('back');
+
+        let tutorialQuizzes = await TutorialQuiz.find({_id: {$in: req.body.tutorialQuizzes || []}});
+
+        await asyncForEach(tutorialQuizzes, async tutorialQuiz => {
+            await tutorialQuiz.populate('quiz groups').execPopulate();
+            await tutorialQuiz.fillTutorialFromRemote();
+            await asyncForEach(tutorialQuiz.groups, async group => {
+                await group.populate('responses').execPopulate();
+                await group.fillMembersFromRemote();
+            });
         });
+
+        let data = [];
+
+        for(let tutorialQuiz of tutorialQuizzes) {
+            tutorialQuiz.groups.forEach(group => {
+                let groupScore = 0;
+                group.responses.forEach(response => {
+                    groupScore += response.points;
+                });
+                group.members.forEach(member => {
+                    let memberData      = {};
+                    memberData.score    = groupScore; // Individual score is the group score.
+                    memberData.member   = member;
+                    memberData.group    = group;
+                    memberData.quiz     = tutorialQuiz.quiz;
+                    memberData.tutorial = tutorialQuiz.tutorial;
+                    data.push(memberData);
+                });
+            });
+        }
+
+        if (req.query.export === 'true') {
+            data = _.map(data, d => [
+                d.member.getUsername(),
+                d.quiz.name,
+                d.tutorial.getDisplayName(),
+                d.group.name,
+                d.score
+            ]);
+            data.unshift(['Username', 'Quiz', 'Tutorial', 'Group', 'Mark']);
+            res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
+            res.set('Content-Type', 'text/csv');
+
+            return csv.stringify(data, (err, output) => {
+                if (err)
+                    return next(err);
+                return res.send(output);
+            });
+        } else {
+            res.redirect('back');
+        }
+
+
+        // models.TutorialQuiz.aggregate([{
+        //     $match: {_id: {$in: req.body.tutorialQuizzes || []}}
+        // }, {
+        //     $lookup: {from: 'tutorials', localField: 'tutorial', foreignField: '_id', as: 'tutorial'}
+        // }, {
+        //     $unwind: '$tutorial'
+        // }, {
+        //     $lookup: {from: 'quizzes', localField: 'quiz', foreignField: '_id', as: 'quiz'}
+        // }, {
+        //     $unwind: '$quiz'
+        // }, {
+        //     $unwind: '$groups'
+        // }, {
+        //     $lookup: {from: 'groups', localField: 'groups', foreignField: '_id', as: 'group'}
+        // }, {
+        //     $unwind: '$group'
+        // }, {
+        //     $unwind: '$group.members'
+        // }, {
+        //     $lookup: {from: 'users', localField: 'group.members', foreignField: '_id', as: 'member'}
+        // }, {
+        //     $unwind: '$member'
+        // }, {
+        //     $lookup: {from: 'responses', localField: 'group._id', foreignField: 'group', as: 'response'}
+        // }, {
+        //     $unwind: {path: '$response', preserveNullAndEmptyArrays: true}
+        // }, {
+        //     $group: {
+        //         _id: {tutorialQuiz: '_id', member: '$member._id'},
+        //         tutorial: {$first: '$tutorial'},
+        //         quiz: {$first: '$quiz'},
+        //         group: {$first: '$group'},
+        //         member: {$first: '$member'},
+        //         totalPoints: {$sum: '$response.points'}
+        //     }
+        // }, {
+        //     $sort: {'member.UTORid': 1, 'tutorialQuiz.quiz.name': 1}
+        // }], (err, data) => {
+        //     if (err)
+        //         return next(err);
+        //     // export marks into CSV
+        //     if (req.query.export === 'true') {
+        //         data = _.map(data, d => [
+        //             d.member.UTORid,
+        //             d.member.studentNumber,
+        //             `${d.member.name.first} ${d.member.name.last}`,
+        //             d.tutorial.number,
+        //             d.quiz.name,
+        //             d.group.name,
+        //             d.totalPoints
+        //         ]);
+        //         // set headings
+        //         data.unshift(['UTORid', 'Student No.', 'Name', 'Tutorial', 'Quiz', 'Group', 'Mark']);
+        //         // send CSV
+        //         res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
+        //         res.set('Content-Type', 'text/csv');
+        //         return csv.stringify(data, (err, output) => {
+        //             if (err)
+        //                 return next(err);
+        //             return res.send(output);
+        //         });
+        //     }
+        //     res.redirect('back');
+        // });
     }
 }
 

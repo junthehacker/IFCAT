@@ -41,7 +41,7 @@
         <% } else { %>
             <% _.each(tutorialQuizzes, tutorialQuiz => { %>
                 <tr>
-                    <td class="cb"><input type="checkbox" name="tutorialsQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
+                    <td class="cb"><input type="checkbox" name="tutorialQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
                     <td class="quiz"><%= tutorialQuiz.quiz.name %></td>
                     <td class="tutorial"><%= tutorialQuiz.tutorial.getDisplayName() %></td>
                     <td class="published"><% if (tutorialQuiz.published) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
