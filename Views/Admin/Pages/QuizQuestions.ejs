@@ -109,9 +109,11 @@ Author(s): Jun Zheng [me at jackzh dot com]
                                     <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
                                         Edit Question
                                     </a>
-                                    <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" class="btn-delete">
-                                        Delete Question
-                                    </a>
+                                    <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" method="post">
+                                        <button class="dropdown-item" class="btn-delete">
+                                            Delete Question
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
