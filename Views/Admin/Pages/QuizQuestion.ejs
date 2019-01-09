@@ -341,7 +341,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <!-- buttons -->
     <div class="form-group">
         <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
-           class="btn btn-default btn-sm">Cancel</a>
+           class="btn btn-default">Cancel</a>
         <% if (question.isNew) { %>
             <input type="hidden" id="back" name="back" value="1">
             <button type="submit" class="btn btn-primary btn-raised" onclick="back.value=0">Save &amp; Add Another New
@@ -368,7 +368,9 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 </button>
             </div>
             <div class="modal-body">
-                <p>To write your question, simply write it in plain text. If you wish to include math expressions, you
+                <p>To write your question, simply write it in plain text.</p>
+                <h4>Math Expressions</h4>
+                <p>If you wish to include math expressions, you
                     must
                     wrap it around <code>$$</code>.</p>
                 <p>For example, if you typed the following content:</p>
@@ -378,6 +380,20 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <p>Student will see the following on their screen:</p>
 
                 <p>Suppose you have $$F_X(x) = x^2$$ what is P(X < 1) ?</p>
+                <h4>Markdown / Tables</h4>
+                <p>IFCAT supports markdown syntax.</p>
+                <h5>Basic Text Formatting</h5>
+                <ul>
+                    <li>Bold Text: <code>**Bold text**</code></li>
+                    <li>Italic Text: <code>*Italic text*</code></li>
+                    <li>Inline Code: <code>`Inline code`</code></li>
+                    <li>Code Block: <code>```code block```</code></li>
+                </ul>
+                <h5>Tables</h5>
+                <pre><code>| content | content |
+|---------|---------|
+| 123     | 345     |
+| 123     | 234     |</code></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -419,7 +435,14 @@ Author(s): Jun Zheng [me at jackzh dot com]
     function showQuestionPreview() {
         $("#question-preview-text").html(questionInput.getValue());
         $("#question-preview").modal();
+        renderMarkdownInPreview();
         renderMathInElement(document.getElementById('question-preview-text'));
+    }
+
+    function renderMarkdownInPreview() {
+        let converter = new showdown.Converter({tables: true});
+        let text = $("#question-preview-text").html();
+        $("#question-preview-text").html(converter.makeHtml(text));
     }
 
     questionInputUpdated();

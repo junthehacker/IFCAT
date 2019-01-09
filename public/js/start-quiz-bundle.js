@@ -38759,7 +38759,7 @@
 /* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -38782,28 +38782,42 @@
 	var QuestionTitle = function (_Component) {
 	    _inherits(QuestionTitle, _Component);
 
-	    function QuestionTitle() {
+	    function QuestionTitle(props) {
 	        _classCallCheck(this, QuestionTitle);
 
-	        return _possibleConstructorReturn(this, (QuestionTitle.__proto__ || Object.getPrototypeOf(QuestionTitle)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (QuestionTitle.__proto__ || Object.getPrototypeOf(QuestionTitle)).call(this, props));
+
+	        _this.state = {
+	            questionText: ""
+	        };
+	        return _this;
 	    }
 
 	    _createClass(QuestionTitle, [{
-	        key: 'render',
+	        key: "componentDidMount",
+	        value: function componentDidMount() {
+	            var converter = new showdown.Converter({ tables: true });
+	            this.setState({
+	                questionText: converter.makeHtml(this.props.question.question)
+	            });
+	        }
+	    }, {
+	        key: "render",
 	        value: function render() {
 	            var question = this.props.question;
+	            var questionText = this.state.questionText;
 
 	            return _react2.default.createElement(
-	                'div',
+	                "div",
 	                null,
 	                _react2.default.createElement(
-	                    'h4',
+	                    "h4",
 	                    null,
-	                    'Question ',
+	                    "Question ",
 	                    question.number
 	                ),
-	                question.question,
-	                _react2.default.createElement('hr', null)
+	                _react2.default.createElement("div", { dangerouslySetInnerHTML: { __html: questionText } }),
+	                _react2.default.createElement("hr", null)
 	            );
 	        }
 	    }]);
