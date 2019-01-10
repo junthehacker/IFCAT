@@ -9,11 +9,11 @@ class QuestionTitle extends Component {
         };
     }
 
-    componentDidMount() {
+    static getDerivedStateFromProps(nextProps, prevState){
         let converter = new showdown.Converter({tables: true});
-        this.setState({
-            questionText: converter.makeHtml(this.props.question.question)
-        })
+        return {
+            questionText: converter.makeHtml(nextProps.question.question)
+        }
     }
 
     render() {

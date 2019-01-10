@@ -37726,7 +37726,7 @@
 	            var groupNotAvailable = _react2.default.createElement(
 	                'div',
 	                { className: 'alert alert-light', role: 'alert' },
-	                'An instructor must assign you to a group, please wait...'
+	                'You are not in a group! Please contact your instructor for details.'
 	            );
 
 	            var loadingQuiz = _react2.default.createElement(
@@ -37771,11 +37771,15 @@
 	                        'You are in group'
 	                    ),
 	                    group ? _react2.default.createElement(
-	                        'h1',
+	                        _react2.default.Fragment,
 	                        null,
-	                        group.name
-	                    ) : groupNotAvailable,
-	                    quiz.active ? driverSelect : quizNotActive
+	                        _react2.default.createElement(
+	                            'h1',
+	                            null,
+	                            group.name
+	                        ),
+	                        quiz.active ? driverSelect : quizNotActive
+	                    ) : groupNotAvailable
 	                );
 	            } else {
 	                return loadingQuiz;
@@ -38794,14 +38798,6 @@
 	    }
 
 	    _createClass(QuestionTitle, [{
-	        key: "componentDidMount",
-	        value: function componentDidMount() {
-	            var converter = new showdown.Converter({ tables: true });
-	            this.setState({
-	                questionText: converter.makeHtml(this.props.question.question)
-	            });
-	        }
-	    }, {
 	        key: "render",
 	        value: function render() {
 	            var question = this.props.question;
@@ -38819,6 +38815,14 @@
 	                _react2.default.createElement("div", { dangerouslySetInnerHTML: { __html: questionText } }),
 	                _react2.default.createElement("hr", null)
 	            );
+	        }
+	    }], [{
+	        key: "getDerivedStateFromProps",
+	        value: function getDerivedStateFromProps(nextProps, prevState) {
+	            var converter = new showdown.Converter({ tables: true });
+	            return {
+	                questionText: converter.makeHtml(nextProps.question.question)
+	            };
 	        }
 	    }]);
 

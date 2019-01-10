@@ -21,7 +21,7 @@ class QuizSetup extends Component {
 
         const groupNotAvailable = (
             <div className="alert alert-light" role="alert">
-                An instructor must assign you to a group, please wait...
+                You are not in a group! Please contact your instructor for details.
             </div>
         );
 
@@ -50,9 +50,11 @@ class QuizSetup extends Component {
                 <Container>
                     <h2>You are in group</h2>
                     {group ? (
-                        <h1>{group.name}</h1>
+                        <React.Fragment>
+                            <h1>{group.name}</h1>
+                            {quiz.active ? driverSelect: quizNotActive}
+                        </React.Fragment>
                     ): groupNotAvailable}
-                    {quiz.active ? driverSelect: quizNotActive}
                 </Container>
             )
         } else {
