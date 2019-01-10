@@ -27,6 +27,10 @@ module.exports = class RemoteTutorial {
         return this.students;
     }
 
+    getName() {
+        return this.tutorial.name;
+    }
+
     /**
      * Fill students field from remote
      * @returns {Promise<void>}

@@ -19,7 +19,8 @@ class EnsureAdminMiddleware extends Middleware {
      * @inheritDoc
      */
     async handler(req, res, next) {
-        if (req.user && req.user.isAdmin()) return next();
+        // TODO: canAccessAdminPanel should be a separate middleware
+        if (req.user && req.user.canAccessAdminPanel()) return next();
         res.redirect(getAbsUrl('/'));
     }
 

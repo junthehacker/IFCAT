@@ -38,6 +38,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
         </tr>
         <% } else { %>
             <% courses.forEach(course => { %>
+                <% if(user.isAdmin() || user.isTAForCourse(course)) { %>
                 <tr>
                     <td class="code"><%= course.getCode() %></td>
                     <td class="name"><%= course.getDisplayName() %></td>
@@ -47,10 +48,12 @@ Author(s): Jun Zheng [me at jackzh dot com]
                                 Actions
                             </button>
                             <div class="dropdown-menu">
+                                <% if(user.isAdmin()) { %>
                                 <a class="dropdown-item"
                                    href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">
                                     <i class="fa fa-list" aria-hidden="true"></i> &nbsp;Manage Quizzes
                                 </a>
+                                <% } %>
                                 <a class="dropdown-item"
                                    href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">
                                     <i class="fa fa-play" aria-hidden="true"></i> &nbsp;Conduct Quizzes
@@ -59,6 +62,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         </div>
                     </td>
                 </tr>
+                <%}%>
             <% }) %>
         <% } %>
         </tbody>

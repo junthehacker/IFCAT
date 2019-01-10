@@ -26,6 +26,10 @@ module.exports = class Course {
         return this.course.courseDisplayName;
     }
 
+    getName() {
+        return this.course.name;
+    }
+
     getCode() {
         return this.course.courseName;
     }

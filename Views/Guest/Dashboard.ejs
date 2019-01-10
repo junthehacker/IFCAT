@@ -53,7 +53,7 @@
             <a class="btn btn-primary btn-raised btn-lg" href="<%= getAbsUrl('/student/courses') %>" role="button">
                 <i class="fa fa-graduation-cap" aria-hidden="true"></i> My Courses
             </a>
-            <% if(user.isAdmin()) { %>
+            <% if(user.canAccessAdminPanel()) { %>
             <a class="btn btn-secondary btn-raised btn-lg" href="<%= getAbsUrl('/admin/courses') %>" role="button">
                 <i class="fa fa-user" aria-hidden="true"></i> Admin
             </a>

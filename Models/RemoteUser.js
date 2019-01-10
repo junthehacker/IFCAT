@@ -12,9 +12,9 @@ const config = require('../Utils/config').ia;
 const getIAServiceProvider = () => require('../Providers/IAServiceProvider');
 
 // Constants
-const ADMIN_GROUP = "admin";
+const ADMIN_GROUP      = "admin";
 const INSTRUCTOR_GROUP = "instructor";
-const TA_GROUP = "ta";
+const TA_SUFFIX        = "\.ta";
 
 /**
  * Class describes a remote I.A. user
@@ -78,7 +78,40 @@ class RemoteUser {
      * @returns {boolean}
      */
     isTA() {
-        return this.user.groups.indexOf(TA_GROUP) > -1;
+        for(let group of this.user.groups) {
+            if(group.match(`.*${TA_SUFFIX}`)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if this user is a TA for a specific course.
+     * @param course
+     * @returns {boolean}
+     */
+    isTAForCourse(course) {
+        for(let group of this.user.groups) {
+            if(group === course.getName() + TA_SUFFIX) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if this user is a TA for a specific tutorial.
+     * @param tutorial
+     * @returns {boolean}
+     */
+    isTAForTutorial(tutorial) {
+        for(let group of this.user.groups) {
+            if(group === tutorial.getName() + TA_SUFFIX) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -118,7 +151,7 @@ class RemoteUser {
                     let result = null;
                     // Loop through and try to get one matching course
                     courses.some(course => {
-                        if(course.getId() === id) {
+                        if (course.getId() === id) {
                             result = course;
                             return true;
                         }
