@@ -82,7 +82,7 @@ app.use((req, res, next) => {
 // routes
 const mainRouter = new express.Router();
 
-if(process.env.MAINTENANCE) {
+if(process.env.MAINTENANCE === 'true') {
     mainRouter.use('*', (req, res) => res.render('Maintenance'));
 }
 

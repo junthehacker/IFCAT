@@ -67,11 +67,11 @@ Author(s): Jun Zheng [me at jackzh dot com]
             </a>
         </label>
         <input id="question-input-hidden" type="hidden" name="question"/>
-        <div id="question-input" class="form-control" style="height: 100px;"><%= question.question %></div>
+        <div id="question-input" class="form-control" style="height: 200px;"><%= question.question %></div>
     </div>
 
     <!-- files -->
-    <div class="form-group">
+    <div class="form-group" style="display: none;">
         <label class="control-label">Files</label>
         <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-files">
             <span class="glyphicon glyphicon-file"></span> Show files</a>
@@ -80,7 +80,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </div>
 
     <!-- links -->
-    <div class="form-group">
+    <div class="form-group" style="display: none;">
         <label class="control-label">Links</label>
         <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-links">
             <span class="glyphicon glyphicon-link"></span> Show links</a>
