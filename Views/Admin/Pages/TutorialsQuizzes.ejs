@@ -40,7 +40,7 @@
             <tr><td colspan="7">No quizzes have been added for this tutorial yet.</td></tr>
         <% } else { %>
             <% _.each(tutorialQuizzes, tutorialQuiz => { %>
-                <% if(user.isTAForTutorial(tutorialQuiz.tutorial)) { %>
+                <% if(user.isTAForTutorial(tutorialQuiz.tutorial) || user.isAdmin()) { %>
                 <tr>
                     <td class="cb"><input type="checkbox" name="tutorialQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
                     <td class="quiz"><%= tutorialQuiz.quiz.name %></td>
