@@ -16,12 +16,11 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <h3>
     <i class="fa fa-television" aria-hidden="true"></i> All Courses
 </h3>
-<hr/>
 
 <% include ../Partials/Flash.ejs %>
 
 <form method="post">
-    <table class="table table-hover table-bordered table-light">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th class="code">Code</th>
@@ -43,23 +42,14 @@ Author(s): Jun Zheng [me at jackzh dot com]
                     <td class="code"><%= course.getCode() %></td>
                     <td class="name"><%= course.getDisplayName() %></td>
                     <td class="actions">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Actions
-                            </button>
-                            <div class="dropdown-menu">
-                                <% if(user.isAdmin()) { %>
-                                <a class="dropdown-item"
-                                   href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">
-                                    <i class="fa fa-list" aria-hidden="true"></i> &nbsp;Manage Quizzes
-                                </a>
-                                <% } %>
-                                <a class="dropdown-item"
-                                   href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">
-                                    <i class="fa fa-play" aria-hidden="true"></i> &nbsp;Conduct Quizzes
-                                </a>
-                            </div>
-                        </div>
+                        <a class="btn btn-primary btn-sm"
+                           href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes`) %>">
+                            <i class="fa fa-list" aria-hidden="true"></i> &nbsp;Manage
+                        </a>
+                        <a class="btn btn-secondary btn-sm"
+                           href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes`) %>">
+                            <i class="fa fa-play" aria-hidden="true"></i> &nbsp;Conduct Quizzes
+                        </a>
                     </td>
                 </tr>
                 <%}%>

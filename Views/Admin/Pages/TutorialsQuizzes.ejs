@@ -13,12 +13,11 @@
 
 <form method="post" autocomplete="off" class="form-horizontal">
 
-    <hr/>
-    <div class="nav-actions">
-        <!--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-edit-tutorials-quizzes"> Bulk Actions</button>-->
-        <button type="submit" class="btn btn-primary" formaction="<%= getAbsUrl(`/admin/courses/${course.getId()}/marks?export=true`) %>">Export Marks</button>
-    </div>
-    <hr/>
+    <!--<div class="nav-actions">-->
+        <!--&lt;!&ndash;<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-edit-tutorials-quizzes"> Bulk Actions</button>&ndash;&gt;-->
+        <!--<button type="submit" class="btn btn-primary" formaction="<%= getAbsUrl(`/admin/courses/${course.getId()}/marks?export=true`) %>">Export Marks</button>-->
+    <!--</div>-->
+    <!--<br/>-->
 
     <table class="table table-hover table-nofluid">
         <thead>
@@ -45,18 +44,16 @@
                     <td class="cb"><input type="checkbox" name="tutorialQuizzes[]" value="<%= tutorialQuiz._id %>"></td>
                     <td class="quiz"><%= tutorialQuiz.quiz.name %></td>
                     <td class="tutorial"><%= tutorialQuiz.tutorial.getDisplayName() %></td>
-                    <td class="published"><% if (tutorialQuiz.published) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
-                    <td class="active-1"><% if (tutorialQuiz.active) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
-                    <td class="archived"><% if (tutorialQuiz.archived) { %><span class="glyphicon glyphicon-ok"></span><% } %></td>
+                    <td class="published"><% if (tutorialQuiz.published) { %><i class="fa fa-check" aria-hidden="true"></i><% } %></td>
+                    <td class="active-1"><% if (tutorialQuiz.active) { %><i class="fa fa-check" aria-hidden="true"></i><% } %></td>
+                    <td class="archived"><% if (tutorialQuiz.archived) { %><i class="fa fa-check" aria-hidden="true"></i><% } %></td>
                     <td>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Actions
-                            </button>                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}`) %>"><span class="glyphicon glyphicon-play-circle"></span> Conduct quiz</a>
-                                <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/marks    `) %>"><span class="glyphicon glyphicon-signal"></span> View Results</a>
-                            </div>
-                        </div>
+                        <a class="btn btn-primary btn-sm" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}`) %>">
+                            <i class="fa fa-play" aria-hidden="true"></i> Conduct
+                        </a>
+                        <a class="btn btn-secondary btn-sm" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/marks`) %>">
+                            <i class="fa fa-signal" aria-hidden="true"></i> View Results
+                        </a>
                     </td>
                 </tr>
                 <% } %>

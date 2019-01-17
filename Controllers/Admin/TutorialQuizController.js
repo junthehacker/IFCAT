@@ -28,7 +28,11 @@ class TutorialQuizController extends Controller {
      */
     async getTutorialsQuizzes(req, res, next) {
         try {
-            let tutorialQuizzes = await TutorialQuiz.find({}).populate('quiz');
+            await req.course.fillTutorials();
+            let tutorials = req.course.tutorials.map(tutorial => tutorial.getId());
+            let tutorialQuizzes = await TutorialQuiz.find({
+                tutorialId: {$in: tutorials}
+            }).populate('quiz');
             await asyncForEach(tutorialQuizzes, async (quiz) => {
                 await quiz.fillTutorialFromRemote();
             });
