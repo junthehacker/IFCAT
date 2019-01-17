@@ -13,6 +13,9 @@ const lodash           = require('./Utils/lodash.mixin'),
       passportSocketIo = require('passport.socketio'),
       logger           = require('./Utils/logger');
 
+const dotenv = require('dotenv');
+dotenv.load();
+
 const IS_EDGE = true; // Is edge release?
 
 const app  = express(),
@@ -78,6 +81,10 @@ app.use((req, res, next) => {
 
 // routes
 const mainRouter = new express.Router();
+
+if(process.env.MAINTENANCE) {
+    mainRouter.use('*', (req, res) => res.render('Maintenance'));
+}
 
 mainRouter.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
 mainRouter.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
