@@ -38,13 +38,13 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <label class="control-label">Name</label>
                 <input type="text" name="name" placeholder="My Awesome Quiz" value="<%= quiz.name %>" class="form-control" required/>
             </div>
-            <div class="switch">
+            <div class="switch" style="display: none;">
                 <label>
                     <input type="checkbox" name="studentChoice" value="1" <%= quiz.studentChoice ? ' checked' : '' %>>
                     Enable student choice?
                 </label>
             </div>
-            <div class="switch">
+            <div class="switch" style="display: none;">
                 <label>
                     <input type="checkbox" name="voting" value="1" <%= quiz.voting ? ' checked' : '' %>> Enable student
                     voting?
@@ -76,7 +76,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <hr/>
     <h5>Question Behaviours</h5>
-    <small class="text-muted">How should questions behave for this quiz?</small>
+    <small class="text-muted">How should questions by default behave for this quiz? (You can still customize behaviours for each question.)</small>
     <div class="row mt-3">
         <div class="col-12">
             <div class="switch">

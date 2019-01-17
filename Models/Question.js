@@ -21,7 +21,7 @@ const QuestionSchema = new mongoose.Schema({
     points: Number,
     firstTryBonus: Number,
     penalty: Number,
-    submitter: String ,
+    submitter: String,
     approved: Boolean,
     votes: {
         up: [String],
