@@ -28,7 +28,8 @@ const QuestionSchema = new mongoose.Schema({
         down: [String]
     }
 }, {
-    timestamps: true 
+    timestamps: true,
+    usePushEach: true
 });
 // Get total number of votes
 QuestionSchema.virtual('votes.length').get(function () {
