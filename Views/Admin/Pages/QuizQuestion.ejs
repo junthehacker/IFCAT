@@ -28,7 +28,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <% include ../Partials/Flash.ejs %>
 
 <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/` + (question.isNew ? '' : `${question._id}?_method=put`)) %>"
-      method="post" autocomplete="off" class="form-horizontal">
+      method="post" autocomplete="off" class="form-horizontal" id="question-form">
 
     <% if (question.submitter) { %>
         <div class="form-group" style="margin-top: 10px">
@@ -66,8 +66,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 Preview
             </a>
         </label>
-        <input id="question-input-hidden" type="hidden" name="question"/>
-        <div id="question-input" class="form-control" style="height: 200px;"><%= question.question %></div>
+        <textarea form="question-form" id="question-input" name="question"><%= question.question %></textarea>
     </div>
 
     <!-- files -->
@@ -380,20 +379,6 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <p>Student will see the following on their screen:</p>
 
                 <p>Suppose you have $$F_X(x) = x^2$$ what is P(X < 1) ?</p>
-                <h4>Markdown / Tables</h4>
-                <p>IFCAT supports markdown syntax.</p>
-                <h5>Basic Text Formatting</h5>
-                <ul>
-                    <li>Bold Text: <code>**Bold text**</code></li>
-                    <li>Italic Text: <code>*Italic text*</code></li>
-                    <li>Inline Code: <code>`Inline code`</code></li>
-                    <li>Code Block: <code>```code block```</code></li>
-                </ul>
-                <h5>Tables</h5>
-                <pre><code>| content | content |
-|---------|---------|
-| 123     | 345     |
-| 123     | 234     |</code></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -424,28 +409,17 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <script src="<%= config.baseDir %>/js/admin/questions.js"></script>
 
 <script>
-    let questionInput = ace.edit("question-input");
-    questionInput.setTheme("ace/theme/github");
-    questionInput.session.setMode("ace/mode/markdown");
-
-    function questionInputUpdated() {
-        $("#question-input-hidden").val(questionInput.getValue());
-    }
-
     function showQuestionPreview() {
-        $("#question-preview-text").html(questionInput.getValue());
+        $("#question-preview-text").html($("#question-input").val());
         $("#question-preview").modal();
-        renderMarkdownInPreview();
         renderMathInElement(document.getElementById('question-preview-text'));
     }
 
-    function renderMarkdownInPreview() {
-        let converter = new showdown.Converter({tables: true});
-        let text = $("#question-preview-text").html();
-        $("#question-preview-text").html(converter.makeHtml(text));
-    }
-
-    questionInputUpdated();
-    questionInput.session.on('change', questionInputUpdated);
     renderMathInElement(document.body);
+
+    tinymce.init({
+        selector: '#question-input',
+        plugins: "table",
+        height: "200"
+    });
 </script>
