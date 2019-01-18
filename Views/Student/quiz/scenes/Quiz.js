@@ -25,10 +25,16 @@ class Quiz extends Component {
                         responses={responses || []}
                         onSelectionChange={this.onChangeQuestion}
                     />
-                    <Question
-                        question={quiz.quiz.questions[selectedQuestion]}
-                        isDriver={group.driver === user._id}
-                    />
+                    {quiz.quiz.questions.map((question, key) => {
+                        return (
+                            <Question
+                                visible={key === selectedQuestion}
+                                question={question}
+                                key={question._id}
+                                isDriver={group && group.driver === user._id}
+                            />
+                        )
+                    })}
                 </div>
             </div>
         )

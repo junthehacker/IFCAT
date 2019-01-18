@@ -26,6 +26,10 @@ class Question extends Component {
     };
 
     render() {
+        const {visible} = this.props;
+
+        if(!visible) return null;
+
         return (
             <div>
                 {this.getQuestionDisplayComponent()}
@@ -35,7 +39,8 @@ class Question extends Component {
 }
 
 Question.propTypes = {
-    question: PropTypes.any
+    question: PropTypes.any,
+    visible: PropTypes.bool
 };
 
 export default Question;

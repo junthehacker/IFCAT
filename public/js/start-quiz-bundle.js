@@ -37885,9 +37885,13 @@
 	                        responses: responses || [],
 	                        onSelectionChange: this.onChangeQuestion
 	                    }),
-	                    _react2.default.createElement(_Question2.default, {
-	                        question: quiz.quiz.questions[selectedQuestion],
-	                        isDriver: group.driver === user._id
+	                    quiz.quiz.questions.map(function (question, key) {
+	                        return _react2.default.createElement(_Question2.default, {
+	                            visible: key === selectedQuestion,
+	                            question: question,
+	                            key: question._id,
+	                            isDriver: group && group.driver === user._id
+	                        });
 	                    })
 	                )
 	            );
@@ -38460,6 +38464,11 @@
 	    _createClass(Question, [{
 	        key: 'render',
 	        value: function render() {
+	            var visible = this.props.visible;
+
+
+	            if (!visible) return null;
+
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -38472,7 +38481,8 @@
 	}(_react.Component);
 
 	Question.propTypes = {
-	    question: _propTypes2.default.any
+	    question: _propTypes2.default.any,
+	    visible: _propTypes2.default.bool
 	};
 
 	exports.default = Question;
@@ -38606,37 +38616,6 @@
 	            return _this.props.question.choices;
 	        };
 
-	        _this.getResponse = function () {
-	            var question = _this.props.question;
-	            var responses = _this.props.globalContext.data.responses;
-	            var _iteratorNormalCompletion = true;
-	            var _didIteratorError = false;
-	            var _iteratorError = undefined;
-
-	            try {
-	                for (var _iterator = responses[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                    var response = _step.value;
-
-	                    if (response.question === question._id) {
-	                        return response;
-	                    }
-	                }
-	            } catch (err) {
-	                _didIteratorError = true;
-	                _iteratorError = err;
-	            } finally {
-	                try {
-	                    if (!_iteratorNormalCompletion && _iterator.return) {
-	                        _iterator.return();
-	                    }
-	                } finally {
-	                    if (_didIteratorError) {
-	                        throw _iteratorError;
-	                    }
-	                }
-	            }
-	        };
-
 	        _this.state = {
 	            selectedChoice: null
 	        };
@@ -38699,6 +38678,18 @@
 	                }) : null,
 	                _react2.default.createElement('br', null)
 	            );
+	        }
+	    }], [{
+	        key: 'getDerivedStateFromProps',
+	        value: function getDerivedStateFromProps(props, state) {
+	            var question = props.question;
+	            var responses = props.globalContext.data.responses;
+
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+	            if (response && response.correct) {
+	                return { selectedChoice: props.question.choices.indexOf(response.answer[0]) };
+	            }
+	            return null;
 	        }
 	    }]);
 
@@ -38773,7 +38764,7 @@
 /* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -38796,43 +38787,29 @@
 	var QuestionTitle = function (_Component) {
 	    _inherits(QuestionTitle, _Component);
 
-	    function QuestionTitle(props) {
+	    function QuestionTitle() {
 	        _classCallCheck(this, QuestionTitle);
 
-	        var _this = _possibleConstructorReturn(this, (QuestionTitle.__proto__ || Object.getPrototypeOf(QuestionTitle)).call(this, props));
-
-	        _this.state = {
-	            questionText: ""
-	        };
-	        return _this;
+	        return _possibleConstructorReturn(this, (QuestionTitle.__proto__ || Object.getPrototypeOf(QuestionTitle)).apply(this, arguments));
 	    }
 
 	    _createClass(QuestionTitle, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var question = this.props.question;
-	            var questionText = this.state.questionText;
 
 	            return _react2.default.createElement(
-	                "div",
+	                'div',
 	                null,
 	                _react2.default.createElement(
-	                    "h4",
+	                    'h4',
 	                    null,
-	                    "Question ",
+	                    'Question ',
 	                    question.number
 	                ),
-	                _react2.default.createElement("div", { dangerouslySetInnerHTML: { __html: questionText } }),
-	                _react2.default.createElement("hr", null)
+	                _react2.default.createElement('div', { dangerouslySetInnerHTML: { __html: question.question } }),
+	                _react2.default.createElement('hr', null)
 	            );
-	        }
-	    }], [{
-	        key: "getDerivedStateFromProps",
-	        value: function getDerivedStateFromProps(nextProps, prevState) {
-	            var converter = new showdown.Converter({ tables: true });
-	            return {
-	                questionText: converter.makeHtml(nextProps.question.question)
-	            };
 	        }
 	    }]);
 
@@ -39081,6 +39058,46 @@
 	                _react2.default.createElement("br", null)
 	            );
 	        }
+	    }], [{
+	        key: "getDerivedStateFromProps",
+	        value: function getDerivedStateFromProps(props, state) {
+	            var question = props.question;
+	            var responses = props.globalContext.data.responses;
+
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+
+	            if (response && response.correct) {
+	                var selectedChoices = [];
+	                var _iteratorNormalCompletion2 = true;
+	                var _didIteratorError2 = false;
+	                var _iteratorError2 = undefined;
+
+	                try {
+	                    for (var _iterator2 = response.answer[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                        var answer = _step2.value;
+
+	                        selectedChoices.push(props.question.choices.indexOf(answer));
+	                    }
+	                } catch (err) {
+	                    _didIteratorError2 = true;
+	                    _iteratorError2 = err;
+	                } finally {
+	                    try {
+	                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                            _iterator2.return();
+	                        }
+	                    } finally {
+	                        if (_didIteratorError2) {
+	                            throw _iteratorError2;
+	                        }
+	                    }
+	                }
+
+	                return { selectedChoices: selectedChoices };
+	            }
+
+	            return null;
+	        }
 	    }]);
 
 	    return MultipleSelectQuestion;
@@ -39202,6 +39219,18 @@
 	                }) : null,
 	                _react2.default.createElement("br", null)
 	            );
+	        }
+	    }], [{
+	        key: "getDerivedStateFromProps",
+	        value: function getDerivedStateFromProps(props, state) {
+	            var question = props.question;
+	            var responses = props.globalContext.data.responses;
+
+	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+	            if (response && response.correct) {
+	                return { answer: response.answer[0] };
+	            }
+	            return null;
 	        }
 	    }]);
 

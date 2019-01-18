@@ -1,26 +1,24 @@
-const lodash           = require('./Utils/lodash.mixin'),
-      bodyParser       = require('body-parser'),
-      config           = require('./Utils/config'),
-      cookieParser     = require('cookie-parser'),
-      express          = require('express'),
-      flash            = require('connect-flash'),
-      methodOverride   = require('method-override'),
-      moment           = require('moment'),
-      mongoose         = require('mongoose'),
-      morgan           = require('morgan'),
-      session          = require('express-session'),
-      MongoStore       = require('connect-mongo')(session),
-      passportSocketIo = require('passport.socketio'),
-      logger           = require('./Utils/logger');
-const Sentry = require('@sentry/node');
+const lodash           = require('./Utils/lodash.mixin');
+const bodyParser       = require('body-parser');
+const config           = require('./Utils/config');
+const cookieParser     = require('cookie-parser');
+const express          = require('express');
+const flash            = require('connect-flash');
+const methodOverride   = require('method-override');
+const moment           = require('moment');
+const mongoose         = require('mongoose');
+const morgan           = require('morgan');
+const session          = require('express-session');
+const MongoStore       = require('connect-mongo')(session);
+const passportSocketIo = require('passport.socketio');
+const Sentry           = require('@sentry/node');
+const dotenv           = require('dotenv');
 
-
-const dotenv = require('dotenv');
 dotenv.load();
 
 const IS_EDGE = true; // Is edge release?
 
-if(process.env.SERVER_NAME !== 'local') {
+if (process.env.SERVER_NAME !== 'local') {
     console.log("Sentry initialized...");
     Sentry.init({
         dsn: process.env.SENTRY_DSN,
@@ -93,18 +91,10 @@ app.use((req, res, next) => {
 // routes
 const mainRouter = new express.Router();
 
-if(process.env.MAINTENANCE === 'true') {
+if (process.env.MAINTENANCE === 'true') {
     mainRouter.use('*', (req, res) => res.render('Maintenance'));
 }
 
-mainRouter.use('/jquery', express.static(__dirname + '/node_modules/jquery/dist'));
-mainRouter.use('/bootstrap', express.static(__dirname + '/node_modules/bootstrap/dist'));
-mainRouter.use('/bootbox', express.static(__dirname + '/node_modules/bootbox'));
-mainRouter.use('/bootstrap-switch', express.static(__dirname + '/node_modules/bootstrap-switch/dist'));
-mainRouter.use('/font-awesome', express.static(__dirname + '/node_modules/font-awesome'));
-mainRouter.use('/lodash', express.static(__dirname + '/node_modules/lodash'));
-mainRouter.use('/socketioclient', express.static(__dirname + '/node_modules/socket.io-client/dist'));
-mainRouter.use('/sweetalert', express.static(__dirname + '/node_modules/sweetalert/dist'));
 mainRouter.use('/', express.static(__dirname + '/public'));
 
 const routes = require('./Routers');
@@ -146,5 +136,5 @@ io.on('connection', require('./SocketIO/EventHandlers')(io));
 
 // server
 http.listen(app.get('port'), () => {
-    console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+    console.log('IFCAT listening on port %d in %s mode', app.get('port'), app.get('env'));
 });

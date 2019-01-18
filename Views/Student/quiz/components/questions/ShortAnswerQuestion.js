@@ -20,6 +20,16 @@ class ShortAnswerQuestion extends Component {
         }
     }
 
+    static getDerivedStateFromProps(props, state) {
+        const {question}     = props;
+        const {responses} = props.globalContext.data;
+        const response = selectResponseGivenQuestionID(responses, question._id);
+        if(response && response.correct) {
+            return {answer: response.answer[0]}
+        }
+        return null;
+    }
+
     render() {
         const {question, isDriver}     = this.props;
         const {group, responses, quiz} = this.props.globalContext.data;

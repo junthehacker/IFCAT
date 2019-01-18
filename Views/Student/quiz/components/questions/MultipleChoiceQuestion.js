@@ -25,15 +25,15 @@ class MultipleChoiceQuestion extends Component {
         return this.props.question.choices;
     };
 
-    getResponse = () => {
-        const {question}  = this.props;
-        const {responses} = this.props.globalContext.data;
-        for (let response of responses) {
-            if (response.question === question._id) {
-                return response;
-            }
+    static getDerivedStateFromProps(props, state) {
+        const {question}     = props;
+        const {responses} = props.globalContext.data;
+        const response = selectResponseGivenQuestionID(responses, question._id);
+        if(response && response.correct) {
+            return {selectedChoice: props.question.choices.indexOf(response.answer[0])}
         }
-    };
+        return null;
+    }
 
     render() {
 
