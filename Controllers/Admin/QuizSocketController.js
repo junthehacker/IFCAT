@@ -63,10 +63,10 @@ class QuizSocketController extends Controller {
                         // TODO: tutorialQuiz.allocateMembers = 'self-selection' case
                         // TODO: This logic should be within model
                         const groupsWithRoom = tutorialQuiz.groups.filter(group => {
-                            if (!tutorialQuiz.max || !tutorialQuiz.max.membersPerGroup) {
-                                tutorialQuiz.max = {membersPerGroup: 2}
+                            if (!tutorialQuiz.max || !tutorialQuiz.maxMembersPerGroup) {
+                                tutorialQuiz.maxMembersPerGroup = 2;
                             }
-                            return (group.members.length < tutorialQuiz.max.membersPerGroup);
+                            return (group.members.length < tutorialQuiz.maxMembersPerGroup);
                         });
                         if (groupsWithRoom.length > 0) {
                             // Some group still have room, add the student to first one
