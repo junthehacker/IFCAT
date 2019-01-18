@@ -1,0 +1,5 @@
+<h5>Remove All Groups <span class="badge badge-danger">Danger</span></h5>
+<p>By removing all groups, you will also lose ALL marks and responses! Only use this option if you experience issues or wish to restart the quiz.</p>
+<form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/tutorials-quizzes/${tutorialQuiz._id}/groups/nuke`) %>" method="post">
+    <button class="btn btn-danger btn-sm">Remove</button>
+</form>

@@ -69,6 +69,7 @@ router.patch('/courses/:course/tutorials-quizzes/:tutorialQuiz', tutorialQuizCon
 
 router.patch('/courses/:course/tutorials-quizzes/:tutorialQuiz/groups', groupController.saveGroups);
 router.get('/courses/:course/tutorials-quizzes/:tutorialQuiz/groups/generate', groupController.generateGroups);
+router.post('/courses/:course/tutorials-quizzes/:tutorialQuiz/groups/nuke', groupController.removeAllGroups);
 
 router.get('/courses/:course/tutorials-quizzes/:tutorialQuiz/groups/:group/responses', responseController.getResponses);
 router.post('/courses/:course/tutorials-quizzes/:tutorialQuiz/groups/:group/responses', responseController.addResponse);

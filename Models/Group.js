@@ -6,7 +6,6 @@ Author(s): Jun Zheng [me at jackzh dot com]
            Neeilan Selvalingam
 -------------------------------------*/
 
-const _                    = require('lodash');
 const mongoose             = require('mongoose');
 const getIAServiceProvider = () => require('../Providers/IAServiceProvider');
 const asyncForEach         = require('../Utils/asyncForEach');
@@ -39,9 +38,13 @@ groupSchema.methods.hasMember = function (userId) {
     return this.members.indexOf(userId) > -1;
 };
 
-// Tally the points from populated responses
-groupSchema.methods.getTotalPoints = function () {
-    return _.sumBy(this.responses, response => response.points)
-};
+/**
+ * Pre-remove hook to remove all responses.
+ */
+groupSchema.pre('remove', async function (next) {
+    // Also remove all responses
+    await this.model('Response').remove({group: this._id});
+    next();
+});
 
 module.exports = mongoose.model('Group', groupSchema);

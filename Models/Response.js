@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const ResponseSchema = new mongoose.Schema({
     question: { type: mongoose.Schema.Types.ObjectId, ref : 'Question' },
     group: { type: mongoose.Schema.Types.ObjectId, ref : 'Group' },
@@ -11,6 +12,7 @@ const ResponseSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
 // Check if given choice is one of the answers
 ResponseSchema.methods.isAnswer = function (choice) {
     return this.answer && this.answer.indexOf(choice) > -1;

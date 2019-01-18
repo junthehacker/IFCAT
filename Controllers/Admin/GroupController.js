@@ -105,6 +105,15 @@ class GroupController extends Controller {
         }
     }
 
+    /**
+     * Remove all groups from a tutorial quiz.
+     */
+    async removeAllGroups(req, res) {
+        await Group.remove({_id: {$in: req.tutorialQuiz.groups}});
+        req.flash('success', 'Groups nuked.');
+        res.redirect('back');
+    }
+
 }
 
 module.exports = GroupController;
