@@ -40,12 +40,10 @@ QuestionSchema.virtual('votes.score').get(function () {
     return _.lowerBound(this.votes.up.length, this.votes.length);
 });
 // Delete cascade
-QuestionSchema.pre('remove', function (next) {
-    let self = this;
-    async.parallel([
-        done => self.model('Quiz').update({ questions: { $in: [self._id] }}, { $pull: { questions: self._id }}, done),
-        done => self.model('Response').remove({ question: self._id }, done)
-    ], next);
+QuestionSchema.pre('remove', async function (next) {
+    await this.model('Quiz').update({ questions: { $in: [this._id] }}, { $pull: { questions: this._id }});
+    await this.model('Response').remove({ question: this._id });
+    next();
 });
 // Populate files
 QuestionSchema.methods.withFiles = function () {

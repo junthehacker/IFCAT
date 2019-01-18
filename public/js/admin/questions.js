@@ -63,7 +63,7 @@ $(function () {
     });
     // Remove choice input
     $(document).on('click', '.btn-remove-choice', function () {
-        $(this).closest('.form-group').remove();
+        $(this).closest('.input-group').remove();
     });
     // Add choice input
     var id = 999;

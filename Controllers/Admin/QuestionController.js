@@ -140,7 +140,6 @@ class QuestionController extends Controller {
      */
     async editQuestion(req, res, next) {
         try {
-            console.log(req.question);
             await req.question.store(req.body).save();
             req.flash('success', 'Question <b>%s</b> has been updated.', req.question.number);
             res.redirect('back');

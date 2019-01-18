@@ -39,109 +39,76 @@ Author(s): Jun Zheng [me at jackzh dot com]
         </div>
     <% } %>
 
-    <!-- number -->
-    <div class="form-group help">
-        <label title="Ex: 1, A or 1a">Number</label>
-        <input name="number" value="<%= question.number %>" maxlength="6" class="form-control">
-    </div>
+    <h5>Basic Information</h5>
 
-    <!-- type -->
-    <div class="form-group required">
-        <label class="control-label">Type</label>
-        <select name="type" class="form-control"<%= question.submitter ? ' disabled' : '' %>>
-            <% _.each(question.schema.path('type').enumValues, type => { %>
-                <option value="<%= type %>"<%= question.type === type ? ' selected' : '' %>><%= _.upperFirst(type) %></option>
-            <% }) %>
-        </select>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group help">
+                <label title="Ex: 1, A or 1a">Number</label>
+                <input name="number" value="<%= question.number %>" maxlength="6" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group required">
+                <label class="control-label">Type</label>
+                <select name="type" class="form-control"<%= question.submitter ? ' disabled' : '' %>>
+                    <% _.each(question.schema.path('type').enumValues, type => { %>
+                        <option value="<%= type %>"<%= question.type === type ? ' selected' : '' %>><%= _.upperFirst(type) %></option>
+                    <% }) %>
+                </select>
+            </div>
+        </div>
     </div>
 
     <!-- question -->
-    <div class="form-group required">
-        <label class="control-label">
-            Question
-            <a href="#question-format-help" data-toggle="modal" data-target="#question-format-help">
-                <i class="fa fa-question-circle" aria-hidden="true"></i>
-            </a>
-            <a href="#question-preview" onclick="showQuestionPreview()">
-                Preview
-            </a>
-        </label>
-        <textarea form="question-form" id="question-input" name="question"><%= question.question %></textarea>
-    </div>
 
-    <!-- files -->
-    <div class="form-group" style="display: none;">
-        <label class="control-label">Files</label>
-        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-files">
-            <span class="glyphicon glyphicon-file"></span> Show files</a>
-        <a href="#" class="counter files" data-toggle="modal"
-           data-target="#modal-show-files"><%= question.files.length != 1 ? question.files.length + ' files selected' : '1 file selected' %></a>
-    </div>
-
-    <!-- links -->
-    <div class="form-group" style="display: none;">
-        <label class="control-label">Links</label>
-        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#modal-show-links">
-            <span class="glyphicon glyphicon-link"></span> Show links</a>
-        <a href="#" class="counter links" data-toggle="modal"
-           data-target="#modal-show-links"><%= question.links.length != 1 ? question.links.length + ' links added' : '1 link added' %></a>
-    </div>
-
+    <h5>Question</h5>
+    <textarea form="question-form" id="question-input" name="question"><%= question.question %></textarea>
+    <br/>
     <!-- multiple choice -->
     <div class="form-group required" data-type="multiple choice">
-        <label class="control-label">Choices &amp; Answer</label>
+        <h5>Choices & Answer</h5>
         <% if (question.isNew || !question.isMultipleChoice()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
-                <div class="form-group row">
-                    <div class="col-1">
-                        <div class="radio">
-                            <label><input type="radio" name="_answer"
-                                          value="<%= i %>"<%= !i ? ' checked' : '' %>></label>
-                        </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend pr-2">
+                        <span class="input-group-text"><input type="radio" name="_answer"
+                                                              value="<%= i %>"<%= !i ? ' checked' : '' %>></span>
                     </div>
-                    <div class="col-8">
-                        <textarea name="_choices[<%= i %>]" class="form-control" rows="1"></textarea>
-                    </div>
-                    <div class="col-2 radio">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control" value=""/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% } %>
         <% } else { %>
             <% _.each(question.choices, (choice, i) => { %>
-                <div class="form-group row">
-                    <div class="col-1">
-                        <div class="radio">
-                            <label><input type="radio" name="_answer"
-                                          value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
-                        </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend pr-2">
+                        <span class="input-group-text"><input type="radio" name="_answer"
+                                                              value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <div class="col-8">
-                        <textarea name="_choices[<%= i %>]" class="form-control" rows="1"><%= choice %></textarea>
-                    </div>
-                    <div class="col-2 radio">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control" value="<%= choice %>"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% }) %>
         <% } %>
-        <div class="form-group row" style="display: none">
-            <div class="col-1">
-                <div class="radio">
-                    <label><input type="radio" name="_answer" value=""></label>
-                </div>
+        <div class="input-group mb-3" style="display: none;">
+            <div class="input-group-prepend pr-2">
+                <span class="input-group-text"><input type="radio" name="_answer" value=""></span>
             </div>
-            <div class="col-8">
-                <textarea name="_choices[]" class="form-control" rows="1"></textarea>
-            </div>
-            <div class="col-2 radio">
-                <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+            <input name="_choices[]" type="text" class="form-control" value=""/>
+            <div class="input-group-append">
+                <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-default btn-raised btn-add-choice">
+            <button type="button" class="btn btn-default btn-raised btn-add-choice btn-sm">
                 Add another choice
             </button>
         </div>
@@ -152,55 +119,44 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <label class="control-label">Choices &amp; Answers</label>
         <% if (question.isNew || !question.isMultipleSelect()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
-                <div class="form-group row">
-                    <div class="col-1">
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="_answers[]" value="<%= i %>"></label>
-                        </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend pr-2">
+                        <span class="input-group-text"><input type="checkbox" name="_answers[]" value="<%= i %>"></span>
                     </div>
-                    <div class="col-8">
-                        <textarea name="_choices[<%= i %>]" class="form-control" rows="1"></textarea>
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control" value=""/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% } %>
         <% } else { %>
             <% _.each(question.choices, (choice, i) => { %>
-                <div class="form-group row">
-                    <div class="col-1">
-                        <div class="checkbox">
-                            <label><input type="checkbox" name="_answers[]"
-                                          value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></label>
-                        </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend pr-2">
+                        <span class="input-group-text"><input type="checkbox" name="_answers[]"
+                                                              value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <div class="col-8">
-                        <textarea name="_choices[<%= i %>]" class="form-control" rows="1"><%= choice %></textarea>
-                    </div>
-                    <div class="col-2">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control" value="<%= choice %>"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% }) %>
         <% } %>
-        <div class="form-group row" style="display: none">
-            <div class="col-1">
-                <div class="checkbox">
-                    <label><input type="checkbox" name="_answers[]" value=""></label>
-                </div>
+        <div class="input-group mb-3" style="display: none;">
+            <div class="input-group-prepend pr-2">
+                <span class="input-group-text"><input type="checkbox" name="_answers[]" value=""></span>
             </div>
-            <div class="col-8">
-                <textarea name="_choices[]" class="form-control" rows="1"></textarea>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+            <input name="_choices[]" type="text" class="form-control" value=""/>
+            <div class="input-group-append">
+                <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-default btn-raised btn-add-choice">
+            <button type="button" class="btn btn-default btn-raised btn-add-choice btn-sm">
                 Add another choice
             </button>
         </div>
@@ -211,39 +167,34 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <label class="control-label">Acceptable Answers</label>
         <% if (question.isNew || !question.isShortAnswer()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
-                <div class="form-group row">
-                    <div class="col-8">
-                        <textarea name="_answers[<%= i %>]" class="form-control" rows="1"></textarea>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                <div class="input-group mb-3">
+                    <input name="_answers[<%= i %>]" type="text" class="form-control" value=""/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% } %>
         <% } else { %>
             <% _.each(question.answers, (answer, i) => { %>
-                <div class="form-group row">
-                    <div class="col-8">
-                        <textarea name="_answers[<%= i %>]" class="form-control" rows="1"><%= answer %></textarea>
-                    </div>
-                    <div class="col-4">
-                        <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i>
-                        </button>
+                <div class="input-group mb-3">
+                    <input name="_answers[<%= i %>]" type="text" class="form-control" value="<%= answer %>"/>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
+                                                                                   aria-hidden="true"></i></button>
                     </div>
                 </div>
             <% }) %>
         <% } %>
-        <div class="form-group row" style="display: none">
-            <div class="col-10">
-                <textarea name="_answers[]" class="form-control" rows="1"></textarea>
-            </div>
-            <div class="col-2">
-                <button class="btn btn-danger btn-remove-choice"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <div class="input-group mb-3" style="display: none;">
+            <input name="_answers[]" type="text" class="form-control" value=""/>
+            <div class="input-group-append">
+                <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <div class="form-group">
-            <button type="button" class="btn btn-default btn-raised btn-add-choice">
+            <button type="button" class="btn btn-default btn-raised btn-add-choice btn-sm">
                 <span class="glyphicon glyphicon-plus"></span> Add another correct answer
             </button>
         </div>
@@ -267,39 +218,55 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <!-- options -->
 
+        <br/>
+    <h5>Scoring & Other Options</h5>
+
     <!--TODO: Remove this tag feature for questions, not needed.-->
     <input type="hidden" name="_tags" value="<%= question.tags.join(', ') %>" class="form-control" maxlength="70">
 
-    <div class="form-group" data-type="short answer">
-        <label class="control-label">Case-sensitive</label>
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="caseSensitive" value="1" <%= question.caseSensitive ? ' checked' : '' %>>
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group" data-type="multiple choice|multiple select|short answer">
-        <label class="control-label">Shuffle choices?</label>
-        <div class="switch">
-            <label>
-                <input type="checkbox" name="shuffleChoices" value="1" <%= question.shuffleChoices ? ' checked' : '' %>>
-            </label>
-        </div>
-    </div>
+    <!--<div class="form-group" data-type="multiple choice|multiple select|short answer">-->
+        <!--<label class="control-label">Shuffle choices?</label>-->
+        <!--<div class="switch">-->
+            <!--<label>-->
+                <!--<input type="checkbox" name="shuffleChoices" value="1" <%= question.shuffleChoices ? ' checked' : '' %>>-->
+            <!--</label>-->
+        <!--</div>-->
+    <!--</div>-->
 
     <!--TODO: This needs to be removed-->
     <input type="hidden" name="useLaTeX" value="1" <%= question.useLaTeX ? ' checked' : '' %>>
 
-    <div class="form-group" data-type="multiple choice|multiple select|short answer">
-        <label class="control-label">Points possible</label>
-        <input type="number" name="points" value="<%= question.points %>" min="0" class="form-control">
-    </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group" data-type="multiple choice|multiple select|short answer">
+                    <label class="control-label">Points possible</label>
+                    <input type="number" name="points" value="<%= question.points %>" min="0" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group" data-type="multiple choice|multiple select|short answer">
+                    <label class="control-label">Penalty per attempt</label>
+                    <input type="number" name="penalty" value="<%= question.penalty %>" min="0" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">First-try bonus</label>
+                    <input type="number" name="firstTryBonus" value="<%= question.firstTryBonus %>" min="0" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group" data-type="short answer">
+                    <label class="control-label">Case-sensitive</label>
+                    <div class="switch">
+                        <label>
+                            <input type="checkbox" name="caseSensitive" value="1" <%= question.caseSensitive ? ' checked' : '' %>>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <div class="form-group" data-type="multiple choice|multiple select|short answer">
-        <label class="control-label">Penalty per attempt</label>
-        <input type="number" name="penalty" value="<%= question.penalty %>" min="0" class="form-control">
-    </div>
 
     <div class="form-group" data-type="code tracing">
         <label class="control-label">Disable immediate feedback?</label>
@@ -319,11 +286,6 @@ Author(s): Jun Zheng [me at jackzh dot com]
                min="1" class="form-control">
     </div>
 
-    <div class="form-group">
-        <label class="control-label">First-try bonus</label>
-        <input type="number" name="firstTryBonus" value="<%= question.firstTryBonus %>" min="0" class="form-control">
-    </div>
-
     <% if (question.submitter) { %>
         <div class="form-group required">
             <label class="control-label">Approved?</label>
@@ -339,8 +301,6 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <!-- buttons -->
     <div class="form-group">
-        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
-           class="btn btn-default">Cancel</a>
         <% if (question.isNew) { %>
             <input type="hidden" id="back" name="back" value="1">
             <button type="submit" class="btn btn-primary btn-raised" onclick="back.value=0">Save &amp; Add Another New
@@ -348,8 +308,12 @@ Author(s): Jun Zheng [me at jackzh dot com]
             </button>
             <button type="submit" class="btn btn-primary btn-raised">Save &amp; Go Back To List</button>
         <% } else { %>
-            <button type="submit" class="btn btn-primary btn-raised">Save</button>
+            <button type="submit" class="btn btn-primary btn-raised">
+                <i class="fa fa-floppy-o" aria-hidden="true"></i> Save
+            </button>
         <% } %>
+            <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
+               class="btn btn-link">Cancel</a>
     </div>
 
     <!-- modals -->
@@ -409,11 +373,6 @@ Author(s): Jun Zheng [me at jackzh dot com]
 <script src="<%= config.baseDir %>/js/admin/questions.js"></script>
 
 <script>
-    function showQuestionPreview() {
-        $("#question-preview-text").html($("#question-input").val());
-        $("#question-preview").modal();
-        renderMathInElement(document.getElementById('question-preview-text'));
-    }
 
     renderMathInElement(document.body);
 
