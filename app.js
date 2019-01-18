@@ -12,11 +12,22 @@ const lodash           = require('./Utils/lodash.mixin'),
       MongoStore       = require('connect-mongo')(session),
       passportSocketIo = require('passport.socketio'),
       logger           = require('./Utils/logger');
+const Sentry = require('@sentry/node');
+
 
 const dotenv = require('dotenv');
 dotenv.load();
 
 const IS_EDGE = true; // Is edge release?
+
+if(process.env.SERVER_NAME !== 'local') {
+    console.log("Sentry initialized...");
+    Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        environment: process.env.SERVER_NAME
+    });
+}
+
 
 const app  = express(),
       http = require('http').Server(app),
@@ -101,7 +112,9 @@ mainRouter.use('/', routes.GuestRouter);
 mainRouter.use('/student', routes.StudentRouter);
 mainRouter.use('/admin', routes.AdminRouter);
 
+
 // error handling
+mainRouter.use(Sentry.Handlers.errorHandler());
 mainRouter.use((err, req, res, next) => {
     if (app.get('env') !== 'development') {
         delete err.stack;
