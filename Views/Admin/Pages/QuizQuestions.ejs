@@ -101,21 +101,14 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         </td>
                         <td class="createdAt"><%= moment(question.createdAt).format(DATEFORMAT) %></td>
                         <td class="actions">
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Actions
-                                </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
-                                        Edit Question
-                                    </a>
-                                    <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" method="post">
-                                        <button class="dropdown-item" class="btn-delete">
-                                            Delete Question
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            <a class="btn btn-primary btn-sm" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
+                                Edit
+                            </a>
+                            <!--For some reason, first form gets removed-->
+                            <form></form>
+                            <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" method="post">
+                                <button class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                            </form>
                         </td>
                     </tr>
                 <% }) %>

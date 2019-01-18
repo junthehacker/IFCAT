@@ -1,18 +1,4 @@
 $(function () {
-
-    // Confirm and delete selected row
-    $('.btn-delete').click(function (e) {
-        e.preventDefault();
-        var btn = $(this), tr = btn.closest('tr'), form = tr.closest('form');
-        $.deletebox({
-            title: 'Delete question',
-            message: '<p>You are about to delete question <b>' + tr.find('.number').text() + '</b> and all of its associated information.</p>\
-                <p>This action <b>cannot be undone</b>. Do you want to proceed with this action?</p>',
-            callback: function () {
-                form.attr('action', btn.attr('href')).submit();
-            }
-        });
-    });
     // Drag and drop rows
     $('tbody').sortable({ axis: 'y', cancel: false, handle: '.handle' });
 
