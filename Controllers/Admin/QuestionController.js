@@ -122,16 +122,6 @@ class QuestionController extends Controller {
     }
 
     /**
-     * Render question preview page.
-     * @param {Object} req Express request.
-     * @param {Object} res Express response.
-     * @returns {Promise<void>}
-     */
-    async previewQuestion(req, res) {
-        res.render('Admin/Pages/PreViewQuestion/PreviewQuestion.ejs', {});
-    }
-
-    /**
      * Update an existing question within a quiz.
      * @param {Object} req Express request.
      * @param {Object} res Express response.
