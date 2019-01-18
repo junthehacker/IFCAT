@@ -5,7 +5,7 @@ const _ = require('../Utils/lodash.mixin'),
 const QuestionSchema = new mongoose.Schema({
     number: String,
     type: { type: String, enum: ['multiple choice', 'multiple select', 'short answer', 'code tracing'] },
-    question: { type: String, required: true },
+    question: String,
     code: String,
     choices: [String],
     answers: [String],
