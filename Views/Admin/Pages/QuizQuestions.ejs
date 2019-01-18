@@ -29,16 +29,16 @@ Author(s): Jun Zheng [me at jackzh dot com]
         <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/new`) %>" class="btn btn-primary btn-raised">
             <i class="fa fa-plus" aria-hidden="true"></i> Add New Question
         </a>
-        <div class="btn-group">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Sort By
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="?sort=">Default</a>
-                <a class="dropdown-item" href="?sort=createdAt">Date Created</a>
-                <a class="dropdown-item" href="?sort=votes">Votes</a>
-            </div>
-        </div>
+        <!--<div class="btn-group">-->
+            <!--<button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                <!--Sort By-->
+            <!--</button>-->
+            <!--<div class="dropdown-menu">-->
+                <!--<a class="dropdown-item" href="?sort=">Default</a>-->
+                <!--<a class="dropdown-item" href="?sort=createdAt">Date Created</a>-->
+                <!--<a class="dropdown-item" href="?sort=votes">Votes</a>-->
+            <!--</div>-->
+        <!--</div>-->
         <button type="submit" formaction="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/sort?_method=patch`) %>" class="btn btn-default btn-primary">
             Save Order
         </button>
@@ -53,7 +53,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <th class="question">Question</th>
                 <th class="votes">Votes</th>
                 <th class="createdAt">Date Created</th>
-                <th class="actions"></th>
+                <th class="actions" style="width: 150px;"></th>
             </tr>
         </thead>
         <% if (_.isEmpty(quiz.questions)) { %>
@@ -102,11 +102,11 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <td class="createdAt"><%= moment(question.createdAt).format(DATEFORMAT) %></td>
                         <td class="actions">
                             <a class="btn btn-primary btn-sm" href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}/edit`) %>">
-                                Edit
+                                <i class="fa fa-pencil" aria-hidden="true"></i> Edit
                             </a>
                             <!--For some reason, first form gets removed-->
-                            <form></form>
-                            <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" method="post">
+                            <form style="display: inline"></form>
+                            <form action="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions/${question._id}?_method=delete`) %>" method="post" style="display: inline">
                                 <button class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i></button>
                             </form>
                         </td>
