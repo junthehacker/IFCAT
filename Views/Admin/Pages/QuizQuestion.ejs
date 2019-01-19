@@ -70,7 +70,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <br/>
     <!-- multiple choice -->
     <div class="form-group required" data-type="multiple choice">
-        <h5>Choices & Answer</h5>
+        <h5>
+            Choices & Answer
+            <button class="btn btn-light btn-sm" type="button" onclick="showChoiceAnswersPreview('.multiple-choice-answer');"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+        </h5>
         <% if (question.isNew || !question.isMultipleChoice()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
                 <div class="input-group mb-3">
@@ -78,7 +81,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <span class="input-group-text"><input type="radio" name="_answer"
                                                               value="<%= i %>"<%= !i ? ' checked' : '' %>></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control" value=""/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-choice-answer" value=""/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -92,7 +95,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <span class="input-group-text"><input type="radio" name="_answer"
                                                               value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control" value="<%= choice %>"/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-choice-answer" value="<%= choice %>"/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -104,7 +107,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
             <div class="input-group-prepend pr-2">
                 <span class="input-group-text"><input type="radio" name="_answer" value=""></span>
             </div>
-            <input name="_choices[]" type="text" class="form-control" value=""/>
+            <input name="_choices[]" type="text" class="form-control multiple-choice-answer" value=""/>
             <div class="input-group-append">
                 <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times" aria-hidden="true"></i>
                 </button>
@@ -119,6 +122,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <!-- multiple select -->
     <div class="form-group required" data-type="multiple select">
+        <h5>
+            Choices & Answers
+            <button class="btn btn-light btn-sm" type="button" onclick="showChoiceAnswersPreview('.multiple-select-answer');"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+        </h5>
         <label class="control-label">Choices &amp; Answers</label>
         <% if (question.isNew || !question.isMultipleSelect()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
@@ -126,7 +133,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                     <div class="input-group-prepend pr-2">
                         <span class="input-group-text"><input type="checkbox" name="_answers[]" value="<%= i %>"></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control" value=""/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-select-answer" value=""/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -140,7 +147,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <span class="input-group-text"><input type="checkbox" name="_answers[]"
                                                               value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control" value="<%= choice %>"/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-select-answer" value="<%= choice %>"/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -152,7 +159,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
             <div class="input-group-prepend pr-2">
                 <span class="input-group-text"><input type="checkbox" name="_answers[]" value=""></span>
             </div>
-            <input name="_choices[]" type="text" class="form-control" value=""/>
+            <input name="_choices[]" type="text" class="form-control multiple-select-answer" value=""/>
             <div class="input-group-append">
                 <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times" aria-hidden="true"></i>
                 </button>
@@ -355,6 +362,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
 </div>
 
 <% include QuizQuestion/PreviewQuestion.ejs %>
+<% include QuizQuestion/PreviewChoiceAnswers.ejs %>
 
 <% include ../Partials/Footer.ejs %>
 
