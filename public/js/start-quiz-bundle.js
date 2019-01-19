@@ -38655,7 +38655,7 @@
 	                        _react2.default.createElement(
 	                            'button',
 	                            {
-	                                className: "btn" + (_this2.state.selectedChoice === key ? " btn-primary" : " btn-link"),
+	                                className: "btn btn-no-capital" + (_this2.state.selectedChoice === key ? " btn-primary" : " btn-link"),
 	                                onClick: function onClick() {
 	                                    return _this2.setState({ selectedChoice: key });
 	                                },
@@ -39007,7 +39007,7 @@
 	                        _react2.default.createElement(
 	                            "button",
 	                            {
-	                                className: "btn" + (_this2.state.selectedChoices.indexOf(key) >= 0 ? " btn-primary" : " btn-link"),
+	                                className: "btn btn-no-capital" + (_this2.state.selectedChoices.indexOf(key) >= 0 ? " btn-primary" : " btn-link"),
 	                                onClick: function onClick() {
 	                                    return _this2.toggleChoice(key);
 	                                },

@@ -52,7 +52,7 @@ class MultipleChoiceQuestion extends Component {
                     return (
                         <React.Fragment key={key}>
                             <button
-                                className={"btn" + (this.state.selectedChoice === key ? " btn-primary" : " btn-link")}
+                                className={"btn btn-no-capital" + (this.state.selectedChoice === key ? " btn-primary" : " btn-link")}
                                 onClick={() => this.setState({selectedChoice: key})}
                                 disabled={!isDriver || (response && response.correct) || quiz.archived}
                             >
