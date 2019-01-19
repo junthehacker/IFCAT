@@ -62,7 +62,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <!-- question -->
 
-    <h5>Question</h5>
+    <h5>
+        Question
+        <button class="btn btn-light btn-sm" type="button" onclick="showQuestionPreview();"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+    </h5>
     <textarea form="question-form" id="question-input" name="question"><%= question.question %></textarea>
     <br/>
     <!-- multiple choice -->
@@ -351,22 +354,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </div>
 </div>
 
-<div class="modal fade" id="question-preview" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Question Preview</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="question-preview-text"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+<% include QuizQuestion/PreviewQuestion.ejs %>
 
 <% include ../Partials/Footer.ejs %>
 
@@ -381,4 +369,5 @@ Author(s): Jun Zheng [me at jackzh dot com]
         plugins: "table",
         height: "200"
     });
+
 </script>
