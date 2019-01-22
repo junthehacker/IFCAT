@@ -64,7 +64,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <h5>
         Question
-        <button class="btn btn-light btn-sm" type="button" onclick="showQuestionPreview();"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+        <button class="btn btn-light btn-sm" type="button" onclick="showQuestionPreview();"><i class="fa fa-eye"
+                                                                                               aria-hidden="true"></i>
+            Preview
+        </button>
     </h5>
     <textarea form="question-form" id="question-input" name="question"><%= question.question %></textarea>
     <br/>
@@ -72,7 +75,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <div class="form-group required" data-type="multiple choice">
         <h5>
             Choices & Answer
-            <button class="btn btn-light btn-sm" type="button" onclick="showChoiceAnswersPreview('.multiple-choice-answer');"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+            <button class="btn btn-light btn-sm" type="button"
+                    onclick="showChoiceAnswersPreview('.multiple-choice-answer');"><i class="fa fa-eye"
+                                                                                      aria-hidden="true"></i> Preview
+            </button>
         </h5>
         <% if (question.isNew || !question.isMultipleChoice()) { %>
             <% for (let i = 0, len = 3; i < 3; i++) { %>
@@ -95,7 +101,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <span class="input-group-text"><input type="radio" name="_answer"
                                                               value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-choice-answer" value="<%= choice %>"/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-choice-answer"
+                           value="<%= choice %>"/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -124,7 +131,10 @@ Author(s): Jun Zheng [me at jackzh dot com]
     <div class="form-group required" data-type="multiple select">
         <h5>
             Choices & Answers
-            <button class="btn btn-light btn-sm" type="button" onclick="showChoiceAnswersPreview('.multiple-select-answer');"><i class="fa fa-eye" aria-hidden="true"></i> Preview</button>
+            <button class="btn btn-light btn-sm" type="button"
+                    onclick="showChoiceAnswersPreview('.multiple-select-answer');"><i class="fa fa-eye"
+                                                                                      aria-hidden="true"></i> Preview
+            </button>
         </h5>
         <label class="control-label">Choices &amp; Answers</label>
         <% if (question.isNew || !question.isMultipleSelect()) { %>
@@ -147,7 +157,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <span class="input-group-text"><input type="checkbox" name="_answers[]"
                                                               value="<%= i %>"<%= question.isAnswer(choice) ? ' checked' : '' %>></span>
                     </div>
-                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-select-answer" value="<%= choice %>"/>
+                    <input name="_choices[<%= i %>]" type="text" class="form-control multiple-select-answer"
+                           value="<%= choice %>"/>
                     <div class="input-group-append">
                         <button class="btn btn-danger btn-remove-choice btn-sm"><i class="fa fa-times"
                                                                                    aria-hidden="true"></i></button>
@@ -228,54 +239,56 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     <!-- options -->
 
-        <br/>
+    <br/>
     <h5>Scoring & Other Options</h5>
 
     <!--TODO: Remove this tag feature for questions, not needed.-->
     <input type="hidden" name="_tags" value="<%= question.tags.join(', ') %>" class="form-control" maxlength="70">
 
     <!--<div class="form-group" data-type="multiple choice|multiple select|short answer">-->
-        <!--<label class="control-label">Shuffle choices?</label>-->
-        <!--<div class="switch">-->
-            <!--<label>-->
-                <!--<input type="checkbox" name="shuffleChoices" value="1" <%= question.shuffleChoices ? ' checked' : '' %>>-->
-            <!--</label>-->
-        <!--</div>-->
+    <!--<label class="control-label">Shuffle choices?</label>-->
+    <!--<div class="switch">-->
+    <!--<label>-->
+    <!--<input type="checkbox" name="shuffleChoices" value="1" <%= question.shuffleChoices ? ' checked' : '' %>>-->
+    <!--</label>-->
+    <!--</div>-->
     <!--</div>-->
 
     <!--TODO: This needs to be removed-->
     <input type="hidden" name="useLaTeX" value="1" <%= question.useLaTeX ? ' checked' : '' %>>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group" data-type="multiple choice|multiple select|short answer">
-                    <label class="control-label">Points possible</label>
-                    <input type="number" name="points" value="<%= question.points %>" min="0" class="form-control">
-                </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group" data-type="multiple choice|multiple select|short answer">
+                <label class="control-label">Points possible</label>
+                <input type="number" name="points" value="<%= question.points %>" min="0" class="form-control">
             </div>
-            <div class="col-md-6">
-                <div class="form-group" data-type="multiple choice|multiple select|short answer">
-                    <label class="control-label">Penalty per attempt</label>
-                    <input type="number" name="penalty" value="<%= question.penalty %>" min="0" class="form-control">
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group" data-type="multiple choice|multiple select|short answer">
+                <label class="control-label">Penalty per attempt</label>
+                <input type="number" name="penalty" value="<%= question.penalty %>" min="0" class="form-control">
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="control-label">First-try bonus</label>
-                    <input type="number" name="firstTryBonus" value="<%= question.firstTryBonus %>" min="0" class="form-control">
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">First-try bonus</label>
+                <input type="number" name="firstTryBonus" value="<%= question.firstTryBonus %>" min="0"
+                       class="form-control">
             </div>
-            <div class="col-md-6">
-                <div class="form-group" data-type="short answer">
-                    <label class="control-label">Case-sensitive</label>
-                    <div class="switch">
-                        <label>
-                            <input type="checkbox" name="caseSensitive" value="1" <%= question.caseSensitive ? ' checked' : '' %>>
-                        </label>
-                    </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group" data-type="short answer">
+                <label class="control-label">Case-sensitive</label>
+                <div class="switch">
+                    <label>
+                        <input type="checkbox" name="caseSensitive"
+                               value="1" <%= question.caseSensitive ? ' checked' : '' %>>
+                    </label>
                 </div>
             </div>
         </div>
+    </div>
 
 
     <div class="form-group" data-type="code tracing">
@@ -322,8 +335,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
                 <i class="fa fa-floppy-o" aria-hidden="true"></i> Save
             </button>
         <% } %>
-            <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
-               class="btn btn-link">Cancel</a>
+        <a href="<%= getAbsUrl(`/admin/courses/${course.getId()}/quizzes/${quiz._id}/questions`) %>"
+           class="btn btn-link">Cancel</a>
     </div>
 
     <!-- modals -->
@@ -363,14 +376,18 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
 <% include QuizQuestion/PreviewQuestion.ejs %>
 <% include QuizQuestion/PreviewChoiceAnswers.ejs %>
-
 <% include ../Partials/Footer.ejs %>
 
 <script src="<%= config.baseDir %>/js/admin/questions.js"></script>
 
 <script>
 
-    renderMathInElement(document.body);
+    renderMathInElement(document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false}
+        ]
+    });
 
     tinymce.init({
         selector: '#question-input',

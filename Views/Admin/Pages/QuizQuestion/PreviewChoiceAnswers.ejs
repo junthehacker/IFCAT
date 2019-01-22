@@ -29,6 +29,11 @@
 
         $("#choice-answers-preview-text").html(text);
 
-        renderMathInElement(document.getElementById('choice-answers-preview-text'));
+        renderMathInElement(document.getElementById('choice-answers-preview-text'), {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ]
+        });
     }
 </script>

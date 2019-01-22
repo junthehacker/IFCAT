@@ -20,6 +20,11 @@
         $("#question-preview").modal();
         $("#question-preview-text").html(tinymce.activeEditor.getContent());
 
-        renderMathInElement(document.getElementById('question-preview-text'));
+        renderMathInElement(document.getElementById('question-preview-text'), {
+            delimiters: [
+                {left: "$$", right: "$$", display: true},
+                {left: "$", right: "$", display: false}
+            ]
+        });
     }
 </script>
