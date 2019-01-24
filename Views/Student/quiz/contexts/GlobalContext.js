@@ -45,7 +45,7 @@ export function withGlobalContextProvider(WrappedComponent) {
                     {left: "$$", right: "$$", display: true},
                     {left: "$", right: "$", display: false}
                 ]
-            }), 100);
+            }), 200);
         };
 
         getData = () => {
