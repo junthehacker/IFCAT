@@ -20,10 +20,19 @@ class MultipleChoiceQuestion extends Component {
         }
     }
 
+    getRandomOffset = () => {
+        const {group} = this.props.globalContext.data;
+        return (parseInt(group.name) || 0) % this.props.question.choices.length;
+    };
+
     getChoices = () => {
-        // TODO: Shuffle based on this.props.question.shuffle
         return this.props.question.choices;
     };
+
+    getRealKey = (key) => {
+        const choices = this.getChoices();
+        return (key + this.getRandomOffset()) % choices.length;
+    }
 
     static getDerivedStateFromProps(props, state) {
         const {question}     = props;
@@ -40,6 +49,7 @@ class MultipleChoiceQuestion extends Component {
         const {question, isDriver}     = this.props;
         const {group, responses, quiz} = this.props.globalContext.data;
         const response                 = selectResponseGivenQuestionID(responses, question._id);
+        const choices = this.getChoices();
 
         return (
             <Container>
@@ -48,12 +58,13 @@ class MultipleChoiceQuestion extends Component {
 
                 <small className={"text-muted"}>Choose one option from below:</small>
                 <br/><br/>
-                {this.getChoices().map((choice, key) => {
+                {[...this.getChoices().keys()].map(key => {
+                    const choice = choices[this.getRealKey(key)];
                     return (
                         <React.Fragment key={key}>
                             <button
-                                className={"btn btn-no-capital" + (this.state.selectedChoice === key ? " btn-primary" : " btn-link")}
-                                onClick={() => this.setState({selectedChoice: key})}
+                                className={"btn btn-no-capital" + (this.state.selectedChoice === this.getRealKey(key) ? " btn-primary" : " btn-link")}
+                                onClick={() => this.setState({selectedChoice: this.getRealKey(key)})}
                                 disabled={!isDriver || (response && response.correct) || quiz.archived}
                             >
                                 {choice}

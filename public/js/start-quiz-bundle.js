@@ -11821,8 +11821,10 @@
 
 	                // TODO: This is so hacky, have to have a better way
 	                setTimeout(function () {
-	                    return renderMathInElement(document.body);
-	                }, 100);
+	                    return renderMathInElement(document.body, {
+	                        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }]
+	                    });
+	                }, 200);
 	            };
 
 	            _this.getData = function () {
@@ -38593,6 +38595,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -38611,9 +38615,19 @@
 
 	        var _this = _possibleConstructorReturn(this, (MultipleChoiceQuestion.__proto__ || Object.getPrototypeOf(MultipleChoiceQuestion)).call(this, props));
 
+	        _this.getRandomOffset = function () {
+	            var group = _this.props.globalContext.data.group;
+
+	            return (parseInt(group.name) || 0) % _this.props.question.choices.length;
+	        };
+
 	        _this.getChoices = function () {
-	            // TODO: Shuffle based on this.props.question.shuffle
 	            return _this.props.question.choices;
+	        };
+
+	        _this.getRealKey = function (key) {
+	            var choices = _this.getChoices();
+	            return (key + _this.getRandomOffset()) % choices.length;
 	        };
 
 	        _this.state = {
@@ -38636,6 +38650,7 @@
 	                quiz = _props$globalContext$.quiz;
 
 	            var response = (0, _quizSelectors.selectResponseGivenQuestionID)(responses, question._id);
+	            var choices = this.getChoices();
 
 	            return _react2.default.createElement(
 	                Container,
@@ -38648,16 +38663,17 @@
 	                ),
 	                _react2.default.createElement('br', null),
 	                _react2.default.createElement('br', null),
-	                this.getChoices().map(function (choice, key) {
+	                [].concat(_toConsumableArray(this.getChoices().keys())).map(function (key) {
+	                    var choice = choices[_this2.getRealKey(key)];
 	                    return _react2.default.createElement(
 	                        _react2.default.Fragment,
 	                        { key: key },
 	                        _react2.default.createElement(
 	                            'button',
 	                            {
-	                                className: "btn btn-no-capital" + (_this2.state.selectedChoice === key ? " btn-primary" : " btn-link"),
+	                                className: "btn btn-no-capital" + (_this2.state.selectedChoice === _this2.getRealKey(key) ? " btn-primary" : " btn-link"),
 	                                onClick: function onClick() {
-	                                    return _this2.setState({ selectedChoice: key });
+	                                    return _this2.setState({ selectedChoice: _this2.getRealKey(key) });
 	                                },
 	                                disabled: !isDriver || response && response.correct || quiz.archived
 	                            },
