@@ -37408,7 +37408,10 @@
 	 */
 	function connectToQuizServer(reduce, getData) {
 	    window.quizSocket = window.io.connect({
-	        path: SOCKET_PATH
+	        path: SOCKET_PATH,
+	        reconnectionDelay: 5000,
+	        reconnectionAttempts: 3,
+	        reconnectionDelayMax: 15000
 	    });
 	    (0, _register.registerHandlers)(window.quizSocket, reduce, getData);
 	}

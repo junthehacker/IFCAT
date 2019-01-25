@@ -9,7 +9,8 @@ export function connectToQuizServer(reduce, getData) {
     window.quizSocket = window.io.connect({
         path: SOCKET_PATH,
         reconnectionDelay: 5000,
-        reconnectionAttempts: 3
+        reconnectionAttempts: 3,
+        reconnectionDelayMax: 15000
     });
     registerHandlers(window.quizSocket, reduce, getData);
 }
