@@ -9,6 +9,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
 const config = require('../Utils/config').ia;
 const _axios = require('axios');
 const https = require('https');
+const wrapAxios = require('zipkin-instrumentation-axios');
+const getZipkinTracer = require('../Tracers/ZipkinTracer');
 
 // Configure axios to accept self-signed certificates in development environment
 let axios;
@@ -20,6 +22,13 @@ if (process.env.NODE_ENV === 'development') {
     });
 } else {
     axios = _axios;
+}
+
+if(process.env.ZIPKIN_ENDPOINT) {
+    // Setup zipkin components
+    const tracer = getZipkinTracer();
+
+    axios = wrapAxios(axios, { tracer, serviceName: process.env.ZIPKIN_SERVICE_NAME});
 }
 
 /**

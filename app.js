@@ -12,6 +12,8 @@ const session          = require('express-session');
 const MongoStore       = require('connect-mongo')(session);
 const passportSocketIo = require('passport.socketio');
 const Sentry           = require('@sentry/node');
+const getZipkinTracer = require('./Tracers/ZipkinTracer');
+const zipkinMiddleware = require('zipkin-instrumentation-express').expressMiddleware;
 const dotenv           = require('dotenv');
 
 dotenv.load();
@@ -33,6 +35,13 @@ const app  = express(),
 
 const connectionPool = require('./SocketIO/ConnectionPool').getInstance();
 connectionPool.setSocketIOInstance(io);
+
+if (process.env.ZIPKIN_ENDPOINT) {
+    let tracer = getZipkinTracer();
+    app.use(zipkinMiddleware({ tracer, serviceName: process.env.ZIPKIN_SERVICE_NAME }));
+    console.log('Zipkin tracing initialized...');
+}
+
 
 // local variables
 app.locals._          = lodash;
