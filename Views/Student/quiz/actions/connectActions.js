@@ -7,7 +7,9 @@ const SOCKET_PATH = "/ifcat/socket.io";
  */
 export function connectToQuizServer(reduce, getData) {
     window.quizSocket = window.io.connect({
-        path: SOCKET_PATH
+        path: SOCKET_PATH,
+        reconnectionDelay: 5000,
+        reconnectionAttempts: 3
     });
     registerHandlers(window.quizSocket, reduce, getData);
 }
