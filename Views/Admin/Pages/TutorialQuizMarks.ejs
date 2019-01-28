@@ -28,6 +28,7 @@
     <thead>
         <tr>
             <th>Username</th>
+            <th class="text-center">UTORid</th>
             <th class="text-center">Group</th>
             <th class="text-center">Mark</th>
             <!--<th class="actions"></th>-->
@@ -40,6 +41,7 @@
         <% _.each(data, row => { %>
             <tr>
                 <td><%= row.member.getUsername() %></td>
+                <td><%= row.utorid %></td>
                 <td><%= row.group.name %></td>
                 <td><%= row.score %></td>
                 <!--<td class="actions">-->

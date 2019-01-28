@@ -277,6 +277,8 @@ class ResponseController extends Controller {
      */
     async getMarksByTutorialQuiz(req, res, next) {
 
+        const UTORID_KEY = 'urn:oid:1&#463&#466&#461&#464&#461&#4615465&#463&#461&#468';
+
         await req.tutorialQuiz.populate('quiz groups').execPopulate();
         await asyncForEach(req.tutorialQuiz.groups, async group => {
             await group.populate('responses').execPopulate();
@@ -295,21 +297,24 @@ class ResponseController extends Controller {
                 memberData.score    = groupScore; // Individual score is the group score.
                 memberData.member   = member;
                 memberData.group    = group;
+                memberData.utorid   = JSON.parse(member.user.attributes[UTORID_KEY]);
                 memberData.quiz     = req.tutorialQuiz.quiz;
                 memberData.tutorial = req.tutorialQuiz.tutorial;
                 data.push(memberData);
             });
         });
 
+
         if (req.query.export === 'true') {
             data = _.map(data, d => [
                 d.member.getUsername(),
+                JSON.parse(d.member.user.attributes[UTORID_KEY]),
                 d.quiz.name,
                 d.tutorial.getDisplayName(),
                 d.group.name,
                 d.score
             ]);
-            data.unshift(['Username', 'Quiz', 'Tutorial', 'Group', 'Mark']);
+            data.unshift(['Username', 'UTORid', 'Quiz', 'Tutorial', 'Group', 'Mark']);
             res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
             res.set('Content-Type', 'text/csv');
 
