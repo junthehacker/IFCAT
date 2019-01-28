@@ -63,11 +63,6 @@ class Report extends Component {
                 </button>
                 <h3>Quiz Report</h3>
 
-                <h4>You scored</h4>
-                <Score>{this.getEarnedPoints()} / {this.getTotalPossiblePoints()}</Score>
-
-                <hr/>
-
                 <h4>Detailed Report</h4>
                 <p>Your Group: {group.name}</p>
 
@@ -82,7 +77,7 @@ class Report extends Component {
                                 <React.Fragment>
                                     <i className="fa fa-check" aria-hidden="true"/> Your group correctly attempted this
                                     question. There were {response.attempts} failed attempts.
-                                    <QuestionScore>{response.points} / {question.points}</QuestionScore>
+                                    <QuestionScore>{response.points} / {question.points + question.firstTryBonus}</QuestionScore>
                                 </React.Fragment>
                             ) : <p>Your group failed to answer this question.</p>}
                             <br/>

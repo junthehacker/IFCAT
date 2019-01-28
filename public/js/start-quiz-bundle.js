@@ -39558,19 +39558,6 @@
 	                _react2.default.createElement(
 	                    'h4',
 	                    null,
-	                    'You scored'
-	                ),
-	                _react2.default.createElement(
-	                    Score,
-	                    null,
-	                    this.getEarnedPoints(),
-	                    ' / ',
-	                    this.getTotalPossiblePoints()
-	                ),
-	                _react2.default.createElement('hr', null),
-	                _react2.default.createElement(
-	                    'h4',
-	                    null,
 	                    'Detailed Report'
 	                ),
 	                _react2.default.createElement(
@@ -39602,7 +39589,7 @@
 	                                null,
 	                                response.points,
 	                                ' / ',
-	                                question.points
+	                                question.points + question.firstTryBonus
 	                            )
 	                        ) : _react2.default.createElement(
 	                            'p',
