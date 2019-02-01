@@ -7,7 +7,7 @@
   "scripts": {
     "start": "BUILD=`git rev-parse --short HEAD` NODE_ENV=development nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json --readme DEVELOPER.md"
+    "generate-docs": "node_modules/.bin/jsdoc -c jsdoc.json"
   },
   "author": "mikey",
   "license": "ISC",
