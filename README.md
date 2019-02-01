@@ -27,6 +27,6 @@ Application configuration is stored within `config.json`, and is in the followin
 
 ## Want to Contribute?
 
-Please head over to `CONTRIBUTING.md` for details.
+Please head over to [CONTRIBUTING](https://github.com/junthehacker/IFCAT-IA/blob/master/CONTRIBUTING.md) for details.
 
 > Built by students at the University of Toronto Scarborough with ❤️
