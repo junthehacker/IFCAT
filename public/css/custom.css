@@ -1,3 +1,9 @@
 .btn-no-capital {
     text-transform: none;
 }
+
+.quiz-question-title img {
+    max-width: 100% !important;
+    height: auto !important;
+    cursor: pointer;
+}

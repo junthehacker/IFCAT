@@ -374,6 +374,8 @@ Author(s): Jun Zheng [me at jackzh dot com]
     </div>
 </div>
 
+<input name="image" type="file" id="image-upload" style="display: none" onchange="">
+
 <% include QuizQuestion/PreviewQuestion.ejs %>
 <% include QuizQuestion/PreviewChoiceAnswers.ejs %>
 <% include ../Partials/Footer.ejs %>
@@ -391,8 +393,23 @@ Author(s): Jun Zheng [me at jackzh dot com]
 
     tinymce.init({
         selector: '#question-input',
-        plugins: "table",
-        height: "200"
+        plugins: "table image imagetools paste",
+        height: "200",
+        file_picker_callback: function(callback, value, meta) {
+            if (meta.filetype === 'image') {
+                $('#image-upload').trigger('click');
+                $('#image-upload').on('change', function() {
+                    let file = this.files[0];
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        callback(e.target.result, {
+                            alt: ''
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        },
     });
 
 </script>

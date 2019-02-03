@@ -11825,6 +11825,15 @@
 	                        delimiters: [{ left: "$$", right: "$$", display: true }, { left: "$", right: "$", display: false }]
 	                    });
 	                }, 200);
+	                setTimeout(function () {
+	                    $(".quiz-question-title img").click(function () {
+	                        var image = new Image();
+	                        image.src = $(this).attr('src');
+
+	                        var w = window.open("");
+	                        w.document.write(image.outerHTML);
+	                    });
+	                }, 200);
 	            };
 
 	            _this.getData = function () {
@@ -38783,7 +38792,7 @@
 /* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -38813,21 +38822,21 @@
 	    }
 
 	    _createClass(QuestionTitle, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
 	            var question = this.props.question;
 
 	            return _react2.default.createElement(
-	                'div',
-	                null,
+	                "div",
+	                { className: "quiz-question-title" },
 	                _react2.default.createElement(
-	                    'h4',
+	                    "h4",
 	                    null,
-	                    'Question ',
+	                    "Question ",
 	                    question.number
 	                ),
-	                _react2.default.createElement('div', { dangerouslySetInnerHTML: { __html: question.question } }),
-	                _react2.default.createElement('hr', null)
+	                _react2.default.createElement("div", { dangerouslySetInnerHTML: { __html: question.question } }),
+	                _react2.default.createElement("hr", null)
 	            );
 	        }
 	    }]);

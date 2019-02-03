@@ -46,6 +46,15 @@ export function withGlobalContextProvider(WrappedComponent) {
                     {left: "$", right: "$", display: false}
                 ]
             }), 200);
+            setTimeout(() => {
+                $(".quiz-question-title img").click(function() {
+                    let image = new Image();
+                    image.src = $(this).attr('src');
+
+                    let w = window.open("");
+                    w.document.write(image.outerHTML);
+                });
+            }, 200);
         };
 
         getData = () => {

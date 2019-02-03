@@ -79,7 +79,7 @@ Author(s): Jun Zheng [me at jackzh dot com]
                         <td class="number"><%= question.number %></td>
                         <td class="type"><%= question.type %></td>
                         <td class="question">
-                            <div class="question"><%= question.question %></div>
+                            <div class="question" style="word-break: break-all;"><%= question.question.substring(0, 256) %></div>
                             <% if (question.tags.length) { %>
                                 <div class="tags">
                                 <% _.each(question.tags, tag => { %>
