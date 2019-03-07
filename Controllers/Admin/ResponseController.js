@@ -284,37 +284,54 @@ class ResponseController extends Controller {
             await group.populate('responses').execPopulate();
             await group.fillMembersFromRemote();
         });
+        await req.tutorialQuiz.quiz.populate('questions').execPopulate();
 
         let data = [];
 
-        req.tutorialQuiz.groups.forEach(group => {
+        await asyncForEach(req.tutorialQuiz.groups, async group => {
             let groupScore = 0;
-            group.responses.forEach(response => {
+            let groupResult = [];
+            await asyncForEach(req.tutorialQuiz.quiz.questions, async question => {
+                await asyncForEach(group.responses, async response => {
+                    if(response.question.toString() === question._id.toString()) {
+                        groupResult.push(response.points);
+                    }
+                });
+            });
+            await asyncForEach(group.responses, async response => {
                 groupScore += response.points;
             });
             group.members.forEach(member => {
-                let memberData      = {};
-                memberData.score    = groupScore; // Individual score is the group score.
-                memberData.member   = member;
-                memberData.group    = group;
-                memberData.utorid   = JSON.parse(member.user.attributes[UTORID_KEY]);
-                memberData.quiz     = req.tutorialQuiz.quiz;
-                memberData.tutorial = req.tutorialQuiz.tutorial;
+                let memberData = {
+                    score: groupScore,
+                    member: member,
+                    group: group,
+                    utorid: member.user.attributes ? JSON.parse(member.user.attributes[UTORID_KEY]) : "",
+                    quiz: req.tutorialQuiz.quiz,
+                    tutorial: req.tutorialQuiz.tutorial,
+                    groupResult: groupResult,
+                };
                 data.push(memberData);
             });
+        });
+
+        let questionHeadings = [];
+        await asyncForEach(req.tutorialQuiz.quiz.questions, async (question, key) => {
+            questionHeadings.push(`Q${question.number} [${key}]`);
         });
 
 
         if (req.query.export === 'true') {
             data = _.map(data, d => [
                 d.member.getUsername(),
-                JSON.parse(d.member.user.attributes[UTORID_KEY]),
+                d.member.user.attributes ? JSON.parse(d.member.user.attributes[UTORID_KEY]) : "",
                 d.quiz.name,
                 d.tutorial.getDisplayName(),
                 d.group.name,
-                d.score
+                d.score,
+                ...d.groupResult,
             ]);
-            data.unshift(['Username', 'UTORid', 'Quiz', 'Tutorial', 'Group', 'Mark']);
+            data.unshift(['Username', 'UTORid', 'Quiz', 'Tutorial', 'Group', 'Mark', ...questionHeadings]);
             res.setHeader('Content-disposition', 'attachment; filename=marks.csv');
             res.set('Content-Type', 'text/csv');
 
