@@ -1,3 +1,8 @@
+# IMPORTANT NOTICE
+
+This repository is deprecated, new repository resides in `cms-urg` organization. You can find it here: https://github.com/cms-urg/IFCAT-IA
+
+
 # IFCAT-IA
 Immediate-Feedback Collaborative Assessment Tool is a collaborative quiz application for the classroom, based on [immediate feedback assessment technique](https://link.springer.com/article/10.1007/BF03395423).
 
